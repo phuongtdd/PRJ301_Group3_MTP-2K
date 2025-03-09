@@ -12,6 +12,24 @@
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
               rel="stylesheet">
         <style>
+
+            /* Custom scrollbar styles */
+            ::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: rgba(2, 12, 27, 0.95);
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: #64ffda;
+                border-radius: 4px;
+            }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: #4ad3b3;
+            }
             /* Keep existing styles */
             body {
                 display: flex;

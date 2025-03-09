@@ -1,15 +1,35 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="en">
+
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Music Library</title>
         <link rel="stylesheet" href="styles.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+              rel="stylesheet">
         <style>
+            /* Custom scrollbar styles */
+            ::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: rgba(2, 12, 27, 0.95);
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: #64ffda;
+                border-radius: 4px;
+            }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: #4ad3b3;
+            }
+
             body {
                 display: flex;
                 background-color: #0a192f;
@@ -167,14 +187,16 @@
                 background: rgba(100, 255, 218, 0.1);
             }
 
-            .artist-section, .album-section {
+            .artist-section,
+            .album-section {
                 display: grid;
                 grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
                 gap: 24px;
                 margin-bottom: 40px;
             }
 
-            .artist-card, .album-card {
+            .artist-card,
+            .album-card {
                 background: #112240;
                 padding: 16px;
                 border-radius: 8px;
@@ -182,14 +204,16 @@
                 border: 1px solid transparent;
             }
 
-            .artist-card:hover, .album-card:hover {
+            .artist-card:hover,
+            .album-card:hover {
                 background: #233554;
                 cursor: pointer;
                 border: 1px solid #64ffda;
                 transform: translateY(-5px);
             }
 
-            .artist-card img, .album-card img {
+            .artist-card img,
+            .album-card img {
                 width: 100%;
                 aspect-ratio: 1;
                 object-fit: cover;
@@ -274,7 +298,8 @@
     <body>
         <div class="sidebar">
             <div class="logo-container">
-                <img src="<%= request.getContextPath()%>/image/mtp2k-logo.png" alt="MTP-2K" style="border-radius: 50%;">
+                <img src="<%= request.getContextPath()%>/image/mtp2k-logo.png" alt="MTP-2K"
+                     style="border-radius: 50%;">
             </div>
             <ul class="nav-links">
                 <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
@@ -386,4 +411,5 @@
             <a href="#" class="signup-button">Sign up free</a>
         </div>
     </body>
+
 </html>

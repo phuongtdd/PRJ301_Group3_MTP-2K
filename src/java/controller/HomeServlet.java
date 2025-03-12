@@ -7,17 +7,19 @@ package controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
+import dao.ArtistDAO;
+import model.Album;
+import model.Artist;
 
 /**
  *
  * @author HP
  */
-@WebServlet(name = "s1", urlPatterns = {"/s1"})
-public class s1 extends HttpServlet {
+public class HomeServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -28,23 +30,6 @@ public class s1 extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet s1</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet s1 at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -57,7 +42,12 @@ public class s1 extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        // Lấy danh sách Artists và Albums từ database
+        handleViewArtist(request, response);
+        handleViewAlbum(request, response);
+
+        // Điều hướng đến home.jsp
+        request.getRequestDispatcher("view/home/home.jsp").forward(request, response);
     }
 
     /**
@@ -71,14 +61,24 @@ public class s1 extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
+
+    /*------------------------------------Lấy danh sách Artists-----------------------------------------------------*/
+    private void handleViewArtist(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        ArtistDAO dao = new ArtistDAO();
+        List<Artist> artists = dao.getArtists();
+        request.setAttribute("artist", artists);
+    }
+
+    /*------------------------------------Lấy danh sách Albums-----------------------------------------------------*/
+    private void handleViewAlbum(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        ArtistDAO dao = new ArtistDAO();
+        List<Album> albums = dao.getAlbums();
+        request.setAttribute("album", albums);
+    }
+
     @Override
     public String getServletInfo() {
         return "Short description";

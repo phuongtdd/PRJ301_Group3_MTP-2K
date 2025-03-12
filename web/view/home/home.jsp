@@ -9,8 +9,7 @@
         <title>Music Library</title>
         <link rel="stylesheet" href="styles.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-              rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <style>
             /* Custom scrollbar styles */
             ::-webkit-scrollbar {
@@ -298,8 +297,7 @@
     <body>
         <div class="sidebar">
             <div class="logo-container">
-                <img src="<%= request.getContextPath()%>/image/mtp2k-logo.png" alt="MTP-2K"
-                     style="border-radius: 50%;">
+                <img src="${pageContext.request.contextPath}/image/mtp2k-logo.png" alt="MTP-2K" style="border-radius: 50%;">
             </div>
             <ul class="nav-links">
                 <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
@@ -323,41 +321,15 @@
                 <a href="#" class="show-all">Show All</a>
             </div>
             <div class="artist-section">
-                <div class="artist-card">
-                    <img src="<%= request.getContextPath()%>/image/kietlac.jpg" alt="kietlac">
-                    <div class="card-info">
-                        <h3 class="card-title">Kiệt Lặc</h3>
-                        <p class="card-description">Vietnamese Hip-hop Artist</p>
+                <c:forEach var="artist" items="${artist}" begin="0" end="4">
+                    <div class="artist-card">
+                        <img src="${pageContext.request.contextPath}/${artist.imageUrl}" alt="${artist.name}">
+                        <div class="card-info">
+                            <h3 class="card-title">${artist.name}</h3>
+                            <p class="card-description">${artist.description}</p>
+                        </div>
                     </div>
-                </div>
-                <div class="artist-card">
-                    <img src="<%= request.getContextPath()%>/image/brunomars.jpg" alt="brunomars">
-                    <div class="card-info">
-                        <h3 class="card-title">Bruno Mars</h3>
-                        <p class="card-description">American Singer-Songwriter</p>
-                    </div>
-                </div>
-                <div class="artist-card">
-                    <img src="<%= request.getContextPath()%>/image/duongdominic.jpg" alt="duongdominic">
-                    <div class="card-info">
-                        <h3 class="card-title">Dương Dominic</h3>
-                        <p class="card-description">Vietnamese Pop Artist</p>
-                    </div>
-                </div>
-                <div class="artist-card">
-                    <img src="<%= request.getContextPath()%>/image/hieuthu2.jpg" alt="hieuthu2">
-                    <div class="card-info">
-                        <h3 class="card-title">Hiếu Thứ Hai</h3>
-                        <p class="card-description">Vietnamese Rapper</p>
-                    </div>
-                </div>
-                <div class="artist-card">
-                    <img src="<%= request.getContextPath()%>/image/jack.jpg" alt="jack">
-                    <div class="card-info">
-                        <h3 class="card-title">Jack</h3>
-                        <p class="card-description">Vietnamese Pop Sensation</p>
-                    </div>
-                </div>
+                </c:forEach>
             </div>
 
             <div class="section-header">
@@ -365,41 +337,15 @@
                 <a href="#" class="show-all">Show All</a>
             </div>
             <div class="album-section">
-                <div class="album-card">
-                    <img src="<%= request.getContextPath()%>/image/jiso.jpg" alt="jiso">
-                    <div class="card-info">
-                        <h3 class="card-title">ME</h3>
-                        <p class="card-description">JISOO's Solo Album</p>
+                <c:forEach var="album" items="${album}" begin="0" end="4">
+                    <div class="album-card">
+                        <img src="${pageContext.request.contextPath}/${album.imageUrl}" alt="${album.title}">
+                        <div class="card-info">
+                            <h3 class="card-title">${album.title}</h3>
+                            <p class="card-description">${album.description}</p>
+                        </div>
                     </div>
-                </div>
-                <div class="album-card">
-                    <img src="<%= request.getContextPath()%>/image/keshi.jpg" alt="keshi">
-                    <div class="card-info">
-                        <h3 class="card-title">GABRIEL</h3>
-                        <p class="card-description">Keshi's Latest Album</p>
-                    </div>
-                </div>
-                <div class="album-card">
-                    <img src="<%= request.getContextPath()%>/image/rose.jpg" alt="rose">
-                    <div class="card-info">
-                        <h3 class="card-title">-R-</h3>
-                        <p class="card-description">ROSÉ's Solo Album</p>
-                    </div>
-                </div>
-                <div class="album-card">
-                    <img src="<%= request.getContextPath()%>/image/obito.jpg" alt="obito">
-                    <div class="card-info">
-                        <h3 class="card-title">OBITO</h3>
-                        <p class="card-description">Vietnamese Hip-hop Album</p>
-                    </div>
-                </div>
-                <div class="album-card">
-                    <img src="<%= request.getContextPath()%>/image/sontung.jpg" alt="sontung">
-                    <div class="card-info">
-                        <h3 class="card-title">Sky Tour</h3>
-                        <p class="card-description">Sơn Tùng M-TP's Concert Album</p>
-                    </div>
-                </div>
+                </c:forEach>
             </div>
         </div>
 

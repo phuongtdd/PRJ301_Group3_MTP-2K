@@ -16,8 +16,8 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <style>
-            
-            
+
+
             body {
                 font-family: 'Poppins', sans-serif;
                 background: #0f172a;
@@ -598,12 +598,12 @@
     <body class="flex items-center justify-center min-h-screen">
         <div class="music-waves"></div>
 
-<!-- MTP-2K Logo Text -->
-<div class="absolute top-10 text-center w-full z-10">
-    <h1 class="text-5xl font-bold tracking-wider" style="color: #4FFFB0; text-shadow: 0 0 5px rgba(79, 255, 176, 0.5), 0 0 10px rgba(79, 255, 176, 0.3);">
-        <span>MTP-2K</span>
-    </h1>
-</div>
+        <!-- MTP-2K Logo Text -->
+        <div class="absolute top-10 text-center w-full z-10">
+            <h1 class="text-5xl font-bold tracking-wider" style="color: #4FFFB0; text-shadow: 0 0 5px rgba(79, 255, 176, 0.5), 0 0 10px rgba(79, 255, 176, 0.3);">
+                <span>MTP-2K</span>
+            </h1>
+        </div>
 
         <div class="music-banner">
             &#127911; Harmony for your heart, melody for your mind  &#127911;
@@ -868,14 +868,14 @@
 
         <script>
             // Khởi tạo các sự kiện khi trang web đã tải xong
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 // Lấy các phần tử DOM cần thiết cho việc chuyển đổi panel
                 const signUpButton = document.getElementById('signUp');
                 const signInButton = document.getElementById('signIn');
                 const signUpLink = document.getElementById('signUpLink');
                 const signInLink = document.getElementById('signInLink');
                 const container = document.getElementById('container');
-                
+
                 // Thêm sự kiện click cho nút "Sign Up" trong form đăng nhập
                 // Khi người dùng click vào link "Sign Up" trong form đăng nhập, chuyển sang form đăng ký
                 if (signUpLink) {
@@ -883,7 +883,7 @@
                         container.classList.add('right-panel-active');
                     });
                 }
-                
+
                 // Thêm sự kiện click cho nút "Sign In" trong form đăng ký
                 // Khi người dùng click vào link "Sign In" trong form đăng ký, chuyển sang form đăng nhập
                 if (signInLink) {
@@ -891,19 +891,19 @@
                         container.classList.remove('right-panel-active');
                     });
                 }
-                
+
                 // Thêm sự kiện click cho nút "Sign Up" trong overlay bên phải
                 // Khi người dùng click vào nút "Sign Up" trong panel bên phải, chuyển sang form đăng ký
                 signUpButton.addEventListener('click', () => {
                     container.classList.add('right-panel-active');
                 });
-                
+
                 // Thêm sự kiện click cho nút "Sign In" trong overlay bên trái
                 // Khi người dùng click vào nút "Sign In" trong panel bên trái, chuyển sang form đăng nhập
                 signInButton.addEventListener('click', () => {
                     container.classList.remove('right-panel-active');
                 });
-                
+
                 // Thêm hiệu ứng animation cho các thanh equalizer
                 // Tạo hiệu ứng chuyển động cho các thanh equalizer để mô phỏng hiệu ứng âm nhạc
                 const bars = document.querySelectorAll('.bar');
@@ -911,14 +911,14 @@
                     // Mỗi thanh có một độ trễ khác nhau để tạo hiệu ứng sóng
                     bar.style.animation = `barAnimation 1.5s infinite ${index * 0.1}s`;
                 });
-                
+
                 // Thêm hiệu ứng pulse cho logo
                 // Tạo hiệu ứng nhấp nháy cho logo để thu hút sự chú ý
                 const logoContainers = document.querySelectorAll('.logo-container');
                 logoContainers.forEach(container => {
                     container.style.animation = 'pulse 2s infinite';
                 });
-                
+
                 // Tạo các keyframes animation động bằng JavaScript
                 // Định nghĩa các animation sử dụng trong trang
                 const style = document.createElement('style');
@@ -951,41 +951,41 @@
                     }
                 `;
                 document.head.appendChild(style);
-                
+
                 // Thêm hiệu ứng cho nút đăng nhập
                 // Tạo các hiệu ứng tương tác khi người dùng di chuột vào nút đăng nhập
                 const loginButton = document.getElementById('loginButton');
-                
+
                 // Sự kiện khi di chuột vào nút đăng nhập
-                loginButton.addEventListener('mouseenter', function() {
+                loginButton.addEventListener('mouseenter', function () {
                     // Thêm hiệu ứng gradient animation khi di chuột vào nút
                     this.style.backgroundSize = '300% 300%';
                     this.style.animation = 'gradientAnimation 3s ease infinite';
-                    
+
                     // Thêm hiệu ứng nảy lên cho nội dung nút
                     const btnContent = this.querySelector('.btn-content');
                     btnContent.style.animation = 'bounce 0.5s ease';
-                    
+
                     // Tạo và hiển thị các nốt nhạc xung quanh nút
                     createMusicNotes(this);
-                    
+
                     // Phát âm thanh khi di chuột vào nút
                     playSound();
                 });
-                
+
                 // Sự kiện khi di chuột ra khỏi nút đăng nhập
-                loginButton.addEventListener('mouseleave', function() {
+                loginButton.addEventListener('mouseleave', function () {
                     // Xóa các hiệu ứng animation khi di chuột ra khỏi nút
                     this.style.animation = '';
                     const btnContent = this.querySelector('.btn-content');
                     btnContent.style.animation = '';
-                    
+
                     // Xóa tất cả các nốt nhạc
                     document.querySelectorAll('.music-note').forEach(note => {
                         note.remove();
                     });
                 });
-                
+
                 // Hàm tạo các nốt nhạc xung quanh nút khi hover
                 // Tạo hiệu ứng các nốt nhạc bay lên từ nút đăng nhập
                 function createMusicNotes(button) {
@@ -994,20 +994,20 @@
                         const note = document.createElement('i');
                         note.className = 'fas fa-music music-note';
                         button.appendChild(note);
-                        
+
                         // Đặt vị trí ngẫu nhiên cho nốt nhạc
                         const x = Math.random() * button.offsetWidth;
                         const y = button.offsetHeight / 2;
-                        
+
                         note.style.left = `${x}px`;
                         note.style.top = `${y}px`;
-                        
+
                         // Tạo hiệu ứng animation cho nốt nhạc
                         setTimeout(() => {
                             note.style.opacity = '1';
                             note.style.transform = `translate(${Math.random() * 20 - 10}px, -${30 + Math.random() * 20}px) rotate(${Math.random() * 40 - 20}deg)`;
                             note.style.transition = 'all 1s ease';
-                            
+
                             // Làm mờ dần và xóa nốt nhạc sau một khoảng thời gian
                             setTimeout(() => {
                                 note.style.opacity = '0';
@@ -1018,7 +1018,7 @@
                         }, i * 200);
                     }
                 }
-                
+
                 // Hàm phát âm thanh khi hover nút đăng nhập
                 // Tạo âm thanh nốt nhạc A4 khi di chuột vào nút đăng nhập
                 function playSound() {
@@ -1029,17 +1029,17 @@
                             const audioCtx = new AudioContext();
                             const oscillator = audioCtx.createOscillator();
                             const gainNode = audioCtx.createGain();
-                            
+
                             // Thiết lập loại sóng âm, tần số và âm lượng
                             oscillator.type = 'sine';
                             oscillator.frequency.setValueAtTime(440, audioCtx.currentTime); // A4 note
                             gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
                             gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
-                            
+
                             // Kết nối các node âm thanh
                             oscillator.connect(gainNode);
                             gainNode.connect(audioCtx.destination);
-                            
+
                             // Phát và dừng âm thanh
                             oscillator.start();
                             oscillator.stop(audioCtx.currentTime + 0.5);
@@ -1056,7 +1056,7 @@
                 // Lấy phần tử input mật khẩu và icon
                 const passwordInput = document.getElementById('password');
                 const toggleIcon = document.querySelector('.toggle-password');
-                
+
                 // Kiểm tra trạng thái hiện tại của input mật khẩu
                 if (passwordInput.type === 'password') {
                     // Nếu đang ẩn, chuyển sang hiển thị và đổi icon
@@ -1077,7 +1077,7 @@
                 // Lấy phần tử input mật khẩu và icon trong form đăng ký
                 const passwordInput = document.getElementById('registerPassword');
                 const toggleIcon = document.querySelector('#registerPassword + .toggle-password');
-                
+
                 // Kiểm tra trạng thái hiện tại của input mật khẩu
                 if (passwordInput.type === 'password') {
                     // Nếu đang ẩn, chuyển sang hiển thị và đổi icon

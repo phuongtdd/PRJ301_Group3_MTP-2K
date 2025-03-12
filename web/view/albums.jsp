@@ -11,6 +11,23 @@
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
         <style>
+            /* Custom scrollbar styles */
+            ::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: rgba(2, 12, 27, 0.95);
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: #64ffda;
+                border-radius: 4px;
+            }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: #4ad3b3;
+            }
             body {
                 display: flex;
                 background-color: #0a192f;
@@ -388,8 +405,8 @@
             }
 
             .album-cover {
-                width: 250px;
-                height: 250px;
+                width: 300px;
+                height: 300px;
                 border-radius: 8px;
                 box-shadow: 0 4px 60px rgba(0, 0, 0, 0.5);
                 object-fit: cover;
@@ -402,14 +419,14 @@
             }
 
             .album-type {
-                font-size: 14px;
+                font-size: 18px;
                 font-weight: 500;
                 margin-bottom: 8px;
             }
 
             .album-title {
-                font-size: 56px;
-                font-weight: 700;
+                font-size: 96px;
+                font-weight: 800;
                 margin: 8px 0;
                 color: #e6f1ff;
             }
@@ -519,8 +536,8 @@
             }
 
             .artist-avatar {
-                width: 100px;
-                height: 100px;
+                width: 30px;
+                height: 30px;
                 border-radius: 50%;
                 box-shadow: 0 4px 60px rgba(0, 0, 0, 0.5);
                 object-fit: cover;
@@ -726,7 +743,7 @@
                         <span>2021</span>
                         <span>•</span>
                         <span>5 songs</span>
-                       
+
                     </div>
                 </div>
             </div>

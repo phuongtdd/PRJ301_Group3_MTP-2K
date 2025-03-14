@@ -62,7 +62,7 @@
                 position: relative; /* Đặt phần tử ở vị trí tương đối so với vị trí ban đầu của nó */
                 width: 100%; /* Chiều rộng của phần tử chiếm toàn bộ chiều rộng của phần tử chứa */
                 max-width: 850px; /* Đặt chiều rộng tối đa của phần tử là 850px */
-                min-height: 500px; /* Đặt chiều cao tối thiểu của phần tử là 500px */
+                min-height: 650px; /* Tăng từ 500px lên 650px */
                 background: #fff; /* Màu nền của phần tử là màu trắng (#fff) */
                 border-radius: 30px; /* Làm tròn các góc của phần tử với bán kính 30px */
                 box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1); /* Thêm hiệu ứng bóng đổ với đổ bóng hướng xuống dưới và mờ dần */
@@ -210,6 +210,7 @@
                 height: 100%; /* Đặt chiều cao form box là 100% */
                 width: 100%; /* Đặt chiều rộng form box là 100% */
                 position: relative; /* Đặt form box ở vị trí tương đối trong phần tử chứa */
+                margin: 20px 0; /* Added margin top and bottom */
             }
 
 
@@ -260,7 +261,7 @@
             .input-group {
                 position: relative; /* Đặt phần tử vào vị trí tương đối để có thể điều chỉnh vị trí của các phần tử con. */
                 width: 100%; /* Chiều rộng phần tử chiếm 100% chiều rộng của phần tử chứa. */
-                margin-bottom: 15px; /* Khoảng cách dưới mỗi input group. */
+                margin-bottom: 20px; /* Tăng từ 15px lên 20px */
                 transition: all 0.3s ease; /* Thêm hiệu ứng chuyển động mượt mà khi có sự thay đổi. */
             }
 
@@ -742,10 +743,12 @@
                         --%>
                         <%-- Sử dụng JSTL để tạo các trường input --%>
                         <c:set var="registerFields" value="${[
-                                                             {'name': 'name', 'type': 'text', 'placeholder': 'Name', 'icon': 'fa-user'},
-                                                             {'name': 'email', 'type': 'email', 'placeholder': 'Email', 'icon': 'fa-envelope'},
+                                                             {'name': 'fullName', 'type': 'text', 'placeholder': 'Full Name', 'icon': 'fa-id-card'},
+                                                             {'name': 'userName', 'type': 'text', 'placeholder': 'Username', 'icon': 'fa-user'},
                                                              {'name': 'password', 'type': 'password', 'placeholder': 'Password', 'icon': 'fa-lock', 'id': 'registerPassword'},
-                                                             {'name': 'confirmPassword', 'type': 'password', 'placeholder': 'Confirm Password', 'icon': 'fa-lock', 'id': 'confirmPassword'}
+                                                             {'name': 'confirmPassword', 'type': 'password', 'placeholder': 'Confirm Password', 'icon': 'fa-lock', 'id': 'confirmPassword'},
+                                                             {'name': 'email', 'type': 'email', 'placeholder': 'Email', 'icon': 'fa-envelope'},
+                                                             {'name': 'phone', 'type': 'tel', 'placeholder': 'Phone', 'icon': 'fa-phone'}
                                                              ]}" />
 
                         <c:forEach var="field" items="${registerFields}">

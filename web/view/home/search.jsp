@@ -368,7 +368,7 @@
                      style="border-radius: 50%;">
             </div>
             <ul class="nav-links">
-                <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="home"><i class="fas fa-home"></i> Home</a></li>
                 <li><a href="#"><i class="fas fa-search"></i> Search</a></li>
                 <li><a href="#"><i class="fas fa-book"></i> Your Library</a></li>
                 <li style="margin-top: 24px"><a href="#"><i class="fas fa-plus-square"></i> Create Playlist</a></li>
@@ -442,7 +442,7 @@
                     <h3>Preview of MTP-2K</h3>
                     <p>Sign up to get unlimited songs and podcasts with occasional ads. No credit card needed.</p>
                 </div>
-                <a href="#" class="signup-button">Sign up free</a>
+                <a href="/login" class="signup-button">Sign up free</a>
             </div>
         </div>
     </body>

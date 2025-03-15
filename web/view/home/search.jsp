@@ -357,6 +357,107 @@
             /* Keep all existing styles */
 
             /* Keep existing artist-section, album-section, and signup-banner styles */
+
+            .dropdown-menu {
+                margin-top: 10px;
+            }
+
+            .dropdown-item {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                color: #e6f1ff;
+                text-decoration: none;
+                padding: 8px;
+                border-radius: 6px;
+                transition: all 0.3s ease;
+                font-size: 13px;
+            }
+
+            .dropdown-item:hover {
+                background: rgba(100, 255, 218, 0.1);
+                color: #64ffda;
+            }
+
+            .dropdown-item i {
+                width: 14px;
+                text-align: center;
+            }
+
+            .divider {
+                height: 1px;
+                background: rgba(100, 255, 218, 0.1);
+                margin: 6px 0;
+            }
+
+            .user-dropdown {
+                width: 180px;
+            }
+
+            .user-menu {
+                position: relative;
+                z-index: 1000;
+            }
+
+            .user-icon {
+                position: relative;
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+                color: #64ffda;
+                font-size: 32px;
+            }
+
+            .user-dropdown {
+                display: none;
+                position: absolute;
+                top: 35px;
+                right: 0;
+                background: #112240;
+                padding: 12px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                text-align: left;
+                width: 180px;
+                border: 1px solid rgba(100, 255, 218, 0.2);
+                z-index: 1001;
+            }
+
+            .user-icon.active .user-dropdown {
+                display: block;
+            }
+
+            .user-dropdown p {
+                margin: 6px 0;
+                font-size: 13px;
+                color: #e6f1ff;
+                word-break: break-word;
+            }
+
+            .user-dropdown p strong {
+                color: #64ffda;
+                display: block;
+                margin-bottom: 3px;
+            }
+
+            .logout-button {
+                display: block;
+                color: #ff4d4d;
+                text-decoration: none;
+                font-weight: 500;
+                padding: 8px;
+                border-radius: 6px;
+                transition: all 0.3s ease;
+                text-align: center;
+                margin-top: 10px;
+                border: 1px solid transparent;
+                font-size: 13px;
+            }
+
+            .logout-button:hover {
+                background: rgba(255, 77, 77, 0.1);
+                border-color: #ff4d4d;
+            }
         </style>
     </head>
 
@@ -390,10 +491,46 @@
                     <i class="fas fa-search" style="color: #a8b2d1;"></i>
                     <input type="text" placeholder="What do you want to listen to?">
                 </div>
+                <!------------------------------------- LOGIN-------------------------------- -->
                 <div class="auth-buttons">
-                    <a href="${pageContext.request.contextPath}/login" class="signup-btn">Sign up</a>
-                    <a href="${pageContext.request.contextPath}/login" class="login-btn">Log in</a>
+                    <c:choose>
+                        <c:when test="${not empty sessionScope.user}">
+                            <div class="user-menu">
+                                <div class="user-icon" onclick="this.classList.toggle('active')">
+                                    <i class="fas fa-user-circle"></i>
+                                    <div class="user-dropdown">
+                                        <p><strong>${sessionScope.user.fullName}</strong></p>
+                                        <p>${sessionScope.user.email}</p>
+                                        <div class="dropdown-menu">
+                                            <a href="${pageContext.request.contextPath}/user/profile" class="dropdown-item">
+                                                <i class="fas fa-user"></i> Profile
+                                            </a>
+                                            <a href="${pageContext.request.contextPath}/user/change-password" class="dropdown-item">
+                                                <i class="fas fa-key"></i> Change Password
+                                            </a>
+                                            <a href="${pageContext.request.contextPath}/user/change-email" class="dropdown-item">
+                                                <i class="fas fa-envelope"></i> Change Email
+                                            </a>
+                                            <a href="${pageContext.request.contextPath}/user/change-phone" class="dropdown-item">
+                                                <i class="fas fa-phone"></i> Change Phone Number
+                                            </a>
+                                            <div class="divider"></div>
+                                            <a href="${pageContext.request.contextPath}/login?action=logout" class="logout-button">
+                                                <i class="fas fa-sign-out-alt"></i> Logout
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="${pageContext.request.contextPath}/login" class="signup-btn">Sign up</a>
+                            <a href="${pageContext.request.contextPath}/login" class="login-btn">Log in</a>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
+                <!------------------------------------- LOGIN-------------------------------- -->
+
             </div>
 
             <div class="section-header">
@@ -437,13 +574,16 @@
 
 
             <!-- Keep existing signup banner -->
-            <div class="signup-banner">
-                <div class="preview-text">
-                    <h3>Preview of MTP-2K</h3>
-                    <p>Sign up to get unlimited songs and podcasts with occasional ads. No credit card needed.</p>
+            <c:if test="${empty sessionScope.user}">
+                <div class="signup-banner">
+                    <div class="preview-text">
+                        <h3>Preview of MTP-2K</h3>
+                        <p>Sign up to get unlimited songs and podcasts with occasional ads. No credit card needed.</p>
+                    </div>
+                    <a href="${pageContext.request.contextPath}/login" class="signup-button">Sign up free</a>
                 </div>
-                <a href="${pageContext.request.contextPath}/login" class="signup-button">Sign up free</a>
-            </div>
+            </c:if>
+
         </div>
     </body>
 

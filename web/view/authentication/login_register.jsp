@@ -40,20 +40,20 @@
             /* music-banner là một phần tử có nền trong suốt, với chữ trắng và có bóng mờ, được căn giữa trên trang và có khoảng cách từ trên 80px. Thường được sử dụng để hiển thị thông báo hoặc thông điệp nổi bật trên trang.*/
             .music-banner {
                 position: absolute; /* Đặt vị trí phần tử là tuyệt đối, căn chỉnh theo các giá trị top, left, v.v. */
-                top: 80px; /* Đặt vị trí phần tử cách cạnh trên của phần tử chứa (hoặc trang) 80px */
+                top: 10vh; /* Changed from 80px to 10vh */
                 left: 0; /* Đặt phần tử cách cạnh trái của phần tử chứa (hoặc trang) 0px */
                 width: 100%; /* Chiều rộng phần tử chiếm toàn bộ chiều rộng của phần tử chứa */
                 background: transparent; /* Thiết lập nền trong suốt (không có màu nền) */
                 color: #4FFFB0; /* Màu xanh mint neon */
                 text-align: center; /* Căn giữa văn bản trong phần tử */
-                padding: 8px 0; /* Thêm padding 8px ở trên và dưới, không có padding ở trái và phải */
-                font-size: 14px; /* Đặt kích thước font chữ là 14px */
+                padding: 1vh 0; /* Changed from 8px to 1vh */
+                font-size: clamp(0.875rem, 2vw, 1rem); /* Responsive font size */
                 z-index: 10; /* Thiết lập chỉ số z-index để phần tử này hiển thị trên các phần tử khác có chỉ số z-index thấp hơn */
                 text-shadow: 0 0 5px rgba(79, 255, 176, 0.7);
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                gap: 8px;
+                gap: 1vh;
             }
 
 
@@ -72,13 +72,14 @@
             /* .container là một hộp chứa có các góc bo tròn, chiều rộng linh hoạt, và có hiệu ứng bóng đổ nhẹ, tạo sự nổi bật. Các nội dung bên trong nó sẽ không tràn ra ngoài, giúp giao diện luôn sạch sẽ và dễ nhìn.*/
             .container {
                 position: relative; /* Đặt phần tử ở vị trí tương đối so với vị trí ban đầu của nó */
-                width: 100%; /* Chiều rộng của phần tử chiếm toàn bộ chiều rộng của phần tử chứa */
-                max-width: 850px; /* Đặt chiều rộng tối đa của phần tử là 850px */
-                min-height: 650px; /* Tăng từ 500px lên 650px */
+                width: 90%;
+                max-width: min(90vw, 850px); /* More responsive max-width */
+                min-height: min(80vh, 650px); /* Responsive min-height */
                 background: #fff; /* Màu nền của phần tử là màu trắng (#fff) */
-                border-radius: 30px; /* Làm tròn các góc của phần tử với bán kính 30px */
-                box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1); /* Thêm hiệu ứng bóng đổ với đổ bóng hướng xuống dưới và mờ dần */
+                border-radius: clamp(1rem, 3vw, 2rem); /* Responsive border radius */
+                box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.1); /* Thêm hiệu ứng bóng đổ với đổ bóng hướng xuống dưới và mờ dần */
                 overflow: hidden; /* Ẩn phần nội dung tràn ra ngoài phần tử */
+                margin: 2rem auto; /* Added margin for spacing */
             }
 
 
@@ -218,11 +219,11 @@
                 align-items: center; /* Căn giữa các phần tử theo chiều dọc */
                 justify-content: center; /* Căn giữa các phần tử theo chiều ngang */
                 flex-direction: column; /* Sắp xếp các phần tử theo chiều dọc */
-                padding: 0 40px; /* Thêm khoảng cách từ hai bên */
+                padding: 0 clamp(1rem, 5%, 2.5rem); /* Responsive padding */
                 height: 100%; /* Đặt chiều cao form box là 100% */
                 width: 100%; /* Đặt chiều rộng form box là 100% */
                 position: relative; /* Đặt form box ở vị trí tương đối trong phần tử chứa */
-                margin: 20px 0; /* Added margin top and bottom */
+                margin: 2vh 0; /* Changed from 20px to 2vh */
             }
 
 
@@ -273,7 +274,7 @@
             .input-group {
                 position: relative; /* Đặt phần tử vào vị trí tương đối để có thể điều chỉnh vị trí của các phần tử con. */
                 width: 100%; /* Chiều rộng phần tử chiếm 100% chiều rộng của phần tử chứa. */
-                margin-bottom: 20px; /* Tăng từ 15px lên 20px */
+                margin-bottom: 2vh; /* Changed from 20px to 2vh */
                 transition: all 0.3s ease; /* Thêm hiệu ứng chuyển động mượt mà khi có sự thay đổi. */
             }
 
@@ -292,12 +293,12 @@
             .form-input {
                 background-color: #f5f5f5; /* Nền màu xám nhạt cho trường nhập liệu. */
                 border: none; /* Không có viền. */
-                padding: 12px 15px 12px 45px; /* Padding để tạo khoảng cách trong trường nhập liệu và biểu tượng. */
+                padding: 1.2vh 1.5vh 1.2vh 4.5vh; /* Changed from px to vh */
                 width: 100%; /* Chiều rộng chiếm 100% phần tử chứa. */
-                border-radius: 15px; /* Góc bo tròn cho trường nhập liệu. */
+                border-radius: 1rem; /* Changed from 15px to 1rem */
                 outline: none; /* Loại bỏ viền khi trường nhập liệu được focus. */
                 transition: all 0.3s ease; /* Hiệu ứng chuyển động mượt mà khi có sự thay đổi. */
-                font-size: 14px; /* Kích thước font chữ là 14px. */
+                font-size: clamp(0.875rem, 1.5vw, 1rem); /* Responsive font size */
             }
 
             /* Khi trường nhập liệu được focus, nền sẽ chuyển sang trắng và có bóng đổ. */
@@ -361,8 +362,8 @@
             /* .logo-container là phần tử chứa logo, có hiệu ứng phóng to và thay đổi bóng đổ khi hover. */
             .logo-container {
                 position: relative; /* Đặt phần tử logo ở vị trí tương đối. */
-                width: 150px; /* Chiều rộng của logo là 150px. */
-                height: 150px; /* Chiều cao của logo là 150px. */
+                width: clamp(100px, 20vw, 150px); /* Responsive logo size */
+                height: clamp(100px, 20vw, 150px);
                 margin: 0 auto; /* Căn giữa logo. */
                 border-radius: 50%; /* Tạo hình tròn cho logo. */
                 overflow: hidden; /* Ẩn phần thừa ra ngoài hình tròn. */
@@ -393,7 +394,7 @@
                 right: 0;
                 text-align: center; /* Căn giữa văn bản. */
                 font-weight: bold; /* Đậm cho văn bản. */
-                font-size: 18px; /* Kích thước chữ là 18px. */
+                font-size: clamp(1rem, 2.5vw, 1.25rem); /* Responsive font size */
                 color: white; /* Màu chữ là trắng. */
                 text-shadow: 0 0 10px rgba(0,0,0,0.3); /* Thêm bóng đổ cho chữ. */
                 color: #4FFFB0; /* Màu xanh mint neon */
@@ -482,7 +483,7 @@
                 background: #3498db; /* Nền nút có màu xanh dương. */
                 transition: all 0.3s ease; /* Thêm hiệu ứng chuyển động cho các thay đổi. */
                 border: none; /* Không có viền cho nút. */
-                padding: 10px 30px; /* Padding cho nút để tạo không gian cho chữ và icon. */
+                padding: clamp(0.8rem, 2vh, 1.2rem) clamp(1.5rem, 4vw, 2rem);
                 border-radius: 30px; /* Bo tròn góc của nút. */
                 font-weight: bold; /* Đặt chữ đậm. */
                 letter-spacing: 1px; /* Khoảng cách giữa các ký tự là 1px. */
@@ -547,7 +548,7 @@
                 background: transparent; /* Nền của nút là trong suốt. */
                 border: 2px solid white; /* Viền của nút là 2px và màu trắng. */
                 color: white; /* Màu chữ là trắng. */
-                padding: 10px 30px; /* Padding để tạo không gian cho chữ trong nút. */
+                padding: clamp(0.8rem, 2vh, 1.2rem) clamp(1.5rem, 4vw, 2rem);
                 border-radius: 30px; /* Bo tròn góc của nút. */
                 font-weight: bold; /* Đặt chữ đậm. */
                 letter-spacing: 1px; /* Khoảng cách giữa các chữ là 1px. */
@@ -577,13 +578,13 @@
             h1 {
                 font-weight: bold; /* Đặt chữ đậm. */
                 margin: 0; /* Loại bỏ khoảng cách ngoài tiêu đề. */
-                font-size: 22px; /* Kích thước chữ là 22px. */
+                font-size: clamp(1.2rem, 4vw, 1.5rem); /* Responsive font size */
                 color: #333; /* Màu chữ là xám đậm. */
             }
 
             /* p là đoạn văn bản với kích thước chữ 14px và khoảng cách dòng là 20px. */
             p {
-                font-size: 14px; /* Kích thước chữ là 14px. */
+                font-size: clamp(0.875rem, 2vw, 1rem); /* Responsive font size */
                 font-weight: 300; /* Đặt chữ nhẹ (ít đậm). */
                 line-height: 20px; /* Khoảng cách giữa các dòng là 20px. */
                 letter-spacing: 0.5px; /* Khoảng cách giữa các chữ là 0.5px. */
@@ -611,6 +612,70 @@
 
             .hover\:text-purple-600:hover {
                 color: #2980b9 !important; /* Màu xanh nước biển đậm hơn khi hover */
+            }
+
+            /* Responsive styles for different screen sizes */
+            @media (max-width: 768px) {
+                .container {
+                    width: 95%;
+                    min-height: auto;
+                    margin: 1rem auto;
+                }
+
+                .form-container {
+                    width: 100%;
+                }
+
+                .overlay-container {
+                    display: none; /* Hide overlay on mobile */
+                }
+
+                .sign-up-container {
+                    opacity: 1;
+                    z-index: 5;
+                    transform: translateX(100%);
+                }
+
+                .form-box {
+                    padding: 0 1rem;
+                }
+
+                .social-btn {
+                    width: 2.5rem; /* Smaller social buttons on mobile */
+                    height: 2.5rem;
+                }
+
+                h1 {
+                    font-size: clamp(1.2rem, 4vw, 1.5rem);
+                }
+
+                p {
+                    font-size: clamp(0.875rem, 2vw, 1rem);
+                }
+            }
+
+            @media (max-width: 480px) {
+                body {
+                    padding: 1rem;
+                }
+
+                .container {
+                    width: 100%;
+                    margin: 0.5rem auto;
+                }
+
+                .music-banner {
+                    font-size: 0.8rem;
+                }
+
+                .form-input {
+                    padding: 1vh 1.2vh 1vh 3vh;
+                }
+
+                .social-container {
+                    flex-wrap: wrap;
+                    gap: 1rem;
+                }
             }
         </style>
     </head>

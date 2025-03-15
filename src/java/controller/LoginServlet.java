@@ -4,23 +4,19 @@
  */
 package controller;
 
+import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
-import dao.ArtistDAO;
-import jakarta.servlet.RequestDispatcher;
-import model.Album;
-import model.Artist;
 
 /**
  *
  * @author HP
  */
-public class HomeServlet extends HttpServlet {
+public class LoginServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -31,6 +27,8 @@ public class HomeServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -43,18 +41,8 @@ public class HomeServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Lấy danh sách Artists và Albums từ database
-        String action = request.getParameter("action");
-        if ("search".equals(action)) {
-            RequestDispatcher dispatcher = request.getRequestDispatcher("view/home/search.jsp");
-            dispatcher.forward(request, response);
-        } else {
-            handleViewArtist(request, response);
-            handleViewAlbum(request, response);
-
-            // Điều hướng đến home.jsp
-            request.getRequestDispatcher("view/home/home.jsp").forward(request, response);
-        }
+        RequestDispatcher dispatcher = request.getRequestDispatcher("view/authentication/login_register.jsp");
+        dispatcher.forward(request, response);
     }
 
     /**
@@ -68,24 +56,13 @@ public class HomeServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
     }
 
-
-    /*------------------------------------Lấy danh sách Artists-----------------------------------------------------*/
-    private void handleViewArtist(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        ArtistDAO dao = new ArtistDAO();
-        List<Artist> artists = dao.getArtists();
-        request.setAttribute("artist", artists);
-    }
-
-    /*------------------------------------Lấy danh sách Albums-----------------------------------------------------*/
-    private void handleViewAlbum(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        ArtistDAO dao = new ArtistDAO();
-        List<Album> albums = dao.getAlbums();
-        request.setAttribute("album", albums);
-    }
-
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
     @Override
     public String getServletInfo() {
         return "Short description";

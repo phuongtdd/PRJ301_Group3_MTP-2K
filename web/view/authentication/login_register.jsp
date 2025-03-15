@@ -11,33 +11,31 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- Thêm meta tag này -->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>MTP-2K - Login</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <style>
-
-            .top-content {
-                margin-top: 15vh; /* Changed from 120px to 15vh */
-            }
-
-            /* Đảm bảo container chính không bị chồng lên logo và slogan */
-            .container {
-                margin-top: 8vh; /* Changed from 60px to 8vh */
-            }
-
             body {
                 font-family: 'Poppins', sans-serif;
                 background: #0f172a;
                 overflow-x: hidden;
-                min-height: 100vh; /* Added to ensure full height */
+                min-height: 100vh;
                 display: flex;
+                flex-direction: column;
                 align-items: center;
-                justify-content: center;
-                padding: 2rem; /* Added padding for smaller screens */
             }
 
+            .logo-title {
+                font-size: 2.5rem;
+                font-weight: bold;
+                color: #4FFFB0;
+                text-shadow: 0 0 5px rgba(79, 255, 176, 0.5), 0 0 10px rgba(79, 255, 176, 0.3);
+                margin-top: 2rem;
+                margin-bottom: 0.5rem;
+                text-align: center;
+            }
 
             /* music-banner là một phần tử có nền trong suốt, với chữ trắng và có bóng mờ, được căn giữa trên trang và có khoảng cách từ trên 80px. Thường được sử dụng để hiển thị thông báo hoặc thông điệp nổi bật trên trang.*/
             .music-banner {
@@ -426,7 +424,13 @@
                 transition: all 0.3s; /* Thêm hiệu ứng chuyển động mượt mà khi hover. */
                 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Thêm bóng đổ cho nút. */
                 position: relative;
-                overflow: hidden; /* Ẩn các phần tử tràn ra ngoài nút. */
+
+                background: #fff;
+                border-radius: 30px;
+                box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+                overflow: hidden;
+                margin: 0 1rem;
+
             }
 
             /* Khi người dùng di chuột qua nút, nó sẽ có hiệu ứng ripple. */
@@ -675,14 +679,15 @@
             }
         </style>
     </head>
-    <body class="flex items-center justify-center min-h-screen">
-        <div class="music-waves"></div>
+    <body>
+        <!-- Logo Title -->
+        <h1 class="logo-title">MTP-2K</h1>
 
-        <!-- MTP-2K Logo Text -->
-        <div class="absolute top-10 text-center w-full z-10">
-            <h1 class="text-5xl font-bold tracking-wider" style="color: #4FFFB0; text-shadow: 0 0 5px rgba(79, 255, 176, 0.5), 0 0 10px rgba(79, 255, 176, 0.3);">
-                <span>MTP-2K</span>
-            </h1>
+        <!-- Slogan -->
+        <div class="slogan">
+            <i class="fas fa-headphones"></i>
+            Harmony for your heart, melody for your mind
+            <i class="fas fa-headphones"></i>
         </div>
 
         <div class="music-banner">

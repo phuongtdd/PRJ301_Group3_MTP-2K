@@ -409,6 +409,7 @@
                     padding: 30px;
                     background: linear-gradient(transparent, rgba(0, 0, 0, 0.5));
                     margin-bottom: 30px;
+                    align-items: flex-end;
                 }
 
                 .album-cover {
@@ -423,6 +424,8 @@
                     display: flex;
                     flex-direction: column;
                     justify-content: flex-end;
+                    max-width: 100%;
+                    min-width: 0;
                 }
 
                 .album-type {
@@ -473,42 +476,6 @@
                     border-radius: 50%;
                 }
 
-                .tracklist {
-                    padding: 0 30px;
-                }
-
-                .track-header {
-                    display: grid;
-                    grid-template-columns: 50px 1fr 120px;
-                    padding: 8px 16px;
-                    color: #a8b2d1;
-                    font-size: 14px;
-                    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-                    margin-bottom: 16px;
-                }
-
-                .track-item {
-                    display: grid;
-                    grid-template-columns: 50px 1fr 120px;
-                    padding: 8px 16px;
-                    border-radius: 4px;
-                    transition: all 0.3s ease;
-                    cursor: pointer;
-                }
-
-                .track-item:hover {
-                    background: rgba(255, 255, 255, 0.1);
-                }
-
-                .track-number {
-                    color: #a8b2d1;
-                }
-
-                .track-title {
-                    color: #e6f1ff;
-                    font-weight: 500;
-                }
-
                 .album-actions {
                     display: flex;
                     gap: 20px;
@@ -542,11 +509,32 @@
                     color: #a8b2d1;
                     font-size: 24px;
                     cursor: pointer;
-                    transition: color 0.3s ease;
+                    transition: all 0.3s ease;
                 }
 
                 .album-action-icon:hover {
                     color: #e6f1ff;
+                    transform: scale(1.1);
+                }
+
+                /* Thêm tooltip khi hover */
+                [title] {
+                    position: relative;
+                }
+
+                [title]:hover:after {
+                    content: attr(title);
+                    position: absolute;
+                    bottom: -30px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: rgba(0, 0, 0, 0.8);
+                    color: #fff;
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                    font-size: 12px;
+                    white-space: nowrap;
+                    z-index: 1;
                 }
 
                 /* Artist Header Styles */
@@ -623,9 +611,72 @@
                     background: rgba(100, 255, 218, 0.1);
                 }
 
-                /* Popular Tracks Section */
-                .popular-tracks {
+
+                /* More-by-Artists Section */
+                .more-by-Artists {
                     margin: 40px 0;
+                }
+
+                .more-by-Artists h2 {
+                    font-size: 24px;
+                    margin-bottom: 20px;
+                    color: #e6f1ff;
+                }
+
+                .track-details {
+                    padding: 30px 0;
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 40px;
+                }
+
+                .lyrics-preview,
+                .track-credits,
+                .section-header {
+                    background: #112240;
+                    padding: 24px;
+                    border-radius: 8px;
+                }
+
+                .lyrics-preview h2,
+                .track-credits h2 {
+                    font-size: 20px;
+                    margin-bottom: 16px;
+                    color: #e6f1ff;
+                }
+
+                .lyrics-content p {
+                    color: #a8b2d1;
+                    line-height: 1.6;
+                    margin: 8px 0;
+                }
+
+                .show-more {
+                    color: #64ffda;
+                    text-decoration: none;
+                    font-size: 14px;
+                    margin-top: 16px;
+                    display: inline-block;
+                }
+
+                .credit-item {
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 12px 0;
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                }
+
+                .credit-label {
+                    color: #a8b2d1;
+                }
+
+                .credit-value {
+                    color: #e6f1ff;
+                    font-weight: 500;
+                }
+
+                .popular-tracks {
+                    margin-top: 40px;
                 }
 
                 .popular-tracks h2 {
@@ -647,10 +698,16 @@
                     padding: 8px 16px;
                     border-radius: 4px;
                     transition: all 0.3s ease;
+                    background: #112240;
                 }
 
                 .track-item.popular:hover {
-                    background: rgba(255, 255, 255, 0.1);
+                    background: #233554;
+                }
+
+                .track-number {
+                    color: #a8b2d1;
+                    font-size: 16px;
                 }
 
                 .track-info {
@@ -671,45 +728,93 @@
                     gap: 4px;
                 }
 
+                .track-name {
+                    color: #e6f1ff;
+                    font-weight: 500;
+                }
+
                 .track-plays {
-                    font-size: 14px;
                     color: #a8b2d1;
+                    font-size: 14px;
                 }
 
-                /* More-by-Artists Section */
-                .more-by-Artists {
+                .track-duration {
+                    color: #a8b2d1;
+                    text-align: right;
+                }
+
+                /* Lyrics Section */
+                .lyrics-section {
                     margin: 40px 0;
+                    padding: 30px;
+                    background: rgba(255, 255, 255, 0.03);
+                    border-radius: 8px;
+                    backdrop-filter: blur(10px);
                 }
 
-                .more-by-Artists h2 {
+                .lyrics-section h2 {
                     font-size: 24px;
+                    color: #fff;
+                    margin-bottom: 24px;
+                    font-weight: 600;
+                }
+
+                .lyrics-content {
+                    position: relative;
+                    color: #a8b2d1;
+                    font-size: 16px;
+                    line-height: 1.8;
+                }
+
+                .lyrics-preview,
+                .lyrics-full {
                     margin-bottom: 20px;
+                }
+
+                .lyrics-content p {
+                    transition: color 0.2s ease;
+                }
+
+                .lyrics-content p:hover {
                     color: #e6f1ff;
                 }
-                .section-header {
-                    background: #112240;
-                    padding: 24px;
-                    border-radius: 8px;
+
+                .show-more-btn {
+                    background: none;
+                    border: none;
+                    color: #64ffda;
+                    font-size: 14px;
+                    font-weight: 500;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 8px 16px;
+                    border-radius: 20px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    margin: 0 auto;
                 }
 
-                /* Tooltip styles */
-                [title] {
-                    position: relative;
+                .show-more-btn:hover {
+                    background: rgba(100, 255, 218, 0.1);
                 }
 
-                [title]:hover:after {
-                    content: attr(title);
-                    position: absolute;
-                    bottom: -30px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    background: rgba(0, 0, 0, 0.8);
-                    color: #fff;
-                    padding: 4px 8px;
-                    border-radius: 4px;
+                .show-more-btn i {
                     font-size: 12px;
-                    white-space: nowrap;
-                    z-index: 1;
+                    transition: transform 0.3s ease;
+                }
+
+                /* Responsive adjustments */
+                @media (max-width: 768px) {
+                    .album-title {
+                        font-size: clamp(24px, 6vw, 72px);
+                    }
+                }
+
+                @media (max-width: 480px) {
+                    .album-title {
+                        font-size: clamp(20px, 5vw, 48px);
+                    }
                 }
             </style>
         </head>
@@ -768,7 +873,7 @@
                             <i class="fas fa-microphone-alt"></i>
                             Artists
                         </a>
-                        <a href="albums" class="nav-button active">
+                        <a href="albums" class="nav-button">
                             <i class="fas fa-compact-disc"></i>
                             Albums
                         </a>
@@ -778,66 +883,149 @@
                     </div>
                 </div>
 
-                <!-- Album Details Section -->
+                <!-- Track Details Section -->
                 <div class="album-header">
-                    <img src="../image/skytour.jpg" alt="Album Cover" class="album-cover">
+                    <img src="../image/skytour.jpg" alt="Track Cover" class="album-cover">
                     <div class="album-info">
-                        <span class="album-type">Album</span>
-                        <h1 class="album-title">Sky Tour</h1>
+                        <span class="album-type">Track</span>
+                        <h1 class="album-title">Muộn rồi mà sao còn</h1>
                         <div class="album-meta">
                             <img src="../image/sontung.jpg" alt="Artist" class="artist-avatar">
                             <a href="#" style="color: #a8b2d1; text-decoration: none; font-size: 12px;">Sơn Tùng
                                 M-TP</a>
                             <span>•</span>
                             <span>2021</span>
-                            <span>•</span>
-                            <span>5 songs</span>
-
                         </div>
                     </div>
                 </div>
 
-                <!-- Album Actions -->
+                <!-- Track Actions -->
                 <div class="album-actions">
                     <div class="play-button">
                         <i class="fas fa-play"></i>
                     </div>
                     <i class="far fa-heart album-action-icon"></i>
                     <i class="fas fa-plus-square album-action-icon" title="Add to Your Library"></i>
+                    <i class="fas fa-list-ul album-action-icon" title="Add to Playlist"></i>
                 </div>
 
-                <!-- Tracklist -->
-                <div class="tracklist">
-                    <div class="track-header">
-                        <div>#</div>
-                        <div>Title</div>
-                    </div>
-                    <div class="track-item">
-                        <div class="track-number">1</div>
-                        <div class="track-title">Chúng Ta Của Hiện Tại</div>
+                <!-- Track Info -->
+                <div class="track-details" style="margin-top: 40px;">
 
-                    </div>
-                    <div class="track-item">
-                        <div class="track-number">2</div>
-                        <div class="track-title">Có Chắc Yêu Là Đây</div>
+                    <!-- Lyrics Section -->
+                    <div class="lyrics-section">
+                        <h2>Lyrics</h2>
+                        <div class="lyrics-content" id="lyrics-content">
+                            <!-- Short version -->
+                            <div class="lyrics-preview">
+                                <p style="margin: 16px 0;">Muộn rồi mà sao còn</p>
+                                <p style="margin: 16px 0;">Nhìn lên trần nhà rồi quay ra, lại quay vào</p>
+                                <p style="margin: 16px 0;">Nằm trằn trọc vậy đến sáng mai</p>
+                                <p style="margin: 16px 0;">Ôm tương tư nụ cười của ai đó</p>
+                                <p style="margin: 16px 0;">Làm con tim ngô nghê như muốn khóc oà</p>
+                            </div>
 
-                    </div>
-                    <div class="track-item">
-                        <div class="track-number">3</div>
-                        <div class="track-title">Muộn Rồi Mà Sao Còn</div>
+                            <!-- Full version -->
+                            <div class="lyrics-full" style="display: none;">
+                                <p style="margin: 16px 0;">Muộn rồi mà sao còn</p>
+                                <p style="margin: 16px 0;">Nhìn lên trần nhà rồi quay ra, lại quay vào</p>
+                                <p style="margin: 16px 0;">Nằm trằn trọc vậy đến sáng mai</p>
+                                <p style="margin: 16px 0;">Ôm tương tư nụ cười của ai đó</p>
+                                <p style="margin: 16px 0;">Làm con tim ngô nghê như muốn khóc oà</p>
+                                <p style="margin: 16px 0;">Vắt tay lên trên trán mơ mộng</p>
+                                <p style="margin: 16px 0;">Được đứng bên em trong nắng xuân hồng</p>
+                                <p style="margin: 16px 0;">Một giờ sáng (một giờ sáng)</p>
+                                <p style="margin: 16px 0;">Trôi qua trôi nhanh kéo theo ưu phiền miên man</p>
+                                <p style="margin: 16px 0;">Âm thầm gieo tên em vẽ lên hi vọng</p>
+                                <p style="margin: 16px 0;">Đúng là yêu thật rồi</p>
+                                <p style="margin: 16px 0;">Còn không thì hơi phí này</p>
+                                <p style="margin: 16px 0;">Cứ thế loanh quanh, loanh quanh, loanh quanh</p>
+                                <p style="margin: 16px 0;">Lật qua lật lại hai giờ</p>
+                                <p style="margin: 16px 0;">Những ngôi sao trên cao (cao)</p>
+                                <p style="margin: 16px 0;">Là người bạn tâm giao (giao)</p>
+                                <p style="margin: 16px 0;">Lắng nghe anh luyên thuyên</p>
+                                <p style="margin: 16px 0;">Về một tình đầu đẹp tựa chiêm bao</p>
+                                <p style="margin: 16px 0;">Có nghe thôi đã thấy ngọt ngào</p>
+                                <p style="margin: 16px 0;">Đủ biết anh si mê em nhường nào</p>
+                                <p style="margin: 16px 0;">Ít khi văn thơ anh dạt dào</p>
+                                <p style="margin: 16px 0;">Bụng đói nhưng vui quên luôn cồn cào</p>
+                                <p style="margin: 16px 0;">Nắm đôi tay kiêu sa (sa)</p>
+                                <p style="margin: 16px 0;">Được một lần không ta? (Haizz)</p>
+                                <p style="margin: 16px 0;">Nghĩ qua thôi con tim trong anh</p>
+                                <p style="margin: 16px 0;">Đập tung lên rung nóc rung nhà</p>
+                                <p style="margin: 16px 0;">Hoá ra yêu đơn phương một người</p>
+                                <p style="margin: 16px 0;">Hoá ra khi tơ vương một người</p>
+                                <p style="margin: 16px 0;">Ba giờ đêm vẫn ngồi cười</p>
+                                <p style="margin: 16px 0;">Cứ ôm anh đi</p>
+                                <p style="margin: 16px 0;">Ôm anh đi, ôm anh đi, ôm anh đi</p>
+                                <p style="margin: 16px 0;">Ôm trong cơn mơ</p>
+                                <p style="margin: 16px 0;">Trong cơn mơ, trong cơn mơ, trong cơn mơ</p>
+                                <p style="margin: 16px 0;">Có thế cũng khiến anh vui điên lên (lá la là)</p>
+                                <p style="margin: 16px 0;">Ngỡ như em đang bên (lá la là)</p>
+                                <p style="margin: 16px 0;">Chấp bút đôi ba câu thơ ngọt ngào, muốn em đặt tên</p>
+                                <p style="margin: 16px 0;">Cứ ôm anh đi</p>
+                                <p style="margin: 16px 0;">Ôm anh đi, ôm anh đi, ôm anh đi</p>
+                                <p style="margin: 16px 0;">Ôm trong giấc mơ</p>
+                                <p style="margin: 16px 0;">Trong cơn mơ, trong cơn mơ, trong cơn mơ</p>
+                                <p style="margin: 16px 0;">Yêu đến vậy thôi, phát điên rồi làm sao giờ?</p>
+                                <p style="margin: 16px 0;">Haizz, chịu! (yah)</p>
+                                <p style="margin: 16px 0;">Đêm nay không ngủ (không ngủ, yah)</p>
+                                <p style="margin: 16px 0;">Tay kê lên tủ (yah)</p>
+                                <p style="margin: 16px 0;">Miên man anh tranh thủ</p>
+                                <p style="margin: 16px 0;">Chơi vơi suy tư bao nhiêu cho đủ (nà na ná)</p>
+                                <p style="margin: 16px 0;">Yêu em ngu ngơ mình tôi (tôi)</p>
+                                <p style="margin: 16px 0;">Yêu không quan tâm ngày trôi (trôi)</p>
+                                <p style="margin: 16px 0;">Yêu thương ánh mắt bờ môi (môi)</p>
+                                <p style="margin: 16px 0;">Yêu đơn phương vậy thôi (yah)</p>
+                                <p style="margin: 16px 0;">Lại còn chối (chối)</p>
+                                <p style="margin: 16px 0;">Con tim thẹn thùng đập lạc lối liên hồi</p>
+                                <p style="margin: 16px 0;">Đừng chày cối (cối)</p>
+                                <p style="margin: 16px 0;">Miệng cười cả ngày vậy là chết toi rồi</p>
+                                <p style="margin: 16px 0;">Ngày càng nhiều thêm (thêm)</p>
+                                <p style="margin: 16px 0;">Tình yêu cho em ngày càng nhiều thêm (thêm)</p>
+                                <p style="margin: 16px 0;">Muốn nắm đôi bàn tay đó một lần</p>
+                                <p style="margin: 16px 0;">Du dương chìm sâu trong từng câu ca dịu êm</p>
+                                <p style="margin: 16px 0;">Em xinh như một thiên thần (ya)</p>
+                                <p style="margin: 16px 0;">Như một thiên thần (ah-ah)</p>
+                                <p style="margin: 16px 0;">Như một thiên thần (thiên thần)</p>
+                                <p style="margin: 16px 0;">Ngỡ như em là thiên thần (thiên thần)</p>
+                                <p style="margin: 16px 0;">Xinh như một thiên thần (uh-huh)</p>
+                                <p style="margin: 16px 0;">Như một thiên thần (ah-hah-hah-ah-hah-ah)</p>
+                                <p style="margin: 16px 0;">Em xinh như một thiên thần (yeah)</p>
+                                <p style="margin: 16px 0;">Như một thiên thần (ah-ah)</p>
+                                <p style="margin: 16px 0;">Như một thiên thần</p>
+                                <p style="margin: 16px 0;">Ngỡ như em là thiên thần</p>
+                                <p style="margin: 16px 0;">Ngỡ như, ngỡ như, ngỡ như, ngỡ như, ngỡ như</p>
+                                <p style="margin: 16px 0;">(Cứ ôm, cứ ôm) Cứ ôm anh đi</p>
+                                <p style="margin: 16px 0;">Ôm anh đi, ôm anh đi, ôm anh đi</p>
+                                <p style="margin: 16px 0;">Ôm trong cơn mơ</p>
+                                <p style="margin: 16px 0;">Trong cơn mơ, trong cơn mơ, trong cơn mơ</p>
+                                <p style="margin: 16px 0;">Có thế cũng khiến anh vui điên lên (hey, lá la là)</p>
+                                <p style="margin: 16px 0;">Ngỡ như em đang bên (hey, lá la là)</p>
+                                <p style="margin: 16px 0;">Chấp bút đôi ba câu thơ ngọt ngào, muốn em đặt tên</p>
+                                <p style="margin: 16px 0;">Cứ ôm anh đi</p>
+                                <p style="margin: 16px 0;">Ôm anh đi, ôm anh đi, ôm anh đi</p>
+                                <p style="margin: 16px 0;">Ôm trong giấc mơ</p>
+                                <p style="margin: 16px 0;">Trong cơn mơ, trong cơn mơ, trong cơn mơ</p>
+                                <p style="margin: 16px 0;">Yêu đến vậy thôi, phát điên rồi làm sao giờ?</p>
+                            </div>
 
+                            <button class="show-more-btn" onclick="toggleLyrics()">
+                                <span class="btn-text">Show more</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </div>
                     </div>
-                    <div class="track-item">
-                        <div class="track-number">4</div>
-                        <div class="track-title">Making My Way</div>
 
-                    </div>
-                    <div class="track-item">
-                        <div class="track-number">5</div>
-                        <div class="track-title">There's No One At All</div>
-
+                    <div class="track-credits" style="background: rgba(255,255,255,0.03); backdrop-filter: blur(10px);">
+                        <h2 style="color: #fff; font-size: 24px; margin-bottom: 24px;">Credits</h2>
+                        <div class="credit-item" style="padding: 16px 0;">
+                            <span class="credit-label" style="color: #fff; font-size: 18px;">Artist</span>
+                            <span class="credit-value" style="color: #fff; font-weight: 500;">Sơn Tùng M-TP</span>
+                        </div>
                     </div>
                 </div>
+
                 <!-- More by Artists Section -->
                 <div class="more-by-Artists">
                     <div class="section-header" style="background: rgba(255,255,255,0.03); backdrop-filter: blur(10px);">
@@ -869,24 +1057,49 @@
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Signup Banner -->
-            <div class="signup-banner">
-                <div class="preview-text">
-                    <h3>Preview of MTP-2K</h3>
-                    <p>Sign up to get unlimited songs and podcasts with occasional ads. No credit card needed.</p>
+                <!-- Signup Banner -->
+                <div class="signup-banner">
+                    <div class="preview-text">
+                        <h3>Preview of MTP-2K</h3>
+                        <p>Sign up to get unlimited songs and podcasts with occasional ads. No credit card needed.</p>
+                    </div>
+                    <a href="#" class="signup-button">Sign up free</a>
                 </div>
-                <a href="#" class="signup-button">Sign up free</a>
+
             </div>
 
+            <!-- Add JavaScript for toggle functionality -->
             <script>
+                function toggleLyrics() {
+                    const lyricsPreview = document.querySelector('.lyrics-preview');
+                    const lyricsFull = document.querySelector('.lyrics-full');
+                    const btn = document.querySelector('.show-more-btn');
+                    const btnText = btn.querySelector('.btn-text');
+                    const btnIcon = btn.querySelector('i');
+
+                    if (lyricsFull.style.display === 'none') {
+                        lyricsPreview.style.display = 'none';
+                        lyricsFull.style.display = 'block';
+                        btnText.textContent = 'Show less';
+                        btnIcon.classList.remove('fa-chevron-down');
+                        btnIcon.classList.add('fa-chevron-up');
+                    } else {
+                        lyricsPreview.style.display = 'block';
+                        lyricsFull.style.display = 'none';
+                        btnText.textContent = 'Show more';
+                        btnIcon.classList.remove('fa-chevron-up');
+                        btnIcon.classList.add('fa-chevron-down');
+                    }
+                }
+
                 function adjustTitleSize() {
                     const title = document.querySelector('.album-title');
                     const length = title.textContent.length;
 
+                    // Xóa tất cả data attributes cũ
                     title.removeAttribute('data-length');
 
+                    // Thêm data attribute mới dựa trên độ dài
                     if (length > 30) {
                         title.setAttribute('data-length', 'very-long');
                     } else if (length > 20) {
@@ -896,6 +1109,7 @@
                     }
                 }
 
+                // Chạy khi trang load
                 window.addEventListener('load', adjustTitleSize);
             </script>
         </body>

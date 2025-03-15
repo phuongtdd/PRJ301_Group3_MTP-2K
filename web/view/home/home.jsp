@@ -301,10 +301,10 @@
             </div>
             <ul class="nav-links">
                 <li><a href="home"><i class="fas fa-home"></i> Home</a></li>
-                <li><a href="${pageContext.request.contextPath}/home?action=search"><i class="fas fa-search"></i> Search</a></li>
-                <li><a href="#"><i class="fas fa-book"></i> Your Library</a></li>
-                <li style="margin-top: 24px"><a href="#"><i class="fas fa-plus-square"></i> Create Playlist</a></li>
-                <li><a href="#"><i class="fas fa-heart"></i> Liked Songs</a></li>
+                <li><a href="${pageContext.request.contextPath}/home/search"><i class="fas fa-search"></i> Search</a></li>
+                <li><a href="${pageContext.request.contextPath}/home/library"><i class="fas fa-book"></i> Your Library</a></li>
+                <li style="margin-top: 24px"><a href="${pageContext.request.contextPath}/home/create-playlist    "><i class="fas fa-plus-square"></i> Create Playlist</a></li>
+                <li><a href="${pageContext.request.contextPath}/home/liked-songs"><i class="fas fa-heart"></i> Liked Songs</a></li>
             </ul>
             <div class="footer-links">
                 <a href="#">Legal</a>

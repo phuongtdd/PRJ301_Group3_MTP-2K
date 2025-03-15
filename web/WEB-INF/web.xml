@@ -11,6 +11,10 @@
     <servlet-mapping>
         <servlet-name>HomeServlet</servlet-name>
         <url-pattern>/home</url-pattern>
+        <url-pattern>/home/search</url-pattern>
+        <url-pattern>/home/library</url-pattern>
+        <url-pattern>/home/create-playlist</url-pattern>
+        <url-pattern>/home/liked-songs</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>

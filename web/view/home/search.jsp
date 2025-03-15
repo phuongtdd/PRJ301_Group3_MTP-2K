@@ -368,11 +368,11 @@
                      style="border-radius: 50%;">
             </div>
             <ul class="nav-links">
-                <li><a href="home"><i class="fas fa-home"></i> Home</a></li>
-                <li><a href="#"><i class="fas fa-search"></i> Search</a></li>
-                <li><a href="#"><i class="fas fa-book"></i> Your Library</a></li>
-                <li style="margin-top: 24px"><a href="#"><i class="fas fa-plus-square"></i> Create Playlist</a></li>
-                <li><a href="#"><i class="fas fa-heart"></i> Liked Songs</a></li>
+                <li><a href="${pageContext.request.contextPath}/home"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="${pageContext.request.contextPath}/home/search"><i class="fas fa-search"></i> Search</a></li>
+                <li><a href="${pageContext.request.contextPath}/home/library"><i class="fas fa-book"></i> Your Library</a></li>
+                <li style="margin-top: 24px"><a href="${pageContext.request.contextPath}/home/create-playlist    "><i class="fas fa-plus-square"></i> Create Playlist</a></li>
+                <li><a href="${pageContext.request.contextPath}/home/liked-songs"><i class="fas fa-heart"></i> Liked Songs</a></li>
             </ul>
             <div class="footer-links">
                 <a href="#">Legal</a>
@@ -391,8 +391,8 @@
                     <input type="text" placeholder="What do you want to listen to?">
                 </div>
                 <div class="auth-buttons">
-                    <a href="#" class="signup-btn">Sign up</a>
-                    <a href="#" class="login-btn">Log in</a>
+                    <a href="${pageContext.request.contextPath}/login" class="signup-btn">Sign up</a>
+                    <a href="${pageContext.request.contextPath}/login" class="login-btn">Log in</a>
                 </div>
             </div>
 
@@ -442,7 +442,7 @@
                     <h3>Preview of MTP-2K</h3>
                     <p>Sign up to get unlimited songs and podcasts with occasional ads. No credit card needed.</p>
                 </div>
-                <a href="/login" class="signup-button">Sign up free</a>
+                <a href="${pageContext.request.contextPath}/login" class="signup-button">Sign up free</a>
             </div>
         </div>
     </body>

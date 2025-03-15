@@ -21,6 +21,7 @@ public class User implements Serializable {
     private String phone;
     private Date createdAt;
     private Date premiumExpiry;
+    private List<String> roles;
 
 
     public User() {
@@ -113,8 +114,16 @@ public class User implements Serializable {
         this.premiumExpiry = premiumExpiry;
     }
 
+    public List<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
+    }
+
     @Override
     public String toString() {
-        return "User{" + "userID=" + userID + ", userName=" + userName + ", password=" + password + ", email=" + email + ", fullName=" + fullName + ", phone=" + phone + ", createdAt=" + createdAt + ", premiumExpiry=" + premiumExpiry + '}';
+        return "User{" + "userID=" + userID + ", userName=" + userName + ", password=" + password + ", email=" + email + ", fullName=" + fullName + ", phone=" + phone + ", createdAt=" + createdAt + ", premiumExpiry=" + premiumExpiry + ", roles=" + roles + '}';
     }
 }

@@ -1,18 +1,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-    <%@ page contentType="text/html" pageEncoding="UTF-8" %>
-        <!DOCTYPE html>
-        <html lang="en">
-
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Music Library</title>
-            <link rel="stylesheet" href="styles.css">
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-            <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-                rel="stylesheet">
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
-        </head>
+<%@ page contentType="text/html" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Music Library</title>
+        <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
         <style>
             /* Custom scrollbar styles */
             ::-webkit-scrollbar {
@@ -31,7 +28,6 @@
             ::-webkit-scrollbar-thumb:hover {
                 background: #4ad3b3;
             }
-
             body {
                 display: flex;
                 background-color: #0a192f;
@@ -152,25 +148,6 @@
                 background: rgba(100, 255, 218, 0.1);
             }
 
-            .signup-banner {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                background: linear-gradient(90deg, #0a192f, #1a365d);
-                padding: 15px 30px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                z-index: 100;
-                border-top: 1px solid #64ffda;
-                height: 60px;
-            }
-
-            .signup-banner .preview-text {
-                color: #a8b2d1;
-            }
-
             .preview-text h3 {
                 font-size: 12px;
                 text-transform: uppercase;
@@ -195,18 +172,76 @@
 
             .section-header {
                 display: flex;
-                justify-content: space-between;
+                justify-content: center;
                 align-items: center;
-                margin-bottom: 25px;
+                margin-bottom: 40px;
+                width: 100%;
+                position: relative;
+                padding: 20px 0;
             }
 
-
-            .section-title {
-                font-size: 26px;
+            .section-header h2 {
+                font-size: 36px;
                 color: #64ffda;
                 margin: 0;
-                font-weight: 600;
-                letter-spacing: 0.5px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 3px;
+                position: relative;
+                display: inline-block;
+                padding-bottom: 15px;
+                text-shadow: 0 0 20px rgba(100, 255, 218, 0.3);
+                transition: all 0.5s ease-in-out;
+            }
+
+            .section-header h2::before,
+            .section-header h2::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                height: 2px;
+                background: #64ffda;
+                transition: all 0.5s ease;
+                opacity: 0;
+            }
+
+            .section-header h2::before {
+                left: 50%;
+                width: 0;
+                transform: translateX(-50%);
+            }
+
+            .section-header h2::after {
+                right: 50%;
+                width: 0;
+                transform: translateX(50%);
+            }
+
+            .section-header h2:hover::before,
+            .section-header h2:hover::after {
+                width: 50%;
+                opacity: 1;
+            }
+
+            .section-header h2:hover {
+                letter-spacing: 5px;
+                color: #7cffe3;
+            }
+
+            .section-header::before,
+            .section-header::after {
+                content: '•';
+                color: #64ffda;
+                font-size: 24px;
+                margin: 0 15px;
+                opacity: 0;
+                transition: all 0.5s ease;
+            }
+
+            .section-header:hover::before,
+            .section-header:hover::after {
+                opacity: 1;
+                transform: scale(1.2);
             }
 
             .show-all {
@@ -224,7 +259,10 @@
                 background: rgba(100, 255, 218, 0.1);
             }
 
-            .album-section {
+            .album-section,
+            .artist-section,
+            .playlist-section,
+            .track-section {
                 display: grid;
                 grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
                 gap: 24px;
@@ -232,15 +270,20 @@
             }
 
             .album-card,
+            .artist-card,
+            .playlist-card,
             .track-card {
                 background: #112240;
                 padding: 16px;
                 border-radius: 8px;
                 transition: all 0.3s ease;
                 border: 1px solid transparent;
+                position: relative;
             }
 
             .album-card:hover,
+            .artist-card:hover,
+            .playlist-card:hover,
             .track-card:hover {
                 background: #233554;
                 cursor: pointer;
@@ -249,6 +292,8 @@
             }
 
             .album-card img,
+            .artist-card img,
+            .playlist-card img,
             .track-card img {
                 width: 100%;
                 aspect-ratio: 1;
@@ -328,8 +373,7 @@
                 align-items: center;
             }
 
-            .login-btn,
-            .signup-btn {
+            .login-btn, .signup-btn {
                 padding: 10px 25px;
                 border-radius: 20px;
                 font-weight: 600;
@@ -405,19 +449,12 @@
                 font-size: 16px;
             }
 
-            .album-header {
-                display: flex;
-                gap: 30px;
-                padding: 30px;
-                background: linear-gradient(transparent, rgba(0, 0, 0, 0.5));
-                margin-bottom: 30px;
-            }
-
             .album-cover {
-                width: 250px;
-                height: 250px;
+                width: 300px;
+                height: 300px;
                 border-radius: 8px;
                 box-shadow: 0 4px 60px rgba(0, 0, 0, 0.5);
+                object-fit: cover;
             }
 
             .album-info {
@@ -427,14 +464,14 @@
             }
 
             .album-type {
-                font-size: 14px;
+                font-size: 18px;
                 font-weight: 500;
                 margin-bottom: 8px;
             }
 
             .album-title {
-                font-size: 56px;
-                font-weight: 700;
+                font-size: 96px;
+                font-weight: 800;
                 margin: 8px 0;
                 color: #e6f1ff;
             }
@@ -448,13 +485,9 @@
             }
 
             .artist-avatar {
-                width: 24px;
-                height: 24px;
+                width: 20px;
+                height: 20px;
                 border-radius: 50%;
-            }
-
-            .tracklist {
-                padding: 0 30px;
             }
 
             .track-header {
@@ -492,13 +525,6 @@
             .track-duration {
                 color: #a8b2d1;
                 text-align: right;
-            }
-
-            .album-actions {
-                display: flex;
-                gap: 20px;
-                align-items: center;
-                margin: 24px 0;
             }
 
             .play-button {
@@ -544,8 +570,8 @@
             }
 
             .artist-avatar {
-                width: 250px;
-                height: 250px;
+                width: 30px;
+                height: 30px;
                 border-radius: 50%;
                 box-shadow: 0 4px 60px rgba(0, 0, 0, 0.5);
                 object-fit: cover;
@@ -565,31 +591,11 @@
             }
 
             .artist-name {
-                font-size: 96px;
-                font-weight: 800;
+                font-size: 56px;
+                font-weight: 700;
                 margin: 8px 0;
                 color: #e6f1ff;
-                line-height: 1.1;
-            }
-
-            /* Title ngắn (dưới 12 ký tự) */
-            .artist-name {
-                font-size: 96px;
-            }
-
-            /* Title trung bình (12-20 ký tự) */
-            .artist-name[data-length="medium"] {
-                font-size: 72px;
-            }
-
-            /* Title dài (20-30 ký tự) */
-            .artist-name[data-length="long"] {
-                font-size: 60px;
-            }
-
-            /* Title rất dài (trên 30 ký tự) */
-            .artist-name[data-length="very-long"] {
-                font-size: 48px;
+                text-shadow: none;
             }
 
             .artist-stats {
@@ -681,351 +687,249 @@
                 color: #a8b2d1;
             }
 
-            /* Popular Releases Section */
-            .popular-releases {
+            /* Your Library Section */
+            .your-library {
                 margin: 40px 0;
             }
 
-            .popular-releases h2 {
-                font-size: 24px;
+            .your-library h2 {
+                text-align: center;
+                font-size: 32px;
                 margin-bottom: 20px;
-                color: #e6f1ff;
-            }
-
-            /* Flowing buttom Section */
-            .follow-button {
-                padding: 8px 32px;
-                border-radius: 20px;
-                border: 1px solid #64ffda;
-                background: transparent;
                 color: #64ffda;
-                font-weight: 600;
-                font-size: 14px;
-                cursor: pointer;
-                transition: all 0.3s ease;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                position: relative;
+                display: inline-block;
+                padding-bottom: 10px;
             }
 
-            /* Thêm style mới cho trạng thái Following */
-            .follow-button.following {
+            .your-library h2::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%) scaleX(0.7);
+                width: 100%;
+                height: 3px;
                 background: #64ffda;
-                color: #0a192f;
+                transition: transform 0.3s ease;
             }
 
-            .follow-button.following:hover {
-                background: #ff6b6b;
-                /* Màu đỏ khi hover vào nút Following */
-                border-color: #ff6b6b;
-                color: #fff;
+            .your-library h2:hover::after {
+                transform: translateX(-50%) scaleX(1);
             }
 
-            .album-actions,
-            .artist-actions {
+            .delete-button {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background: rgba(255, 59, 48, 0.9);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 32px;
+                height: 32px;
                 display: flex;
-                gap: 20px;
                 align-items: center;
-                margin: 24px 0;
-            }
-
-            .album-action-icon,
-            .artist-action-icon {
-                color: #a8b2d1;
-                font-size: 24px;
+                justify-content: center;
                 cursor: pointer;
-                transition: all 0.3s ease;
+                opacity: 0;
+                transition: all 0.2s ease;
             }
-
-            .album-action-icon:hover,
-            .artist-action-icon:hover {
-                color: #e6f1ff;
+            
+            .album-card:hover .delete-button,
+            .artist-card:hover .delete-button,
+            .playlist-card:hover .delete-button,
+            .track-card:hover .delete-button {
+                opacity: 1;
+            }
+            
+            .delete-button:hover {
+                background: rgb(255, 59, 48);
                 transform: scale(1.1);
             }
 
-            /* Tooltip styles */
-            [title] {
-                position: relative;
+            .subsection-title {
+                font-size: 180%;
+                color: #64ffda;
+                margin: 30px 0 20px 0;
+                font-weight: 600;
+                letter-spacing: 0.5px;
             }
-
-            [title]:hover:after {
-                content: attr(title);
-                position: absolute;
-                bottom: -30px;
-                left: 50%;
-                transform: translateX(-50%);
-                background: rgba(0, 0, 0, 0.8);
-                color: #fff;
-                padding: 4px 8px;
-                border-radius: 4px;
-                font-size: 12px;
-                white-space: nowrap;
-                z-index: 1;
+            
+            .album-section,
+            .artist-section,
+            .playlist-section,
+            .track-section {
+                margin-bottom: 20px;
             }
         </style>
-        </head>
+    </head>
 
-        <body>
-            <!-- Sidebar -->
-            <div class="sidebar">
-                <div class="logo-container">
-                    <img src="../image/mtp2k-logo.png" alt="Logo">
+    <body>
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo-container">
+                <img src="../image/mtp2k-logo.png" alt="Logo">
+            </div>
+            <ul class="nav-links">
+                <li>
+                    <i class="fas fa-home"></i>
+                    <a href="home">Home</a>
+                </li>
+                <li>
+                    <i class="fas fa-search"></i>
+                    <a href="search">Search</a>
+                </li>
+                <li>
+                    <i class="fas fa-book"></i>
+                    <a href="library">Your Library</a>
+                </li>
+                <li>
+                    <i class="fas fa-plus-square"></i>
+                    <a href="create-playlist">Create Playlist</a>
+                </li>
+                <li>
+                    <i class="fas fa-heart"></i>
+                    <a href="liked">Liked Songs</a>
+                </li>
+            </ul>
+            <div class="footer-links">
+                <a href="#" style="color: #a8b2d1; text-decoration: none; font-size: 12px;">Legal</a>
+                <a href="#" style="color: #a8b2d1; text-decoration: none; font-size: 12px;">Privacy Center</a>
+                <a href="#" style="color: #a8b2d1; text-decoration: none; font-size: 12px;">Privacy Policy</a>
+                <a href="#" style="color: #a8b2d1; text-decoration: none; font-size: 12px;">Cookies</a>
+                <a href="#" style="color: #a8b2d1; text-decoration: none; font-size: 12px;">About us</a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Search Container -->
+            <div class="search-container">
+                <div class="search-bar">
+                    <i class="fas fa-search" style="color: #a8b2d1;"></i>
+                    <input type="text" placeholder="What do you want to listen to?">
                 </div>
-                <ul class="nav-links">
-                    <li>
-                        <i class="fas fa-home"></i>
-                        <a href="home">Home</a>
-                    </li>
-                    <li>
-                        <i class="fas fa-search"></i>
-                        <a href="search">Search</a>
-                    </li>
-                    <li>
-                        <i class="fas fa-book"></i>
-                        <a href="library">Your Library</a>
-                    </li>
-                    <li>
-                        <i class="fas fa-plus-square"></i>
-                        <a href="create-playlist">Create Playlist</a>
-                    </li>
-                    <li>
-                        <i class="fas fa-heart"></i>
-                        <a href="liked">Liked Songs</a>
-                    </li>
-                </ul>
-                <div class="footer-links">
-                    <a href="#" style="color: #a8b2d1; text-decoration: none; font-size: 12px;">Legal</a>
-                    <a href="#" style="color: #a8b2d1; text-decoration: none; font-size: 12px;">Privacy Center</a>
-                    <a href="#" style="color: #a8b2d1; text-decoration: none; font-size: 12px;">Privacy Policy</a>
-                    <a href="#" style="color: #a8b2d1; text-decoration: none; font-size: 12px;">Cookies</a>
-                    <a href="#" style="color: #a8b2d1; text-decoration: none; font-size: 12px;">About us</a>
+                <div class="nav-buttons">                   
+                    <a href="playlist" class="nav-button">
+                        <i class="fas fa-list-ul"></i>
+                        Playlist
+                    </a>
+                    <a href="artists" class="nav-button">
+                        <i class="fas fa-microphone-alt"></i>
+                        Artists
+                    </a>
+                    <a href="albums" class="nav-button">
+                        <i class="fas fa-compact-disc"></i>
+                        Albums
+                    </a>
+                </div>
+                <div class="account-icon">
+                    <i class="fas fa-user-circle"></i>
                 </div>
             </div>
 
-            <!-- Main Content -->
-            <div class="main-content">
-                <!-- Search Container -->
-                <div class="search-container">
-                    <div class="search-bar">
-                        <i class="fas fa-search" style="color: #a8b2d1;"></i>
-                        <input type="text" placeholder="What do you want to listen to?">
-                    </div>
-                    <div class="nav-buttons">
-                        <a href="playlist" class="nav-button">
-                            <i class="fas fa-list-ul"></i>
-                            Playlist
-                        </a>
-                        <a href="artists" class="nav-button active">
-                            <i class="fas fa-microphone-alt"></i>
-                            Artists
-                        </a>
-                        <a href="albums" class="nav-button">
-                            <i class="fas fa-compact-disc"></i>
-                            Albums
-                        </a>
-                    </div>
-                    <div class="account-icon">
-                        <i class="fas fa-user-circle"></i>
-                    </div>
+            <!-- Your Library Section -->
+            <div class="your-library">
+                <div class="section-header">
+                    <h2>Your Library</h2>
                 </div>
 
-                <!-- Artist Header -->
-                <div class="artist-header">
-                    <img src="../image/sontung.jpg" alt="Artist Avatar" class="artist-avatar">
-                    <div class="artist-info">
-                        <span class="artist-type">Artist</span>
-                        <h1 class="artist-name">Sơn Tùng M-TP</h1>
-                        <div class="artist-stats">
+                <!-- Artists Section -->
+                <h3 class="subsection-title">Artists</h3>
+                <div class="artist-section">
+                    <div class="artist-card">
+                        <button class="delete-button" onclick="deleteItem('artist-mtp')">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                        <img src="../image/mtp-artist.jpg" alt="Artist Cover">
+                        <div class="card-info">
+                            <h3 class="card-title">Sơn Tùng M-TP</h3>
+                            <p class="card-description">Artist</p>
+                        </div>
+                    </div>
+                    <div class="artist-card">
+                        <button class="delete-button" onclick="deleteItem('artist-jack')">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                        <img src="../image/jack-artist.jpg" alt="Artist Cover">
+                        <div class="card-info">
+                            <h3 class="card-title">Jack</h3>
+                            <p class="card-description">Artist</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="artist-actions">
-                    <div class="play-button">
-                        <i class="fas fa-play"></i>
+                <!-- Playlists Section -->
+                <h3 class="subsection-title">Playlists</h3>
+                <div class="playlist-section">
+                    <div class="playlist-card">
+                        <button class="delete-button" onclick="deleteItem('playlist-1')">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                        <img src="../image/playlist-cover.jpg" alt="Playlist Cover">
+                        <div class="card-info">
+                            <h3 class="card-title">My Favorite Songs</h3>
+                            <p class="card-description">15 bài hát • Playlist</p>
+                        </div>
                     </div>
-                    <i class="far fa-heart artist-action-icon"></i>
-                    <i class="fas fa-plus-square artist-action-icon" title="Add to Your Library"></i>
-
                 </div>
-
-                <!-- Popular Tracks Section -->
-                <section class="popular-tracks">
-                    <h2>Popular</h2>
-                    <div class="track-list">
-                        <div class="track-item popular">
-                            <div class="track-number">1</div>
-                            <div class="track-info">
-                                <img src="../image/chungtacuahientai.jpg" alt="Track Cover" class="track-cover">
-                                <div class="track-details">
-                                    <div class="track-title">Chúng Ta Của Hiện Tại</div>
-
-                                </div>
-                            </div>
-                            <div class="track-duration"></div>
-                        </div>
-
-                        <div class="track-item popular">
-                            <div class="track-number">2</div>
-                            <div class="track-info">
-                                <img src="../image/makingmyway.jpg" alt="Track Cover" class="track-cover">
-                                <div class="track-details">
-                                    <div class="track-title">Making My Way</div>
-
-                                </div>
-                            </div>
-                            <div class="track-duration"></div>
-                        </div>
-
-                        <div class="track-item popular">
-                            <div class="track-number">3</div>
-                            <div class="track-info">
-                                <img src="../image/muonroimasaocon.jpg" alt="Track Cover" class="track-cover">
-                                <div class="track-details">
-                                    <div class="track-title">Muộn Rồi Mà Sao Còn</div>
-
-                                </div>
-                            </div>
-                            <div class="track-duration"></div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Popular Releases Section -->
-                <section class="popular-releases">
-                    <div class="section-header">
-                        <h2>Popular Releases</h2>
-                        <a href="#" class="show-all">Show all</a>
-                    </div>
-                    <div class="album-section">
-                        <div class="album-card">
-                            <img src="../image/skytour.jpg" alt="Album Cover">
-                            <div class="card-info">
-                                <h3 class="card-title">Sky Tour</h3>
-                                <p class="card-description">Album • 2021</p>
-                            </div>
-                        </div>
-                        <div class="track-card">
-                            <img src="../image/muonroimasaocon.jpg" alt="Track Cover">
-                            <div class="card-info">
-                                <h3 class="card-title">Muộn rồi mà sao còn</h3>
-                                <p class="card-description">2022 • Track</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
 
                 <!-- Albums Section -->
-                <section class="popular-releases">
-                    <div class="section-header">
-                        <h2>Albums</h2>
-                        <a href="#" class="show-all">Show all</a>
-                    </div>
-                    <div class="album-section">
-                        <div class="album-card">
-                            <img src="../image/skytour.jpg" alt="Album Cover">
-                            <div class="card-info">
-                                <h3 class="card-title">Sky Tour</h3>
-                                <p class="card-description">Album • 2021</p>
-                            </div>
-                        </div>
-                        <div class="album-card">
-                            <img src="../image/m-tp.jpg" alt="Album Cover">
-                            <div class="card-info">
-                                <h3 class="card-title">M-TP</h3>
-                                <p class="card-description">Album • 2021</p>
-                            </div>
+                <h3 class="subsection-title">Albums</h3>
+                <div class="album-section">
+                    <div class="album-card">
+                        <button class="delete-button" onclick="deleteItem('m-tp-album')">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                        <img src="../image/m-tp.jpg" alt="Album Cover">
+                        <div class="card-info">
+                            <h3 class="card-title">M-TP</h3>
+                            <p class="card-description">2021 • Album</p>
                         </div>
                     </div>
-                </section>
-
-                <!-- Track Section -->
-                <section class="popular-releases">
-                    <div class="section-header">
-                        <h2>Tracks</h2>
-                        <a href="#" class="show-all">Show all</a>
-                    </div>
-                    <div class="album-section">
-                        <div class="track-card">
-                            <img src="../image/muonroimasaocon.jpg" alt="Track Cover">
-                            <div class="card-info">
-                                <h3 class="card-title">Muộn rồi mà sao còn</h3>
-                                <p class="card-description">2022 • Track</p>
-                            </div>
-                        </div>
-                        <div class="track-card">
-                            <img src="../image/makingmyway.jpg" alt="Track Cover">
-                            <div class="card-info">
-                                <h3 class="card-title">Making My Way</h3>
-                                <p class="card-description">2023 • Track</p>
-                            </div>
-                        </div>
-                        <div class="track-card">
-                            <img src="../image/chungtacuahientai.jpg" alt="Track Cover">
-                            <div class="card-info">
-                                <h3 class="card-title">Chúng Ta Của Hiện Tại</h3>
-                                <p class="card-description">2023 • Track</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-            </div>
-
-
-            <!-- Signup Banner -->
-            <div class="signup-banner">
-                <div class="preview-text">
-                    <h3>Preview of MTP-2K</h3>
-                    <p>Sign up to get unlimited songs and podcasts with occasional ads. No credit card needed.</p>
                 </div>
-                <a href="#" class="signup-button">Sign up free</a>
+
+                <!-- Tracks Section -->
+                <h3 class="subsection-title">Tracks</h3>
+                <div class="track-section">
+                    <div class="track-card">
+                        <button class="delete-button" onclick="deleteItem('muon-roi-ma-sao-con')">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                        <img src="../image/muonroimasaocon.jpg" alt="Track Cover">
+                        <div class="card-info">
+                            <h3 class="card-title">Muộn rồi mà sao còn</h3>
+                            <p class="card-description">2022 • Track</p>
+                        </div>
+                    </div>
+                    <div class="track-card">
+                        <button class="delete-button" onclick="deleteItem('making-my-way')">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                        <img src="../image/makingmyway.jpg" alt="Track Cover">
+                        <div class="card-info">
+                            <h3 class="card-title">Making My Way</h3>
+                            <p class="card-description">2023 • Track</p>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </div>
 
-            <script>
-                // Script cho nút Follow
-                const followButton = document.querySelector('.follow-button');
-                let isFollowing = false;
-
-                followButton.addEventListener('click', function () {
-                    isFollowing = !isFollowing;
-                    if (isFollowing) {
-                        followButton.textContent = 'FOLLOWING';
-                        followButton.classList.add('following');
-                    } else {
-                        followButton.textContent = 'FOLLOW';
-                        followButton.classList.remove('following');
-                    }
-                });
-
-                // Thêm hover effect để hiển thị "UNFOLLOW" khi hover vào nút Following
-                followButton.addEventListener('mouseenter', function () {
-                    if (isFollowing) {
-                        followButton.textContent = 'UNFOLLOW';
-                    }
-                });
-
-                followButton.addEventListener('mouseleave', function () {
-                    if (isFollowing) {
-                        followButton.textContent = 'FOLLOWING';
-                    }
-                });
-
-                function adjustTitleSize() {
-                    const title = document.querySelector('.artist-name');
-                    const length = title.textContent.length;
-
-                    title.removeAttribute('data-length');
-
-                    if (length > 30) {
-                        title.setAttribute('data-length', 'very-long');
-                    } else if (length > 20) {
-                        title.setAttribute('data-length', 'long');
-                    } else if (length > 12) {
-                        title.setAttribute('data-length', 'medium');
-                    }
+        <script>
+            function deleteItem(id) {
+                if (confirm('Bạn có chắc chắn muốn xóa mục này khỏi thư viện của bạn?')) {
+                    // Thực hiện gọi API để xóa item
+                    console.log('Đã xóa item:', id);
+                    // Sau khi xóa thành công, có thể refresh trang hoặc xóa element trực tiếp
+                    const card = event.target.closest('.album-card, .artist-card, .playlist-card, .track-card');
+                    card.remove();
                 }
-
-                window.addEventListener('load', adjustTitleSize);
-            </script>
-        </body>
-
-        </html>
+            }
+        </script>
+    </body>
+</html> 

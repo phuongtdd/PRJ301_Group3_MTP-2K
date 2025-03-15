@@ -17,6 +17,25 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <style>
+
+            /* Custom scrollbar styles */
+            ::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: rgba(2, 12, 27, 0.95);
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: #64ffda;
+                border-radius: 4px;
+            }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: #4ad3b3;
+            }
+
             body {
                 font-family: 'Poppins', sans-serif;
                 background: #0f172a;
@@ -682,14 +701,6 @@
     <body>
         <!-- Logo Title -->
         <h1 class="logo-title">MTP-2K</h1>
-
-        <!-- Slogan -->
-        <div class="slogan">
-            <i class="fas fa-headphones"></i>
-            Harmony for your heart, melody for your mind
-            <i class="fas fa-headphones"></i>
-        </div>
-
         <div class="music-banner">
             &#127911; Harmony for your heart, melody for your mind  &#127911;
         </div>
@@ -730,7 +741,7 @@
 
                     <span class="text-gray-500 text-sm">or use your account</span>
 
-                    <form action="login" method="post" class="w-full mt-4">
+                    <form action="${pageContext.request.contextPath}/login?action=login" method="post" class="w-full mt-4">
                         <div class="input-group">
                             <i class="fas fa-user input-icon"></i>
                             <input type="text" name="username" placeholder="Username or Email" 
@@ -817,7 +828,7 @@
 
                     <span class="text-gray-500 text-sm">or sign up with your email or facebook</span>
 
-                    <form action="register" method="post" class="w-full mt-4">
+                    <form action="${pageContext.request.contextPath}/login?action=register" method="post" class="w-full mt-4">
                         <%--
                         - <c:set var="registerFields" value="${[...]}">: Tạo mảng các đối tượng chứa thông tin về các trường input.
                         - <c:forEach var="field" items="${registerFields}">: Vòng lặp qua mảng để tạo các trường input.

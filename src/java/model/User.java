@@ -13,7 +13,6 @@ import java.util.Date;
 import java.util.List;
 
 public class User implements Serializable {
-
     private int userID;
     private String userName;
     private String password;
@@ -22,6 +21,7 @@ public class User implements Serializable {
     private String phone;
     private Date createdAt;
     private Date premiumExpiry;
+
 
     public User() {
     }
@@ -36,6 +36,18 @@ public class User implements Serializable {
         this.createdAt = createdAt;
         this.premiumExpiry = premiumExpiry;
     }
+
+    public User(String userName, String password, String email, String fullName, String phone, Date createdAt, Date premiumExpiry) {
+        this.userName = userName;
+        this.password = password;
+        this.email = email;
+        this.fullName = fullName;
+        this.phone = phone;
+        this.createdAt = createdAt;
+        this.premiumExpiry = premiumExpiry;
+    }
+    
+    
 
     public int getUserID() {
         return userID;

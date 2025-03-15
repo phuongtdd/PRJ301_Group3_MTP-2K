@@ -10,7 +10,7 @@ import java.io.Serializable;
  *
  * @author HP
  */
-class User_Role implements Serializable {
+public class User_Role implements Serializable {
 
     private int userID;
     private int roleID;

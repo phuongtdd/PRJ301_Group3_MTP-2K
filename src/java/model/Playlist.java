@@ -18,18 +18,24 @@ class Playlist implements Serializable {
     private String title;
     private int quantity;
     private Date createdAt;
+    private String imageUrl;
+    private String description;
 
     public Playlist() {
     }
 
-    public Playlist(int playlistID, int userID, String title, int quantity, Date createdAt) {
+    public Playlist(int playlistID, int userID, String title, int quantity, Date createdAt, String imageUrl, String description) {
         this.playlistID = playlistID;
         this.userID = userID;
         this.title = title;
         this.quantity = quantity;
         this.createdAt = createdAt;
+        this.imageUrl = imageUrl;
+        this.description = description;
     }
-
+    
+    
+    
     public int getPlaylistID() {
         return playlistID;
     }
@@ -69,4 +75,27 @@ class Playlist implements Serializable {
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public String toString() {
+        return "Playlist{" + "playlistID=" + playlistID + ", userID=" + userID + ", title=" + title + ", quantity=" + quantity + ", createdAt=" + createdAt + ", imageUrl=" + imageUrl + ", description=" + description + '}';
+    }
+    
+    
 }

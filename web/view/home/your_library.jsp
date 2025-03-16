@@ -738,14 +738,14 @@
                 opacity: 0;
                 transition: all 0.2s ease;
             }
-            
+
             .album-card:hover .delete-button,
             .artist-card:hover .delete-button,
             .playlist-card:hover .delete-button,
             .track-card:hover .delete-button {
                 opacity: 1;
             }
-            
+
             .delete-button:hover {
                 background: rgb(255, 59, 48);
                 transform: scale(1.1);
@@ -758,7 +758,7 @@
                 font-weight: 600;
                 letter-spacing: 0.5px;
             }
-            
+
             .album-section,
             .artist-section,
             .playlist-section,
@@ -775,26 +775,11 @@
                 <img src="../image/mtp2k-logo.png" alt="Logo">
             </div>
             <ul class="nav-links">
-                <li>
-                    <i class="fas fa-home"></i>
-                    <a href="home">Home</a>
-                </li>
-                <li>
-                    <i class="fas fa-search"></i>
-                    <a href="search">Search</a>
-                </li>
-                <li>
-                    <i class="fas fa-book"></i>
-                    <a href="library">Your Library</a>
-                </li>
-                <li>
-                    <i class="fas fa-plus-square"></i>
-                    <a href="create-playlist">Create Playlist</a>
-                </li>
-                <li>
-                    <i class="fas fa-heart"></i>
-                    <a href="liked">Liked Songs</a>
-                </li>
+                <li><a href="${pageContext.request.contextPath}/home"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="${pageContext.request.contextPath}/home/search"><i class="fas fa-search"></i> Search</a></li>
+                <li><a href="${pageContext.request.contextPath}/home/library"><i class="fas fa-book"></i> Your Library</a></li>
+                <li style="margin-top: 24px"><a href="${pageContext.request.contextPath}/home/create-playlist    "><i class="fas fa-plus-square"></i> Create Playlist</a></li>
+                <li><a href="${pageContext.request.contextPath}/home/liked-songs"><i class="fas fa-heart"></i> Liked Songs</a></li>
             </ul>
             <div class="footer-links">
                 <a href="#" style="color: #a8b2d1; text-decoration: none; font-size: 12px;">Legal</a>

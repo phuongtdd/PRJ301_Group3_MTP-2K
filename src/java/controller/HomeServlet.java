@@ -50,7 +50,7 @@ public class HomeServlet extends HttpServlet {
                 request.getRequestDispatcher("/view/home/search.jsp").forward(request, response);
                 break;
             case "/home/library":
-                request.getRequestDispatcher("/view/home/library.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/home/your_library.jsp").forward(request, response);
                 break;
             case "/home/create-playlist":
                 request.getRequestDispatcher("/view/home/createPlaylist.jsp").forward(request, response);

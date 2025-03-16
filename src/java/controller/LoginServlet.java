@@ -30,7 +30,8 @@ public class LoginServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
+    // + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -78,10 +79,10 @@ public class LoginServlet extends HttpServlet {
 
             String confirmPassword = request.getParameter("confirmPassword");
             UserDAO userDAO = new UserDAO();
-            
+
             // Verify password before deletion
             User verifiedUser = userDAO.login(currentUser.getUserName(), confirmPassword);
-            
+
             if (verifiedUser != null) {
                 if (userDAO.deleteUser(currentUser.getUserID())) {
                     session.invalidate(); // Destroy the session after successful deletion
@@ -110,7 +111,8 @@ public class LoginServlet extends HttpServlet {
     }
 
     // ✅ Xử lý đăng nhập
-    private void handleLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void handleLogin(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         UserDAO userDAO = new UserDAO();
@@ -118,8 +120,13 @@ public class LoginServlet extends HttpServlet {
         User user = userDAO.login(username, password);
         if (user != null) {
             HttpSession session = request.getSession();
-            session.setAttribute("user", user);
-            response.sendRedirect(request.getContextPath() + "/home"); // CHUYỂN HƯỚNG ĐÚNG CÁCH
+            if (user.getRoles().get(0).equals("Admin")) {
+                session.setAttribute("user", user);
+                response.sendRedirect(request.getContextPath() + "/admin");
+            } else {
+                session.setAttribute("user", user);
+                response.sendRedirect(request.getContextPath() + "/home");
+            }
         } else {
             request.setAttribute("error", "Invalid username or password!");
             request.getRequestDispatcher("/view/authentication/login_register.jsp").forward(request, response);
@@ -127,7 +134,8 @@ public class LoginServlet extends HttpServlet {
     }
 
     // ✅ Xử lý đăng ký
-    private void handleRegister(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void handleRegister(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         String fullName = request.getParameter("fullName");
         String userName = request.getParameter("userName");
         String password = request.getParameter("password");

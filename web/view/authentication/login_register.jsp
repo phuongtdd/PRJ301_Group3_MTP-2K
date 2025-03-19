@@ -54,6 +54,20 @@
                 margin-top: 2rem;
                 margin-bottom: 0.5rem;
                 text-align: center;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                text-decoration: none;
+                display: inline-block;
+            }
+
+            .logo-title:hover {
+                transform: scale(1.05);
+                text-shadow: 0 0 10px rgba(79, 255, 176, 0.8), 0 0 20px rgba(79, 255, 176, 0.5);
+                color: #5FFFBF;
+            }
+
+            .logo-title:active {
+                transform: scale(0.95);
             }
 
             /* music-banner là một phần tử có nền trong suốt, với chữ trắng và có bóng mờ */
@@ -710,20 +724,26 @@
                 width: 100%;
                 z-index: 1;
             }
-            
+
             .input-error {
                 border: 1px solid #e74c3c !important;
                 background-color: rgba(231, 76, 60, 0.05) !important;
             }
-            
+
             .input-success {
                 border: 1px solid #2ecc71 !important;
                 background-color: rgba(46, 204, 113, 0.05) !important;
             }
-            
+
             @keyframes fadeIn {
-                from { opacity: 0; transform: translateY(-10px); }
-                to { opacity: 1; transform: translateY(0); }
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
             }
 
             /* Ẩn icon mắt mặc định của trình duyệt */
@@ -731,7 +751,7 @@
             input[type="password"]::-ms-clear {
                 display: none;
             }
-            
+
             input[type="password"]::-webkit-contacts-auto-fill-button,
             input[type="password"]::-webkit-credentials-auto-fill-button {
                 visibility: hidden;
@@ -827,39 +847,56 @@
                 position: fixed;
                 top: 20px;
                 left: 20px;
-                background-color: rgba(52, 152, 219, 0.9);
-                color: white;
-                width: 40px;
-                height: 40px;
+                width: 50px;
+                height: 50px;
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 text-decoration: none;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-                transition: all 0.3s ease;
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(5px);
+                -webkit-backdrop-filter: blur(5px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 z-index: 1000;
+                overflow: hidden;
             }
 
             .home-button:hover {
-                transform: translateY(-2px);
-                background-color: #2980b9;
-                box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+                transform: translateY(-2px) scale(1.05);
+                background: rgba(255, 255, 255, 0.2);
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+                border-color: rgba(255, 255, 255, 0.3);
             }
 
-            .home-button i {
-                font-size: 1.2rem;
+            .home-button:active {
+                transform: translateY(0) scale(0.95);
+            }
+
+            .home-logo {
+                width: 35px;
+                height: 35px;
+                object-fit: contain;
+                transition: transform 0.3s ease;
+            }
+
+            .home-button:hover .home-logo {
+                transform: rotate(360deg) scale(1.1);
+            }
+
+
+            .home-button:hover {
+                animation: pulse 1.5s infinite;
             }
         </style>
     </head>
     <body>
-        <!-- Thêm nút home -->
-        <a href="${pageContext.request.contextPath}/home" class="home-button">
-            <i class="fas fa-home"></i>
-        </a>
 
-        <!-- Logo Title -->
-        <h1 class="logo-title">MTP-2K</h1>
+
+        <!-- Logo Title with link. Nhấn vào sẽ ra home -->
+        <a href="${pageContext.request.contextPath}/home" class="logo-title">MTP-2K</a>
         <div class="music-banner">
             &#127911; Harmony for your heart, melody for your mind  &#127911;
         </div>
@@ -915,7 +952,7 @@
                             <i class="fas fa-eye toggle-password absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400" 
                                onclick="togglePasswordVisibility()"></i>
                         </div>
-                        
+
 
                         <div class="flex justify-between items-center w-full mb-4">
                             <label class="flex items-center text-gray-600 text-sm">
@@ -998,7 +1035,7 @@
                                     <i class="fas fa-eye toggle-password absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400" 
                                        onclick="toggleRegisterPasswordVisibility('${field.id}')"></i>
                                 </c:if>
-                                
+
                                 <div class="error-message" id="${field.id}-error"></div>
                             </div>
                         </c:forEach>
@@ -1118,42 +1155,47 @@
             function isEmptyOrWhitespace(str) {
                 return str === null || str === undefined || str.trim() === '';
             }
-            
+
             // Định nghĩa các hàm validation ở phạm vi toàn cục
             // Hàm kiểm tra họ tên
             function validateFullName(fullName) {
                 // Kiểm tra nếu chuỗi rỗng hoặc chỉ chứa khoảng trắng
-                if (isEmptyOrWhitespace(fullName)) return false;
-                
+                if (isEmptyOrWhitespace(fullName))
+                    return false;
+
                 // Kiểm tra độ dài sau khi đã loại bỏ khoảng trắng thừa ở đầu và cuối
                 const trimmedName = fullName.trim();
-                if (trimmedName.length < 2) return false;
-                
+                if (trimmedName.length < 2)
+                    return false;
+
                 // Kiểm tra nếu có nhiều khoảng trắng liên tiếp
-                if (/\s{2,}/.test(trimmedName)) return false;
-                
+                if (/\s{2,}/.test(trimmedName))
+                    return false;
+
                 // Kiểm tra họ tên chỉ chứa chữ cái và khoảng trắng, không chứa ký tự đặc biệt hoặc số
                 const regex = /^[a-zA-ZÀ-ỹ\s]{2,50}$/;
                 return regex.test(trimmedName);
             }
-            
+
             // Hàm kiểm tra tên đăng nhập
             function validateUsername(username) {
-                if (username === '') return false;
+                if (username === '')
+                    return false;
                 const regex = /^[a-zA-Z0-9_]{5,20}$/;
                 return regex.test(username);
             }
-            
+
             // Hàm kiểm tra email
             function validateEmail(email) {
-                if (email === '') return false;
-                
+                if (email === '')
+                    return false;
+
                 // Kiểm tra định dạng email cơ bản
                 const basicEmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
                 if (!basicEmailRegex.test(email)) {
                     return false;
                 }
-                
+
                 // Danh sách các domain phổ biến được chấp nhận
                 const validDomains = [
                     '.com',
@@ -1167,53 +1209,55 @@
                     '.net.vn',
                     '.gov.vn'
                 ];
-                
+
                 // Kiểm tra xem email có kết thúc bằng một trong các domain hợp lệ không
                 return validDomains.some(domain => email.toLowerCase().endsWith(domain));
             }
-            
+
             // Hàm kiểm tra mật khẩu
             function validatePassword(password) {
-                if (password === '') return false;
+                if (password === '')
+                    return false;
                 // Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt
                 const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
                 return regex.test(password);
             }
-            
+
             // Hàm kiểm tra số điện thoại
             function validatePhone(phone) {
-                if (phone === '') return false;
-                
+                if (phone === '')
+                    return false;
+
                 // Kiểm tra số điện thoại Việt Nam
                 // Bắt đầu bằng 0 và có 10 số (VD: 0912345678)
                 // Hoặc bắt đầu bằng +84 và có 9 số phía sau (VD: +84912345678)
                 const phoneRegex = /^(0\d{9}|\+84\d{9})$/;
                 return phoneRegex.test(phone);
             }
-            
+
             // Hàm hiển thị lỗi
             function showError(inputId, message) {
                 const errorElement = document.getElementById(inputId + '-error');
                 const inputElement = document.getElementById(inputId);
-                
+
                 if (errorElement && inputElement) {
                     errorElement.textContent = message;
                     errorElement.style.display = 'block';
-                    
+
                     inputElement.classList.add('input-error');
                     inputElement.classList.remove('input-success');
                 }
             }
-            
+
             // Hàm xóa lỗi
             function clearError(inputId) {
                 const errorElement = document.getElementById(inputId + '-error');
                 const inputElement = document.getElementById(inputId);
-                
+
                 if (errorElement && inputElement) {
                     errorElement.textContent = '';
                     errorElement.style.display = 'none';
-                    
+
                     inputElement.classList.remove('input-error');
                     inputElement.classList.add('input-success');
                 }
@@ -1412,7 +1456,7 @@
                         }
                     }
                 }
-                
+
                 // Lấy các phần tử input
                 const fullNameInput = document.getElementById('fullName');
                 const usernameInput = document.getElementById('userName');
@@ -1420,62 +1464,62 @@
                 const passwordInput = document.getElementById('registerPassword');
                 const confirmPasswordInput = document.getElementById('confirmPassword');
                 const phoneInput = document.getElementById('phone');
-                
+
                 // Thêm sự kiện input cho các trường
                 if (fullNameInput) {
                     // Kiểm tra khi người dùng bắt đầu nhập (sự kiện input)
                     fullNameInput.addEventListener('input', validateFullName);
-                    
+
                     // Kiểm tra khi người dùng nhấn phím (sự kiện keyup)
                     fullNameInput.addEventListener('keyup', validateFullName);
-                    
+
                     // Kiểm tra khi người dùng bấm vào trường (sự kiện focus)
-                    fullNameInput.addEventListener('focus', function() {
+                    fullNameInput.addEventListener('focus', function () {
                         // Nếu đã có giá trị, kiểm tra ngay
                         if (this.value) {
                             validateFullName.call(this);
                         }
                     });
-                    
+
                     // Kiểm tra khi người dùng rời khỏi trường (sự kiện blur)
                     fullNameInput.addEventListener('blur', validateFullName);
-                    
+
                     // Hàm kiểm tra họ tên
                     function validateFullName() {
                         const value = this.value;
-                        
+
                         // Kiểm tra nếu trường rỗng hoặc chỉ có khoảng trắng
                         if (value === '' || value.trim() === '') {
                             showError('fullName', 'Vui lòng nhập họ tên');
                             return false;
                         }
-                        
+
                         // Kiểm tra độ dài
                         if (value.trim().length < 2) {
                             showError('fullName', 'Họ tên phải có ít nhất 2 ký tự');
                             return false;
                         }
-                        
+
                         // Kiểm tra khoảng trắng liên tiếp
                         if (/\s{2,}/.test(value)) {
                             showError('fullName', 'Họ tên không được chứa nhiều khoảng trắng liên tiếp');
                             return false;
                         }
-                        
+
                         // Kiểm tra ký tự đặc biệt và số
                         if (!/^[a-zA-ZÀ-ỹ\s]{2,50}$/.test(value.trim())) {
                             showError('fullName', 'Họ tên chỉ được chứa chữ cái và khoảng trắng, không chứa số hoặc ký tự đặc biệt');
                             return false;
                         }
-                        
+
                         // Nếu hợp lệ
                         clearError('fullName');
                         return true;
                     }
                 }
-                
+
                 if (usernameInput) {
-                    usernameInput.addEventListener('input', function() {
+                    usernameInput.addEventListener('input', function () {
                         const value = this.value.trim();
                         if (value === '') {
                             showError('userName', 'Vui lòng nhập tên đăng nhập');
@@ -1486,9 +1530,9 @@
                         }
                     });
                 }
-                
+
                 if (emailInput) {
-                    emailInput.addEventListener('input', function() {
+                    emailInput.addEventListener('input', function () {
                         const value = this.value.trim();
                         if (value === '') {
                             showError('email', 'Vui lòng nhập email');
@@ -1499,9 +1543,9 @@
                         }
                     });
                 }
-                
+
                 if (passwordInput) {
-                    passwordInput.addEventListener('input', function() {
+                    passwordInput.addEventListener('input', function () {
                         const value = this.value.trim();
                         if (value === '') {
                             showError('registerPassword', 'Vui lòng nhập mật khẩu');
@@ -1510,7 +1554,7 @@
                         } else {
                             clearError('registerPassword');
                         }
-                        
+
                         // Kiểm tra lại xác nhận mật khẩu nếu đã nhập
                         if (confirmPasswordInput && confirmPasswordInput.value.trim() !== '') {
                             if (confirmPasswordInput.value.trim() !== value) {
@@ -1521,12 +1565,12 @@
                         }
                     });
                 }
-                
+
                 if (confirmPasswordInput) {
-                    confirmPasswordInput.addEventListener('input', function() {
+                    confirmPasswordInput.addEventListener('input', function () {
                         const value = this.value.trim();
                         const password = passwordInput ? passwordInput.value.trim() : '';
-                        
+
                         if (value === '') {
                             showError('confirmPassword', 'Vui lòng xác nhận mật khẩu');
                         } else if (value !== password) {
@@ -1536,9 +1580,9 @@
                         }
                     });
                 }
-                
+
                 if (phoneInput) {
-                    phoneInput.addEventListener('input', function() {
+                    phoneInput.addEventListener('input', function () {
                         const value = this.value.trim();
                         if (value === '') {
                             showError('phone', 'Vui lòng nhập số điện thoại');
@@ -1549,13 +1593,13 @@
                         }
                     });
                 }
-                
+
                 // Thêm validation cho form đăng nhập
                 const loginUsernameInput = document.getElementById('loginUsername');
                 const loginPasswordInput = document.getElementById('password');
-                
+
                 if (loginUsernameInput) {
-                    loginUsernameInput.addEventListener('input', function() {
+                    loginUsernameInput.addEventListener('input', function () {
                         const value = this.value.trim();
                         if (value === '') {
                             showError('loginUsername', 'Vui lòng nhập tên đăng nhập hoặc email');
@@ -1564,9 +1608,9 @@
                         }
                     });
                 }
-                
+
                 if (loginPasswordInput) {
-                    loginPasswordInput.addEventListener('input', function() {
+                    loginPasswordInput.addEventListener('input', function () {
                         const value = this.value.trim();
                         if (value === '') {
                             showError('password', 'Vui lòng nhập mật khẩu');
@@ -1578,9 +1622,9 @@
             });
 
             // Xử lý khi submit form
-            document.getElementById('registerForm').addEventListener('submit', function(e) {
+            document.getElementById('registerForm').addEventListener('submit', function (e) {
                 let isValid = true;
-                
+
                 // Lấy giá trị các trường
                 const fullName = document.getElementById('fullName').value.trim();
                 const username = document.getElementById('userName').value.trim();
@@ -1588,7 +1632,7 @@
                 const password = document.getElementById('registerPassword').value.trim();
                 const confirmPassword = document.getElementById('confirmPassword').value.trim();
                 const phone = document.getElementById('phone').value.trim();
-                
+
                 // Kiểm tra họ tên
                 if (isEmptyOrWhitespace(fullName)) {
                     showError('fullName', 'Vui lòng nhập họ tên');
@@ -1603,63 +1647,63 @@
                     showError('fullName', 'Họ tên chỉ được chứa chữ cái và khoảng trắng, không chứa số hoặc ký tự đặc biệt');
                     isValid = false;
                 }
-                
+
                 // Kiểm tra tên đăng nhập
                 if (!validateUsername(username)) {
                     showError('userName', 'Tên đăng nhập phải từ 5-20 ký tự, chỉ chứa chữ cái, số và dấu gạch dưới');
                     isValid = false;
                 }
-                
+
                 // Kiểm tra email
                 if (!validateEmail(email)) {
                     showError('email', 'Email không đúng định dạng. Ví dụ hợp lệ: user@example.com, student@university.edu.vn');
                     isValid = false;
                 }
-                
+
                 // Kiểm tra mật khẩu
                 if (!validatePassword(password)) {
                     showError('registerPassword', 'Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt');
                     isValid = false;
                 }
-                
+
                 // Kiểm tra xác nhận mật khẩu
                 if (password !== confirmPassword) {
                     showError('confirmPassword', 'Xác nhận mật khẩu không khớp');
                     isValid = false;
                 }
-                
+
                 // Kiểm tra số điện thoại
                 if (!validatePhone(phone)) {
                     showError('phone', 'Số điện thoại không hợp lệ. Định dạng: 0xxxxxxxxx hoặc +84xxxxxxxxx');
                     isValid = false;
                 }
-                
+
                 // Nếu có lỗi, ngăn form submit
                 if (!isValid) {
                     e.preventDefault();
                 }
             });
-            
+
             // Thêm validation cho form đăng nhập
-            document.getElementById('loginForm').addEventListener('submit', function(e) {
+            document.getElementById('loginForm').addEventListener('submit', function (e) {
                 let isValid = true;
-                
+
                 // Lấy giá trị các trường
                 const username = document.getElementById('loginUsername').value.trim();
                 const password = document.getElementById('password').value.trim();
-                
+
                 // Kiểm tra username/email
                 if (username === '') {
                     showError('loginUsername', 'Vui lòng nhập tên đăng nhập hoặc email');
                     isValid = false;
                 }
-                
+
                 // Kiểm tra mật khẩu
                 if (password === '') {
                     showError('password', 'Vui lòng nhập mật khẩu');
                     isValid = false;
                 }
-                
+
                 // Nếu có lỗi, ngăn form submit
                 if (!isValid) {
                     e.preventDefault();
@@ -1711,7 +1755,7 @@
             // Validate form khi submit
             registerForm.addEventListener('submit', function (e) {
                 let isValid = true;
-                
+
                 // Kiểm tra từng trường input
                 registerFields.forEach(field => {
                     const input = document.getElementById(field.id);
@@ -1729,10 +1773,10 @@
                 }
             });
 
-   
+
 
             // Thêm sự kiện khi chuyển đổi form
-            document.querySelector('.sign-up-button').addEventListener('click', function() {
+            document.querySelector('.sign-up-button').addEventListener('click', function () {
                 // Xóa lỗi đăng nhập khi chuyển sang form đăng ký
                 const loginError = document.querySelector('.sign-in-container .error-message');
                 if (loginError) {
@@ -1742,14 +1786,14 @@
             });
 
             // Hiển thị và tự động ẩn thông báo lỗi
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 const loginError = document.getElementById('loginError');
                 if (loginError && '${requestScope.error}' !== '') {
                     // Hiển thị thông báo
                     loginError.style.display = 'block';
-                    
+
                     // Tự động ẩn sau 5 giây
-                    setTimeout(function() {
+                    setTimeout(function () {
                         loginError.style.transition = 'opacity 0.5s ease';
                         loginError.style.opacity = '0';
                         setTimeout(() => {
@@ -1760,7 +1804,7 @@
             });
 
             // Sửa lại phần xử lý hiển thị thông báo lỗi
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 const errorMessages = document.querySelectorAll('.error-message');
                 errorMessages.forEach(error => {
                     if (error.textContent.trim() !== '') {
@@ -1778,14 +1822,14 @@
             });
 
             // Xử lý hiển thị thông báo lỗi đăng nhập
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 const loginError = document.getElementById('loginError');
-                
+
                 if (loginError && '${not empty requestScope.error}' === 'true') {
                     // Hiển thị thông báo lỗi với độ trễ nhỏ
                     setTimeout(() => {
                         loginError.classList.add('show');
-                        
+
                         // Tự động ẩn sau 5 giây
                         setTimeout(() => {
                             loginError.style.opacity = '0';

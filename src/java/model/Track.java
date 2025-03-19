@@ -19,17 +19,19 @@ public class Track implements Serializable {
     private String imageUrl;
     private String fileUrl;
     private String description;
+    private int record;
 
     public Track() {
     }
 
-    public Track(int trackID, String title, Date releaseDate, String imageUrl, String fileUrl, String description) {
+    public Track(int trackID, String title, Date releaseDate, String imageUrl, String fileUrl, String description, int record) {
         this.trackID = trackID;
         this.title = title;
         this.releaseDate = releaseDate;
         this.imageUrl = imageUrl;
         this.fileUrl = fileUrl;
         this.description = description;
+        this.record = record;
     }
 
     public int getTrackID() {
@@ -79,4 +81,18 @@ public class Track implements Serializable {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public int getRecord() {
+        return record;
+    }
+
+    public void setRecord(int record) {
+        this.record = record;
+    }
+
+    @Override
+    public String toString() {
+        return "Track{" + "trackID=" + trackID + ", title=" + title + ", releaseDate=" + releaseDate + ", imageUrl=" + imageUrl + ", fileUrl=" + fileUrl + ", description=" + description + ", record=" + record + '}';
+    }
+
 }

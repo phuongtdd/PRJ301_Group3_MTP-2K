@@ -13,31 +13,42 @@ import java.util.Date;
 import java.util.List;
 
 public class User implements Serializable {
-
     private int userID;
     private String userName;
     private String password;
     private String email;
     private String fullName;
     private String phone;
-    private String address;
     private Date createdAt;
     private Date premiumExpiry;
+    private List<String> roles;
+
 
     public User() {
     }
 
-    public User(int userID, String userName, String password, String email, String fullName, String phone, String address, Date createdAt, Date premiumExpiry) {
+    public User(int userID, String userName, String password, String email, String fullName, String phone, Date createdAt, Date premiumExpiry) {
         this.userID = userID;
         this.userName = userName;
         this.password = password;
         this.email = email;
         this.fullName = fullName;
         this.phone = phone;
-        this.address = address;
         this.createdAt = createdAt;
         this.premiumExpiry = premiumExpiry;
     }
+
+    public User(String userName, String password, String email, String fullName, String phone, Date createdAt, Date premiumExpiry) {
+        this.userName = userName;
+        this.password = password;
+        this.email = email;
+        this.fullName = fullName;
+        this.phone = phone;
+        this.createdAt = createdAt;
+        this.premiumExpiry = premiumExpiry;
+    }
+    
+    
 
     public int getUserID() {
         return userID;
@@ -87,14 +98,6 @@ public class User implements Serializable {
         this.phone = phone;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
     public Date getCreatedAt() {
         return createdAt;
     }
@@ -111,8 +114,16 @@ public class User implements Serializable {
         this.premiumExpiry = premiumExpiry;
     }
 
+    public List<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
+    }
+
     @Override
     public String toString() {
-        return "User{" + "userID=" + userID + ", userName=" + userName + ", password=" + password + ", email=" + email + ", fullName=" + fullName + ", phone=" + phone + ", address=" + address + ", createdAt=" + createdAt + ", premiumExpiry=" + premiumExpiry + '}';
+        return "User{" + "userID=" + userID + ", userName=" + userName + ", password=" + password + ", email=" + email + ", fullName=" + fullName + ", phone=" + phone + ", createdAt=" + createdAt + ", premiumExpiry=" + premiumExpiry + ", roles=" + roles + '}';
     }
 }

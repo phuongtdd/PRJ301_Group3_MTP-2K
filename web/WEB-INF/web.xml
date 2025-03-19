@@ -4,11 +4,97 @@
         <servlet-name>HomeServlet</servlet-name>
         <servlet-class>controller.HomeServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>LoginServlet</servlet-name>
+        <servlet-class>controller.LoginServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>PremiumController</servlet-name>
+        <servlet-class>controller.PremiumController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomeServlet</servlet-name>
         <url-pattern>/home</url-pattern>
+        <url-pattern>/home/search</url-pattern>
+        <url-pattern>/home/library</url-pattern>
+        <url-pattern>/home/create-playlist</url-pattern>
+        <url-pattern>/home/liked-songs</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>LoginServlet</servlet-name>
+        <url-pattern>/login</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>home</welcome-file>
     </welcome-file-list>
+    <servlet>
+        <servlet-name>UserManagementController</servlet-name>
+        <servlet-class>controller.UserManagementController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DashboardController</servlet-name>
+        <servlet-class>controller.DashboardController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>OrderManagement</servlet-name>
+        <servlet-class>controller.OrderManagement</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ArtistManagementController</servlet-name>
+        <servlet-class>controller.ArtistManagementController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>TracksManagementController</servlet-name>
+        <servlet-class>controller.TracksManagementController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AlbumManagementController</servlet-name>
+        <servlet-class>controller.AlbumManagementController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminController</servlet-name>
+        <servlet-class>controller.AdminController</servlet-class>
+        <multipart-config>
+            <max-file-size>10485760</max-file-size>
+            <max-request-size>20971520</max-request-size>
+            <file-size-threshold>5242880</file-size-threshold>
+        </multipart-config>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UserManagementController</servlet-name>
+        <url-pattern>/user-management</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DashboardController</servlet-name>
+        <url-pattern>/dashboard</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>OrderManagement</servlet-name>
+        <url-pattern>/order-management</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ArtistManagementController</servlet-name>
+        <url-pattern>/artist-management</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TracksManagementController</servlet-name>
+        <url-pattern>/track-management</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AlbumManagementController</servlet-name>
+        <url-pattern>/album-management</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminController</servlet-name>
+        <url-pattern>/admin</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PremiumController</servlet-name>
+        <url-pattern>/premium</url-pattern>
+    </servlet-mapping>
+    <session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
 </web-app>

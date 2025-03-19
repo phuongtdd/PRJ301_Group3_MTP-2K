@@ -897,6 +897,7 @@
 
         <!-- Logo Title with link. Nhấn vào sẽ ra home -->
         <a href="${pageContext.request.contextPath}/home" class="logo-title">MTP-2K</a>
+
         <div class="music-banner">
             &#127911; Harmony for your heart, melody for your mind  &#127911;
         </div>

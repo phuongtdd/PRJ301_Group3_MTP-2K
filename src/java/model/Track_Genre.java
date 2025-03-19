@@ -10,7 +10,7 @@ import java.io.Serializable;
  *
  * @author HP
  */
-class Track_Genre implements Serializable {
+public class Track_Genre implements Serializable {
 
     private int trackID;
     private int genreID;

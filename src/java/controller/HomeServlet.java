@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import dao.ArtistDAO;
+import jakarta.servlet.RequestDispatcher;
 import model.Album;
 import model.Artist;
 
@@ -42,12 +43,28 @@ public class HomeServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Lấy danh sách Artists và Albums từ database
-        handleViewArtist(request, response);
-        handleViewAlbum(request, response);
+        String path = request.getServletPath();  // Lấy đường dẫn URL
 
-        // Điều hướng đến home.jsp
-        request.getRequestDispatcher("view/home/home.jsp").forward(request, response);
+        switch (path) {
+            case "/home/search":
+                request.getRequestDispatcher("/view/home/search.jsp").forward(request, response);
+                break;
+            case "/home/library":
+                request.getRequestDispatcher("/view/home/your_library.jsp").forward(request, response);
+                break;
+            case "/home/create-playlist":
+                request.getRequestDispatcher("/view/home/createPlaylist.jsp").forward(request, response);
+                break;
+            case "/home/liked-songs":
+                request.getRequestDispatcher("/view/home/likedSongs.jsp").forward(request, response);
+                break;
+            default:
+                handleViewArtist(request, response);
+                handleViewAlbum(request, response);
+                request.getRequestDispatcher("/view/home/home.jsp").forward(request, response);
+                break;
+        }
+
     }
 
     /**

@@ -73,7 +73,7 @@
             /* music-banner là một phần tử có nền trong suốt, với chữ trắng và có bóng mờ */
             .music-banner {
                 position: absolute;
-                top: 8vh; /* Giảm khoảng cách từ trên xuống để gần với logo hơn */
+                top: 12vh; /* Giảm khoảng cách từ trên xuống để gần với logo hơn */
                 left: 0;
                 width: 100%;
                 background: transparent;

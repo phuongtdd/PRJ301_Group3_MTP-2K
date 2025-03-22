@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="6.1" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_1.xsd">
+    
     <servlet>
         <servlet-name>HomeServlet</servlet-name>
         <servlet-class>controller.HomeServlet</servlet-class>
@@ -12,6 +13,7 @@
         <servlet-name>PremiumController</servlet-name>
         <servlet-class>controller.PremiumController</servlet-class>
     </servlet>
+    
     <servlet-mapping>
         <servlet-name>HomeServlet</servlet-name>
         <url-pattern>/home</url-pattern>
@@ -19,38 +21,51 @@
         <url-pattern>/home/library</url-pattern>
         <url-pattern>/home/create-playlist</url-pattern>
         <url-pattern>/home/liked-songs</url-pattern>
+        <url-pattern>/home/artist</url-pattern>
+        <url-pattern>/home/album</url-pattern>
+        <url-pattern>/home/track</url-pattern>
+        <url-pattern>/home/topsong</url-pattern>
     </servlet-mapping>
+    
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/login</url-pattern>
     </servlet-mapping>
+    
     <welcome-file-list>
         <welcome-file>home</welcome-file>
     </welcome-file-list>
+    
     <servlet>
         <servlet-name>UserManagementController</servlet-name>
         <servlet-class>controller.UserManagementController</servlet-class>
     </servlet>
+    
     <servlet>
         <servlet-name>DashboardController</servlet-name>
         <servlet-class>controller.DashboardController</servlet-class>
     </servlet>
+    
     <servlet>
         <servlet-name>OrderManagement</servlet-name>
         <servlet-class>controller.OrderManagement</servlet-class>
     </servlet>
+    
     <servlet>
         <servlet-name>ArtistManagementController</servlet-name>
         <servlet-class>controller.ArtistManagementController</servlet-class>
     </servlet>
+    
     <servlet>
         <servlet-name>TracksManagementController</servlet-name>
         <servlet-class>controller.TracksManagementController</servlet-class>
     </servlet>
+    
     <servlet>
         <servlet-name>AlbumManagementController</servlet-name>
         <servlet-class>controller.AlbumManagementController</servlet-class>
     </servlet>
+    
     <servlet>
         <servlet-name>AdminController</servlet-name>
         <servlet-class>controller.AdminController</servlet-class>
@@ -60,41 +75,57 @@
             <file-size-threshold>5242880</file-size-threshold>
         </multipart-config>
     </servlet>
+    
     <servlet-mapping>
         <servlet-name>UserManagementController</servlet-name>
         <url-pattern>/user-management</url-pattern>
     </servlet-mapping>
+    
     <servlet-mapping>
         <servlet-name>DashboardController</servlet-name>
         <url-pattern>/dashboard</url-pattern>
     </servlet-mapping>
+    
     <servlet-mapping>
         <servlet-name>OrderManagement</servlet-name>
         <url-pattern>/order-management</url-pattern>
     </servlet-mapping>
+    
     <servlet-mapping>
         <servlet-name>ArtistManagementController</servlet-name>
         <url-pattern>/artist-management</url-pattern>
     </servlet-mapping>
+    
     <servlet-mapping>
         <servlet-name>TracksManagementController</servlet-name>
         <url-pattern>/track-management</url-pattern>
     </servlet-mapping>
+    
     <servlet-mapping>
         <servlet-name>AlbumManagementController</servlet-name>
         <url-pattern>/album-management</url-pattern>
     </servlet-mapping>
+    
     <servlet-mapping>
         <servlet-name>AdminController</servlet-name>
         <url-pattern>/admin</url-pattern>
+        <url-pattern>/admin/usermanagement</url-pattern>
+        <url-pattern>/admin/orders</url-pattern>
+        <url-pattern>/admin/tracks</url-pattern>
+        <url-pattern>/admin/albums</url-pattern>
+        <url-pattern>/admin/artists</url-pattern>
     </servlet-mapping>
+    
     <servlet-mapping>
         <servlet-name>PremiumController</servlet-name>
         <url-pattern>/premium</url-pattern>
     </servlet-mapping>
+    
     <session-config>
         <session-timeout>
             30
         </session-timeout>
     </session-config>
+    
+    
 </web-app>

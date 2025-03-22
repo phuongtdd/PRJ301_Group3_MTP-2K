@@ -6,563 +6,78 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Top Songs - MTP-2K</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        <style>
-
-
-            /* Custom scrollbar styles */
-            ::-webkit-scrollbar {
-                width: 8px;
-            }
-
-            ::-webkit-scrollbar-track {
-                background: rgba(2, 12, 27, 0.95);
-            }
-
-            ::-webkit-scrollbar-thumb {
-                background: #64ffda;
-                border-radius: 4px;
-            }
-
-            ::-webkit-scrollbar-thumb:hover {
-                background: #4ad3b3;
-            }
-
-            body {
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                background-color: #0a192f;
-                color: #e6f1ff;
-                margin: 0;
-                padding: 0;
-                display: flex;
-
-            }
-            .sidebar {
-                width: 240px;
-                background: rgba(2, 12, 27, 0.95);
-                padding: 20px;
-                height: calc(100vh - 60px);
-                position: fixed;
-                display: flex;
-                flex-direction: column;
-                overflow-y: auto;
-                padding-bottom: 80px;
-                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
-                backdrop-filter: blur(10px);
-            }
-
-            .logo-container {
-                margin-bottom: 30px;
-                text-align: center;
-            }
-
-            .logo-container img {
-                width: 120px;
-                height: 120px;
-                border-radius: 50%;
-                box-shadow: 0 0 20px rgba(100, 255, 218, 0.2);
-                transition: transform 0.3s ease;
-            }
-
-            .logo-container img:hover {
-                transform: scale(1.05);
-            }
-
-            .nav-links {
-                list-style: none;
-                padding: 0;
-                margin: 0;
-            }
-
-            .nav-links li {
-                padding: 12px 15px;
-                margin: 5px 0;
-                border-radius: 8px;
-                display: flex;
-                align-items: center;
-                gap: 15px;
-                transition: all 0.3s ease;
-            }
-
-            .nav-links li:hover {
-                background: rgba(23, 42, 69, 0.8);
-                transform: translateX(5px);
-            }
-
-            .nav-links a {
-                color: #a8b2d1;
-                text-decoration: none;
-                font-size: 14px;
-                font-weight: 500;
-                transition: color 0.3s ease;
-                width: 100%;
-            }
-
-            .nav-links a:hover {
-                color: #64ffda;
-            }
-
-            .nav-links i {
-                font-size: 16px;
-                width: 20px;
-                text-align: center;
-            }
-
-            .footer-links {
-                margin-top: auto;
-                padding: 15px 0;
-                border-top: 1px solid rgba(100, 255, 218, 0.1);
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-                padding-bottom: 70px;
-            }
-
-            .footer-links a {
-                color: #a8b2d1;
-                text-decoration: none;
-                font-size: 12px;
-                transition: color 0.3s ease;
-                padding: 4px 0;
-            }
-
-            .footer-links a:hover {
-                color: #64ffda;
-            }
-
-            /* Main Content */
-            .main-content {
-                margin-left: 280px;
-                padding: 5px 30px 30px 30px; /* top | right | bottom | left */
-                width: calc(100% - 280px);
-                /* animation: slideIn 0.6s ease-out; */ /* có thể bỏ nếu muốn mượt hơn */
-            }
-
-
-            @keyframes slideIn {
-                from {
-                    transform: translateX(30px);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-            }
-
-            .section-title {
-                font-size: 24px;
-                color: #64ffda; /* Màu chữ mặc định */
-                margin-bottom: 20px;
-                display: flex;
-                align-items: center;
-                animation: fadeInUp 0.5s ease-out;
-                text-transform: uppercase; /* In hoa để tiêu đề nổi bật */
-                font-weight: 700; /* Làm cho chữ đậm */
-                text-shadow: 2px 2px 10px rgba(100, 255, 218, 0.5); /* Thêm bóng chữ nhẹ */
-            }
-
-            .section-title:hover {
-                color: #64ffda; /* Màu khi hover */
-                text-shadow: 2px 2px 15px rgba(100, 255, 218, 0.8); /* Tăng độ mờ bóng khi hover */
-            }
-
-            .section-title i {
-                margin-right: 10px;
-                color: #64ffda;
-            }
-
-            .filter-controls {
-                display: flex;
-                justify-content: center;
-                margin-bottom: 30px;
-                animation: fadeInUp 0.6s ease-out;
-            }
-
-            .filter-btn {
-                background-color: rgba(100, 255, 218, 0.1);
-                color: #ccd6f6;
-                border: 1px solid rgba(100, 255, 218, 0.3);
-                padding: 8px 16px;
-                margin: 0 10px;
-                border-radius: 5px;
-                cursor: pointer;
-                transition: all 0.3s ease;
-            }
-
-            .filter-btn:hover, .filter-btn.active {
-                background-color: rgba(100, 255, 218, 0.2);
-                color: #64ffda;
-                transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            }
-
-            /* Track list styles */
-            .tracks-list {
-                background-color: rgba(2, 12, 27, 0.7);
-                border-radius: 10px;
-                overflow: hidden;
-                animation: fadeInUp 0.8s ease-out;
-            }
-
-            .track-item {
-                display: grid;
-                grid-template-columns: 50px 60px 1fr 120px 100px 80px;
-                align-items: center;
-                padding: 15px 20px;
-                border-bottom: 1px solid rgba(100, 255, 218, 0.1);
-                transition: background-color 0.3s ease;
-                animation: fadeInUp 0.4s ease-out;
-                animation-fill-mode: both;
-                cursor: pointer;
-            }
-
-            @keyframes fadeInUp {
-                from {
-                    opacity: 0;
-                    transform: translateY(20px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-
-            .track-item:hover {
-                background-color: rgba(100, 255, 218, 0.05);
-            }
-
-            .track-rank {
-                font-size: 20px;
-                font-weight: bold;
-                color: #8892b0;
-            }
-
-            .track-rank.rank-1 {
-                color: #FFD700;
-            }
-
-            .track-rank.rank-2 {
-                color: #C0C0C0;
-            }
-
-            .track-rank.rank-3 {
-                color: #CD7F32;
-            }
-
-            .track-image {
-                width: 50px;
-                height: 50px;
-                border-radius: 5px;
-                object-fit: cover;
-            }
-
-            .track-info {
-                display: flex;
-                flex-direction: column;
-                margin-left: 15px;
-            }
-
-            .track-title {
-                font-size: 16px;
-                font-weight: 600;
-                margin: 0;
-                color: #e6f1ff;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                max-width: 300px;
-            }
-
-            .track-artist {
-                font-size: 14px;
-                color: #8892b0;
-                margin: 0;
-            }
-
-            .track-date {
-                color: #8892b0;
-                font-size: 14px;
-                text-align: center;
-            }
-
-            .track-duration {
-                color: #8892b0;
-                font-size: 14px;
-                text-align: center;
-            }
-
-            .track-plays {
-                font-size: 14px;
-                font-weight: bold;
-                color: #ff6347; /* Màu đỏ cam, tạo sự nổi bật */
-                text-align: right;
-            }
-
-
-
-            .play-btn {
-                background-color: transparent;
-                color: #8892b0;
-                border: none;
-                font-size: 16px;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                width: 40px;
-                height: 40px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border-radius: 50%;
-            }
-
-            .track-item:hover .play-btn {
-                color: #64ffda;
-                background-color: rgba(100, 255, 218, 0.1);
-            }
-
-            .track-list-header {
-                display: grid;
-                grid-template-columns: 75px 60px 1fr 120px 130px 35px;
-                align-items: center;
-                padding: 10px 20px;
-                border-bottom: 2px solid #64ffda;
-                font-size: 16px;
-                color: #64ffda;
-                font-weight: 600;
-                background-color: rgba(2, 12, 27, 0.9);
-                transition: all 0.3s ease;
-            }
-
-            /* Hiệu ứng glow khi hover */
-            .track-list-header:hover {
-                color: #ff6347; /* Đổi màu chữ khi hover */
-                text-shadow: 0 0 10px #64ffda, 0 0 20px #64ffda, 0 0 30px #64ffda; /* Thêm hiệu ứng lấp lánh */
-                box-shadow: 0 4px 15px rgba(100, 255, 218, 0.5); /* Tăng bóng đổ */
-                transform: translateY(-5px); /* Nâng lên khi hover */
-            }
-
-            /* Khoảng cách các phần tử của Track List Header*/
-            .track-list-header div:nth-child(1) {
-                padding-left: 7px; /* Dịch dấu # qua phải */
-                padding-right: 10px; /* Khoảng cách giữa # và ảnh */
-            }
-
-            .track-list-header div:nth-child(2) {
-                padding-right: 15px; /* Khoảng cách giữa ảnh và TITLE */
-            }
-
-            .track-list-header div:nth-child(3) {
-                padding-right: 25px; /* TITLE và DATE ADDED */
-            }
-
-            .track-list-header div:nth-child(4) {
-                padding-right: 20px; /* DATE ADDED và DURATION */
-            }
-
-            .track-list-header div:nth-child(5) {
-                padding-right: 10px; /* DURATION và PLAYS */
-            }
-
-
-            /* Charts section */
-            /* Phần biểu đồ */
-            .charts-section {
-                background-color: rgba(2, 12, 27, 0.7);
-                padding: 20px;
-                transform: translateY(-10px); /* Dịch lên 10px */
-                border-radius: 10px;
-                margin-top: 0px;
-                margin-bottom: 40px;
-
-            }
-
-            .chart-container {
-                height: 500px;
-                display: flex;
-                align-items: flex-end;
-                justify-content: space-around;
-                margin-top: 30px;
-                padding: 0 20px;
-            }
-
-            .chart-bar {
-                position: relative; /* Để đặt các phần tử con vào vị trí tuyệt đối */
-                width: 60px;
-                background-color: rgba(100, 255, 218, 0.6);
-                border-radius: 5px 5px 0 0;
-                transition: height 1s ease;
-                cursor: pointer; /* Thêm con trỏ để biết có thể tương tác */
-            }
-
-            .chart-bar:hover {
-                transform: scale(1.05); /* Tăng kích thước một chút khi hover */
-                background-color: rgba(100, 255, 218, 0.8); /* Thay đổi màu khi hover */
-            }
-
-
-            /* Tooltip cho tên bài hát và ca sĩ */
-            .chart-tooltip {
-                position: absolute;
-                top: -95px; /* Đưa tooltip gần với đỉnh cột hơn */
-                left: 50%;
-                transform: translateX(-50%);
-                background-color: rgba(0, 0, 0, 0.7);
-                border: 1px solid #64ffda;
-                border-radius: 5px;
-                padding: 10px;
-                min-width: 180px;
-                color: #e6f1ff;
-                font-size: 12px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-                pointer-events: none;
-                opacity: 0;
-                visibility: hidden;
-                transition: opacity 0.3s, visibility 0.3s;
-                z-index: 100;
-            }
-
-
-
-            /* Hiển thị tooltip khi hover vào cột */
-            .chart-bar:hover .chart-tooltip {
-                opacity: 1;
-                visibility: visible;
-            }
-
-            /* CSS cho các thông tin trong tooltip */
-            .tooltip-title {
-                font-weight: bold;
-                font-size: 14px;
-                color: #64ffda;
-                margin-bottom: 5px;
-                text-align: center;
-            }
-
-            .tooltip-artist {
-                color: #a8b2d1;
-                margin-bottom: 5px;
-                text-align: center;
-            }
-
-            .tooltip-plays {
-                color: #e6f1ff;
-                font-weight: bold;
-                text-align: center;
-            }
-
-            .tooltip-plays span {
-                color: #ff6347;
-            }
-
-            .chart-bar-value {
-                position: absolute;
-                top: -25px; /* Vị trí của số lượt phát trên đỉnh cột */
-                left: 50%;
-                transform: translateX(-50%); /* Căn giữa */
-                font-size: 14px;
-                color: #ff6347; /* Thay màu sắc tùy chỉnh, ví dụ màu đỏ cam */
-                font-weight: bold;
-            }
-
-
-            .chart-label {
-                margin-top: 30px;
-                text-align: center;
-                color: #8892b0;
-                font-size: 14px;
-            }
-
-            /* Hiệu ứng chuyển trang */
-            .track-item:nth-child(1) {
-                animation-delay: 0.1s;
-            }
-            .track-item:nth-child(2) {
-                animation-delay: 0.15s;
-            }
-            .track-item:nth-child(3) {
-                animation-delay: 0.2s;
-            }
-            .track-item:nth-child(4) {
-                animation-delay: 0.25s;
-            }
-            .track-item:nth-child(5) {
-                animation-delay: 0.3s;
-            }
-            .track-item:nth-child(6) {
-                animation-delay: 0.35s;
-            }
-            .track-item:nth-child(7) {
-                animation-delay: 0.4s;
-            }
-            .track-item:nth-child(8) {
-                animation-delay: 0.45s;
-            }
-            .track-item:nth-child(9) {
-                animation-delay: 0.5s;
-            }
-            .track-item:nth-child(10) {
-                animation-delay: 0.55s;
-            }
-            .track-item:nth-child(11) {
-                animation-delay: 0.6s;
-            }
-            .track-item:nth-child(12) {
-                animation-delay: 0.65s;
-            }
-            .track-item:nth-child(13) {
-                animation-delay: 0.7s;
-            }
-            .track-item:nth-child(14) {
-                animation-delay: 0.75s;
-            }
-            .track-item:nth-child(15) {
-                animation-delay: 0.8s;
-            }
-
-            audio {
-                display: none;
-            }
-
-            .toast {
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                background-color: rgba(100, 255, 218, 0.2);
-                border: 1px solid #64ffda;
-                color: #64ffda;
-                padding: 12px 20px;
-                border-radius: 5px;
-                z-index: 1000;
-                opacity: 0;
-                transition: opacity 0.3s ease;
-            }
-
-            .toast.show {
-                opacity: 1;
-            }
-
-            /* Page transition overlay */
-            .page-transition-overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: #0a192f;
-                z-index: 9999;
-                opacity: 0;
-                pointer-events: none;
-                transition: opacity 0.4s ease;
-            }
-
-            .page-transition-overlay.active {
-                opacity: 1;
-                pointer-events: all;
-            }
-        </style>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/topsong.css"/>
     </head>
     <body>
         <!-- Page transition overlay -->
+        <div id="toast" class="toast"></div>
+        <script>
+            window.onload = function () {
+                const message = "${sessionScope.message}";
+                const messageType = "${sessionScope.messageType}";
+
+                if (message && messageType) {
+                    const toast = document.getElementById('toast');
+                    toast.textContent = message;
+                    toast.className = `toast ${messageType}`;
+                    toast.classList.add('show');
+
+                    setTimeout(() => {
+                        toast.classList.remove('show');
+                    }, 3000);
+
+            <%
+                session.removeAttribute("message");
+                session.removeAttribute("messageType");
+            %>
+                }
+            }
+        </script>
+
+        <!------------------------------- USER LOGIN -------------------------------------->
+        <div class="auth-buttons">
+            <c:choose>
+                <c:when test="${not empty sessionScope.user}">
+                    <div class="user-menu">
+                        <div class="user-icon" onclick="this.classList.toggle('active')">
+                            <i class="fas fa-user-circle"></i>
+                            <div class="user-dropdown">
+                                <p><strong>${sessionScope.user.fullName}</strong></p>
+                                <p>${sessionScope.user.email}</p>
+                                <div class="dropdown-menu">
+                                    <a href="#" class="dropdown-item"
+                                       onclick="showModal('profileModal'); return false;">
+                                        <i class="fas fa-user"></i> Profile
+                                    </a>
+                                    <a href="#" class="dropdown-item"
+                                       onclick="showModal('passwordModal'); return false;">
+                                        <i class="fas fa-key"></i> Change Password
+                                    </a>
+                                    <a href="#" class="dropdown-item"
+                                       onclick="showModal('emailModal'); return false;">
+                                        <i class="fas fa-envelope"></i> Change Email
+                                    </a>
+                                    <a href="#" class="dropdown-item"
+                                       onclick="showModal('phoneModal'); return false;">
+                                        <i class="fas fa-phone"></i> Change Phone Number
+                                    </a>
+                                    <div class="divider"></div>
+                                    <a href="#" class="dropdown-item" onclick="showModal('deleteAccountModal');
+                                            return false;" style="color: #ff4d4d;">
+                                        <i class="fas fa-trash-alt"></i> Delete Account
+                                    </a>
+                                    <div class="divider"></div>
+                                    <a href="${pageContext.request.contextPath}/login?action=logout"
+                                       class="logout-button">
+                                        <i class="fas fa-sign-out-alt"></i> Logout
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </c:when>
+            </c:choose>
+        </div>
         <div class="page-transition-overlay" id="pageTransitionOverlay"></div>
 
         <div class="sidebar">
@@ -571,7 +86,7 @@
                      style="border-radius: 50%;">
             </div>
             <ul class="nav-links">
-                <li><a href="home"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="${pageContext.request.contextPath}/home"><i class="fas fa-home"></i> Home</a></li>
                 <li><a href="${pageContext.request.contextPath}/home/search"><i class="fas fa-search"></i>
                         Search</a></li>
                 <li><a href="${pageContext.request.contextPath}/home/library"><i class="fas fa-book"></i> Your
@@ -579,7 +94,7 @@
                 <li style="margin-top: 24px"><a
                         href="${pageContext.request.contextPath}/home/create-playlist    "><i
                             class="fas fa-plus-square"></i> Create Playlist</a></li>
-                <li><a href="${pageContext.request.contextPath}/home/liked-songs"><i class="fas fa-heart"></i>
+                <li><a href="${pageContext.request.contextPath}/home/topsong"><i class="fas fa-heart"></i>
                         Top Songs</a></li>
             </ul>
             <div class="footer-links">
@@ -652,9 +167,22 @@
             </div>
         </div>
 
+        <!-- Signup Banner -->
+        <c:if test="${empty sessionScope.user}">
+            <div class="signup-banner">
+                <div class="preview-text">
+                    <h3>Preview of MTP-2K</h3>
+                    <p>Sign up to get unlimited songs and podcasts with occasional ads. No credit card needed.
+                    </p>
+                </div>
+                <a href="${pageContext.request.contextPath}/login" class="signup-button">Sign up free</a>
+            </div>
+        </c:if>
         <!-- Audio Player and Toast -->
         <audio id="audioPlayer"></audio>
         <div class="toast" id="toast"></div>
+
+
 
         <script>
 
@@ -674,7 +202,7 @@
                     toast.classList.remove('show');
                 }, 3000);
             }
-/*===============================================================================================================================*/
+            /*===============================================================================================================================*/
             document.addEventListener('DOMContentLoaded', function () {
                 // Sample data: Top 8 tracks
                 const trackData = [
@@ -696,8 +224,8 @@
 
                 // Get the chart container
                 const chartContainer = document.getElementById('trackChart');
-                
-/*==================================================================================================================================*/
+
+                /*==================================================================================================================================*/
 
                 // Set the height of the chart container
                 const chartHeight = 420; // Example height of the chart container in pixels
@@ -769,6 +297,206 @@
                     }, 100 + index * 50);
                 });
             });
+        </script>
+
+
+        <!-- Add these modal forms before closing body tag -->
+        <!-- Password Change Modal -->
+        <div id="passwordModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeModal('passwordModal')">&times;</span>
+                <h2 class="modal-title">Change Password</h2>
+                <form action="${pageContext.request.contextPath}/login" method="post">
+                    <input type="hidden" name="action" value="updatePassword">
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password</label>
+                        <input type="password" id="currentPassword" name="currentPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" id="newPassword" name="newPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm New Password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        <span id="passwordError" class="error-message"></span>
+                    </div>
+                    <button type="submit" class="submit-btn" onclick="return validatePasswordForm()">Update
+                        Password</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Email Change Modal -->
+        <div id="emailModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeModal('emailModal')">&times;</span>
+                <h2 class="modal-title">Change Email</h2>
+                <form action="${pageContext.request.contextPath}/login" method="post">
+                    <input type="hidden" name="action" value="updateEmail">
+                    <div class="form-group">
+                        <label for="newEmail">New Email</label>
+                        <input type="email" id="newEmail" name="newEmail" required>
+                        <span id="emailError" class="error-message"></span>
+                    </div>
+                    <button type="submit" class="submit-btn" onclick="return validateEmailForm()">Update
+                        Email</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Phone Change Modal -->
+        <div id="phoneModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeModal('phoneModal')">&times;</span>
+                <h2 class="modal-title">Change Phone Number</h2>
+                <form action="${pageContext.request.contextPath}/login" method="post">
+                    <input type="hidden" name="action" value="updatePhone">
+                    <div class="form-group">
+                        <label for="newPhone">New Phone Number</label>
+                        <input type="tel" id="newPhone" name="newPhone" pattern="[0-9]{10}" required>
+                        <span id="phoneError" class="error-message"></span>
+                    </div>
+                    <button type="submit" class="submit-btn" onclick="return validatePhoneForm()">Update
+                        Phone</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Add profile modal before closing body tag -->
+        <div id="profileModal" class="modal">
+            <div class="modal-content" style="max-width: 600px;">
+                <span class="close-modal" onclick="closeModal('profileModal')">&times;</span>
+                <h2 class="modal-title">Profile Information</h2>
+                <div class="profile-details" style="margin-top: 20px;">
+                    <div class="detail-item">
+                        <label>Username</label>
+                        <p>${sessionScope.user.userName}</p>
+                    </div>
+                    <div class="detail-item">
+                        <label>Full Name</label>
+                        <p>${sessionScope.user.fullName}</p>
+                    </div>
+                    <div class="detail-item">
+                        <label>Email</label>
+                        <p>${sessionScope.user.email}</p>
+                    </div>
+                    <div class="detail-item">
+                        <label>Phone Number</label>
+                        <p>${sessionScope.user.phone}</p>
+                    </div>
+                    <div class="detail-item">
+                        <label>Member Since</label>
+                        <p><fmt:formatDate value="${sessionScope.user.createdAt}" pattern="dd/MM/yyyy"/></p>
+                    </div>
+                    <div class="detail-item">
+                        <label>Subscription Status</label>
+                        <p>
+                            <c:choose>
+                                <c:when test="${sessionScope.user.premiumExpiry == null}">
+                                    <span class="premium-badge standard">Standard Account</span>
+                                </c:when>
+                                <c:otherwise>
+                                    <span class="premium-badge premium">
+                                        Premium until: <fmt:formatDate value="${sessionScope.user.premiumExpiry}" pattern="dd/MM/yyyy"/>
+                                    </span>
+                                </c:otherwise>
+                            </c:choose>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add the delete account modal before closing body tag -->
+        <div id="deleteAccountModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeModal('deleteAccountModal')">&times;</span>
+                <h2 class="modal-title" style="color: #ff4d4d;">Delete Account</h2>
+                <p style="color: #e6f1ff; margin-bottom: 20px;">Are you sure you want to delete your account? This action cannot be undone.</p>
+                <form action="${pageContext.request.contextPath}/login" method="post">
+                    <input type="hidden" name="action" value="deleteAccount">
+                    <div class="form-group">
+                        <label for="confirmPassword">Enter your password to confirm</label>
+                        <input type="password" id="confirmDeletePassword" name="confirmPassword" required>
+                        <span id="deleteAccountError" class="error-message"></span>
+                    </div>
+                    <button type="submit" class="submit-btn" style="background: #ff4d4d; color: white;" onclick="return confirmDelete()">Delete Account</button>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            // Update the onclick handlers in your dropdown menu items
+            document.querySelector('a[href*="change-password"]').onclick = function (e) {
+                e.preventDefault();
+                showModal('passwordModal');
+            };
+
+            document.querySelector('a[href*="change-email"]').onclick = function (e) {
+                e.preventDefault();
+                showModal('emailModal');
+            };
+
+            document.querySelector('a[href*="change-phone"]').onclick = function (e) {
+                e.preventDefault();
+                showModal('phoneModal');
+            };
+
+            function showModal(modalId) {
+                const modal = document.getElementById(modalId);
+                modal.style.display = 'flex';
+            }
+
+            function closeModal(modalId) {
+                const modal = document.getElementById(modalId);
+                modal.style.display = 'none';
+            }
+
+            // Form validation functions
+            function validatePasswordForm() {
+                const newPass = document.getElementById('newPassword').value;
+                const confirmPass = document.getElementById('confirmPassword').value;
+                const errorElement = document.getElementById('passwordError');
+
+                if (newPass !== confirmPass) {
+                    errorElement.textContent = 'Passwords do not match!';
+                    return false;
+                }
+                if (newPass.length < 6) {
+                    errorElement.textContent = 'Password must be at least 6 characters long!';
+                    return false;
+                }
+                return true;
+            }
+
+            function validateEmailForm() {
+                const email = document.getElementById('newEmail').value;
+                const errorElement = document.getElementById('emailError');
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                if (!emailRegex.test(email)) {
+                    errorElement.textContent = 'Please enter a valid email address!';
+                    return false;
+                }
+                return true;
+            }
+
+            function validatePhoneForm() {
+                const phone = document.getElementById('newPhone').value;
+                const errorElement = document.getElementById('phoneError');
+                const phoneRegex = /^[0-9]{10}$/;
+
+                if (!phoneRegex.test(phone)) {
+                    errorElement.textContent = 'Please enter a valid 10-digit phone number!';
+                    return false;
+                }
+                return true;
+            }
+
+            function confirmDelete() {
+                return confirm('Are you absolutely sure you want to delete your account? This action cannot be undone.');
+            }
         </script>
     </body>
 </html> 

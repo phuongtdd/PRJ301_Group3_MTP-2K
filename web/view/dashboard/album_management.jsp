@@ -333,13 +333,13 @@
                 MTP-2K Admin
             </div>
             <ul class="nav-menu">
-                <li><a href="${pageContext.request.contextPath}/admin?action=dashboard" class="${currentPage == 'dashboard' ? 'active' : ''}"><i class="fas fa-home"></i> Dashboard</a></li>
-                <li><a href="${pageContext.request.contextPath}/admin?action=user-management" class="${currentPage == 'user-management' ? 'active' : ''}"><i class="fas fa-users"></i> User Management</a></li>
-                <li><a href="${pageContext.request.contextPath}/admin?action=order-management" class="${currentPage == 'order-management' ? 'active' : ''}"><i class="fas fa-shopping-cart"></i> Orders</a></li>
-                <li><a href="${pageContext.request.contextPath}/admin?action=track-management" class="${currentPage == 'track-management' ? 'active' : ''}"><i class="fas fa-music"></i> Tracks</a></li>
-                <li><a href="${pageContext.request.contextPath}/admin?action=album-management" class="${currentPage == 'album-management' ? 'active' : ''}"><i class="fas fa-compact-disc"></i> Albums</a></li>
-                <li><a href="${pageContext.request.contextPath}/admin?action=artist-management" class="${currentPage == 'artist-management' ? 'active' : ''}"><i class="fas fa-user-circle"></i> Artists</a></li>
-                <li><a href="${pageContext.request.contextPath}/admin?action=logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin" class="${currentPage == 'dashboard' ? 'active' : ''}"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/usermanagement"><i class="fas fa-users"></i> User Management</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/orders" class="${currentPage == 'order-management' ? 'active' : ''}"><i class="fas fa-shopping-cart"></i> Orders</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/tracks" class="${currentPage == 'track-management' ? 'active' : ''}"><i class="fas fa-music"></i> Tracks</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/albums" class="${currentPage == 'album-management' ? 'active' : ''}"><i class="fas fa-compact-disc"></i> Albums</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/artists" class="${currentPage == 'artist-management' ? 'active' : ''}"><i class="fas fa-user-circle"></i> Artists</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/logout><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </div>
 
@@ -475,16 +475,16 @@
             }
 
             // Artist Search Functionality
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 const artistSearch = document.getElementById('artistSearch');
                 const artistSearchResults = document.getElementById('artistSearchResults');
                 const artistSelect = document.getElementById('artistSelect');
                 const useArtistNameCheckbox = document.getElementById('useArtistName');
                 const directArtistNameInput = document.getElementById('directArtistName');
-                
+
                 // Xử lý checkbox nhập tên nghệ sĩ trực tiếp
                 if (useArtistNameCheckbox) {
-                    useArtistNameCheckbox.addEventListener('change', function() {
+                    useArtistNameCheckbox.addEventListener('change', function () {
                         if (this.checked) {
                             // Hiển thị ô nhập tên nghệ sĩ trực tiếp
                             directArtistNameInput.style.display = 'block';
@@ -503,72 +503,72 @@
                         }
                     });
                 }
-                
+
                 if (artistSearch) {
-                    artistSearch.addEventListener('input', function() {
+                    artistSearch.addEventListener('input', function () {
                         const searchTerm = this.value.trim();
-                        
+
                         if (searchTerm.length < 2) {
                             artistSearchResults.innerHTML = '';
                             artistSearchResults.classList.remove('active');
                             return;
                         }
-                        
+
                         // Gọi API tìm kiếm nghệ sĩ
                         fetch('${pageContext.request.contextPath}/admin?action=search-artists&term=' + searchTerm)
-                            .then(response => response.json())
-                            .then(data => {
-                                artistSearchResults.innerHTML = '';
-                                
-                                if (data.length === 0) {
-                                    const noResult = document.createElement('div');
-                                    noResult.className = 'artist-result';
-                                    noResult.textContent = 'Không tìm thấy nghệ sĩ';
-                                    artistSearchResults.appendChild(noResult);
-                                } else {
-                                    data.forEach(artist => {
-                                        const resultItem = document.createElement('div');
-                                        resultItem.className = 'artist-result';
-                                        resultItem.textContent = artist.name;
-                                        resultItem.dataset.id = artist.id;
-                                        
-                                        resultItem.addEventListener('click', function() {
-                                            // Cập nhật select box
-                                            for (let i = 0; i < artistSelect.options.length; i++) {
-                                                if (artistSelect.options[i].value == artist.id) {
-                                                    artistSelect.selectedIndex = i;
-                                                    break;
+                                .then(response => response.json())
+                                .then(data => {
+                                    artistSearchResults.innerHTML = '';
+
+                                    if (data.length === 0) {
+                                        const noResult = document.createElement('div');
+                                        noResult.className = 'artist-result';
+                                        noResult.textContent = 'Không tìm thấy nghệ sĩ';
+                                        artistSearchResults.appendChild(noResult);
+                                    } else {
+                                        data.forEach(artist => {
+                                            const resultItem = document.createElement('div');
+                                            resultItem.className = 'artist-result';
+                                            resultItem.textContent = artist.name;
+                                            resultItem.dataset.id = artist.id;
+
+                                            resultItem.addEventListener('click', function () {
+                                                // Cập nhật select box
+                                                for (let i = 0; i < artistSelect.options.length; i++) {
+                                                    if (artistSelect.options[i].value == artist.id) {
+                                                        artistSelect.selectedIndex = i;
+                                                        break;
+                                                    }
                                                 }
-                                            }
-                                            
-                                            // Nếu không tìm thấy trong select box, thêm option mới
-                                            if (artistSelect.value != artist.id) {
-                                                const newOption = new Option(artist.name, artist.id);
-                                                artistSelect.add(newOption);
-                                                artistSelect.value = artist.id;
-                                            }
-                                            
-                                            // Xóa kết quả tìm kiếm
-                                            artistSearch.value = artist.name;
-                                            artistSearchResults.innerHTML = '';
-                                            artistSearchResults.classList.remove('active');
+
+                                                // Nếu không tìm thấy trong select box, thêm option mới
+                                                if (artistSelect.value != artist.id) {
+                                                    const newOption = new Option(artist.name, artist.id);
+                                                    artistSelect.add(newOption);
+                                                    artistSelect.value = artist.id;
+                                                }
+
+                                                // Xóa kết quả tìm kiếm
+                                                artistSearch.value = artist.name;
+                                                artistSearchResults.innerHTML = '';
+                                                artistSearchResults.classList.remove('active');
+                                            });
+
+                                            artistSearchResults.appendChild(resultItem);
                                         });
-                                        
-                                        artistSearchResults.appendChild(resultItem);
-                                    });
-                                }
-                                
-                                artistSearchResults.classList.add('active');
-                            })
-                            .catch(error => {
-                                console.error('Error searching artists:', error);
-                                artistSearchResults.innerHTML = '<div class="artist-result">Lỗi khi tìm kiếm</div>';
-                                artistSearchResults.classList.add('active');
-                            });
+                                    }
+
+                                    artistSearchResults.classList.add('active');
+                                })
+                                .catch(error => {
+                                    console.error('Error searching artists:', error);
+                                    artistSearchResults.innerHTML = '<div class="artist-result">Lỗi khi tìm kiếm</div>';
+                                    artistSearchResults.classList.add('active');
+                                });
                     });
-                    
+
                     // Ẩn kết quả tìm kiếm khi click ra ngoài
-                    document.addEventListener('click', function(e) {
+                    document.addEventListener('click', function (e) {
                         if (!artistSearch.contains(e.target) && !artistSearchResults.contains(e.target)) {
                             artistSearchResults.classList.remove('active');
                         }
@@ -577,7 +577,7 @@
             });
 
             // Close modal when clicking outside
-            window.onclick = function(event) {
+            window.onclick = function (event) {
                 var modal = document.getElementById('albumModal');
                 if (event.target == modal) {
                     modal.style.display = "none";

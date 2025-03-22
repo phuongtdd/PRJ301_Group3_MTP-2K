@@ -1126,4 +1126,3 @@ document.addEventListener("DOMContentLoaded", () => {
     playTrack(song)
   }
 })
-

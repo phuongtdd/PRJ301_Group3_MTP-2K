@@ -1,15 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model;
 
-/**
- *
- * @author HP
- */
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+import model.Artist;
+import model.Genre;
 
 public class Track implements Serializable {
 
@@ -20,6 +15,8 @@ public class Track implements Serializable {
     private String fileUrl;
     private String description;
     private int record;
+    private List<Genre> genres;
+    private List<Artist> artists;
 
     public Track() {
     }
@@ -88,6 +85,22 @@ public class Track implements Serializable {
 
     public void setRecord(int record) {
         this.record = record;
+    }
+
+    public List<Genre> getGenres() {
+        return genres;
+    }
+
+    public void setGenres(List<Genre> genres) {
+        this.genres = genres;
+    }
+
+    public List<Artist> getArtists() {
+        return artists;
+    }
+
+    public void setArtists(List<Artist> artists) {
+        this.artists = artists;
     }
 
     @Override

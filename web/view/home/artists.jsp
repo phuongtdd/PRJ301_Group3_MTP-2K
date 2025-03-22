@@ -1,1031 +1,549 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-    <%@ page contentType="text/html" pageEncoding="UTF-8" %>
-        <!DOCTYPE html>
-        <html lang="en">
+<%@ page contentType="text/html" pageEncoding="UTF-8" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Music Library</title>
-            <link rel="stylesheet" href="styles.css">
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-            <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-                rel="stylesheet">
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
-        </head>
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Music Library</title>
+        <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap&family=Roboto:wght@300;400;500;700&family=Noto+Sans:wght@300;400;500;700&display=swap&subset=vietnamese" rel="stylesheet">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/artist.css"/>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
         <style>
-            /* Custom scrollbar styles */
-            ::-webkit-scrollbar {
-                width: 8px;
-            }
-
-            ::-webkit-scrollbar-track {
-                background: rgba(2, 12, 27, 0.95);
-            }
-
-            ::-webkit-scrollbar-thumb {
-                background: #64ffda;
-                border-radius: 4px;
-            }
-
-            ::-webkit-scrollbar-thumb:hover {
-                background: #4ad3b3;
-            }
-
             body {
-                display: flex;
-                background-color: #0a192f;
-                color: #e6f1ff;
-                font-family: 'Poppins', sans-serif;
-                margin: 0;
-            }
-
-            .sidebar {
-                width: 240px;
-                background: rgba(2, 12, 27, 0.95);
-                padding: 20px;
-                height: calc(100vh - 60px);
-                position: fixed;
-                display: flex;
-                flex-direction: column;
-                overflow-y: auto;
-                padding-bottom: 80px;
-                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
-                backdrop-filter: blur(10px);
-            }
-
-            .logo-container {
-                margin-bottom: 30px;
-                text-align: center;
-            }
-
-            .logo-container img {
-                width: 120px;
-                height: 120px;
-                border-radius: 50%;
-                box-shadow: 0 0 20px rgba(100, 255, 218, 0.2);
-                transition: transform 0.3s ease;
-            }
-
-            .logo-container img:hover {
-                transform: scale(1.05);
-            }
-
-            .nav-links {
-                list-style: none;
-                padding: 0;
-                margin: 0;
-            }
-
-            .nav-links li {
-                padding: 12px 15px;
-                margin: 5px 0;
-                border-radius: 8px;
-                display: flex;
-                align-items: center;
-                gap: 15px;
-                transition: all 0.3s ease;
-            }
-
-            .nav-links li:hover {
-                background: rgba(23, 42, 69, 0.8);
-                transform: translateX(5px);
-            }
-
-            .nav-links a {
-                color: #a8b2d1;
-                text-decoration: none;
-                font-size: 14px;
-                font-weight: 500;
-                transition: color 0.3s ease;
-                width: 100%;
-            }
-
-            .nav-links a:hover {
-                color: #64ffda;
-            }
-
-            .nav-links i {
-                font-size: 16px;
-                width: 20px;
-                text-align: center;
-            }
-
-            .footer-links {
-                margin-top: auto;
-                padding: 15px 0;
-                border-top: 1px solid rgba(100, 255, 218, 0.1);
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-                padding-bottom: 70px;
-            }
-
-            .footer-links a {
-                color: #a8b2d1;
-                text-decoration: none;
-                font-size: 12px;
-                transition: color 0.3s ease;
-                padding: 4px 0;
-            }
-
-            .footer-links a:hover {
-                color: #64ffda;
-            }
-
-            .language-selector {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                color: #e6f1ff;
-                padding: 8px 15px;
-                border: 1px solid #64ffda;
-                border-radius: 20px;
-                width: fit-content;
-                margin: 15px 0;
-                font-size: 13px;
-                cursor: pointer;
-                transition: all 0.3s ease;
-            }
-
-            .language-selector:hover {
-                background: rgba(100, 255, 218, 0.1);
-            }
-
-            .signup-banner {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                background: linear-gradient(90deg, #0a192f, #1a365d);
-                padding: 15px 30px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                z-index: 100;
-                border-top: 1px solid #64ffda;
-                height: 60px;
-            }
-
-            .signup-banner .preview-text {
-                color: #a8b2d1;
-            }
-
-            .preview-text h3 {
-                font-size: 12px;
-                text-transform: uppercase;
-                margin: 0 0 8px 0;
-                letter-spacing: 0.1em;
-                color: #64ffda;
-                font-weight: 600;
-            }
-
-            .preview-text p {
-                font-size: 14px;
-                margin: 0;
-            }
-
-            /* Main Content Styles */
-            .main-content {
-                margin-left: 260px;
-                padding: 30px;
-                width: calc(100% - 290px);
-                margin-bottom: 100px;
-            }
-
-            .section-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 25px;
-            }
-
-
-            .section-title {
-                font-size: 26px;
-                color: #64ffda;
-                margin: 0;
-                font-weight: 600;
-                letter-spacing: 0.5px;
-            }
-
-            .show-all {
-                color: #64ffda;
-                text-decoration: none;
-                font-size: 14px;
-                padding: 8px 15px;
-                border: 1px solid #64ffda;
-                border-radius: 20px;
-                transition: all 0.3s ease;
-                font-weight: 500;
-            }
-
-            .show-all:hover {
-                background: rgba(100, 255, 218, 0.1);
-            }
-
-            .album-section {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-                gap: 24px;
-                margin-bottom: 40px;
-            }
-
-            .album-card,
-            .track-card {
-                background: #112240;
-                padding: 16px;
-                border-radius: 8px;
-                transition: all 0.3s ease;
-                border: 1px solid transparent;
-            }
-
-            .album-card:hover,
-            .track-card:hover {
-                background: #233554;
-                cursor: pointer;
-                border: 1px solid #64ffda;
-                transform: translateY(-5px);
-            }
-
-            .album-card img,
-            .track-card img {
-                width: 100%;
-                aspect-ratio: 1;
-                object-fit: cover;
-                border-radius: 8px;
-                margin-bottom: 16px;
-            }
-
-            .card-info {
-                padding: 10px 0;
-            }
-
-            .card-title {
-                color: #64ffda;
-                font-size: 16px;
-                font-weight: 600;
-                margin: 0 0 8px 0;
-                letter-spacing: 0.3px;
-            }
-
-            .card-description {
-                color: #a8b2d1;
-                font-size: 14px;
-                margin: 0;
-                line-height: 1.4;
-                font-weight: 400;
-            }
-
-            .search-container {
-                margin-bottom: 30px;
-                padding: 15px 25px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                background: #112240;
-                border-radius: 10px;
-                margin-top: -10px;
-            }
-
-            .search-bar {
-                background: #283447;
-                border-radius: 25px;
-                padding: 12px 20px;
-                display: flex;
-                align-items: center;
-                width: 400px;
-            }
-
-            .search-bar input {
-                background: transparent;
-                border: none;
-                color: #e6f1ff;
-                font-size: 14px;
-                width: 100%;
-                margin-left: 10px;
-                outline: none;
-            }
-
-            .search-bar input::placeholder {
-                color: #a8b2d1;
-            }
-
-            .account-icon {
-                color: #64ffda;
-                font-size: 24px;
-                cursor: pointer;
-                transition: color 0.3s ease;
-            }
-
-            .account-icon:hover {
-                color: #a8b2d1;
-            }
-
-            .auth-buttons {
-                display: flex;
-                gap: 20px;
-                align-items: center;
-            }
-
-            .login-btn,
-            .signup-btn {
-                padding: 10px 25px;
-                border-radius: 20px;
-                font-weight: 600;
-                font-size: 14px;
-                text-decoration: none;
-                transition: all 0.3s ease;
-            }
-
-            .login-btn {
-                background: #64ffda;
-                color: #0a192f;
-                border: 1px solid #64ffda;
-            }
-
-            .login-btn:hover {
-                background: transparent;
-                color: #64ffda;
-            }
-
-            .signup-button {
-                background: #64ffda;
-                color: #0a192f;
-                padding: 12px 32px;
-                border-radius: 20px;
-                text-decoration: none;
-                font-weight: 600;
-                font-size: 14px;
-                transition: all 0.3s ease;
-                letter-spacing: 0.5px;
-            }
-
-            .signup-btn {
-                color: #64ffda;
-                border: 1px solid #64ffda;
-                background: transparent;
-            }
-
-            .signup-btn:hover {
-                background: rgba(100, 255, 218, 0.1);
-            }
-
-            .nav-buttons {
-                display: flex;
-                gap: 20px;
-                margin: 0 20px;
-            }
-
-            .nav-button {
-                color: #a8b2d1;
-                text-decoration: none;
-                font-size: 14px;
-                font-weight: 500;
-                padding: 8px 15px;
-                border-radius: 20px;
-                transition: all 0.3s ease;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
-
-            .nav-button:hover {
-                color: #64ffda;
-                background: rgba(100, 255, 218, 0.1);
-            }
-
-            .nav-button.active {
-                color: #64ffda;
-                background: rgba(100, 255, 218, 0.1);
-                border: 1px solid #64ffda;
-            }
-
-            .nav-button i {
-                font-size: 16px;
-            }
-
-            .album-header {
-                display: flex;
-                gap: 30px;
-                padding: 30px;
-                background: linear-gradient(transparent, rgba(0, 0, 0, 0.5));
-                margin-bottom: 30px;
-            }
-
-            .album-cover {
-                width: 250px;
-                height: 250px;
-                border-radius: 8px;
-                box-shadow: 0 4px 60px rgba(0, 0, 0, 0.5);
-            }
-
-            .album-info {
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-end;
-            }
-
-            .album-type {
-                font-size: 14px;
-                font-weight: 500;
-                margin-bottom: 8px;
-            }
-
-            .album-title {
-                font-size: 56px;
-                font-weight: 700;
-                margin: 8px 0;
-                color: #e6f1ff;
-            }
-
-            .album-meta {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                color: #a8b2d1;
-                font-size: 14px;
-            }
-
-            .artist-avatar {
-                width: 24px;
-                height: 24px;
-                border-radius: 50%;
-            }
-
-            .tracklist {
-                padding: 0 30px;
-            }
-
-            .track-header {
-                display: grid;
-                grid-template-columns: 50px 1fr 120px;
-                padding: 8px 16px;
-                color: #a8b2d1;
-                font-size: 14px;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-                margin-bottom: 16px;
-            }
-
-            .track-item {
-                display: grid;
-                grid-template-columns: 50px 1fr 120px;
-                padding: 8px 16px;
-                border-radius: 4px;
-                transition: all 0.3s ease;
-                cursor: pointer;
-            }
-
-            .track-item:hover {
-                background: rgba(255, 255, 255, 0.1);
-            }
-
-            .track-number {
-                color: #a8b2d1;
-            }
-
-            .track-title {
-                color: #e6f1ff;
-                font-weight: 500;
-            }
-
-            .track-duration {
-                color: #a8b2d1;
-                text-align: right;
-            }
-
-            .album-actions {
-                display: flex;
-                gap: 20px;
-                align-items: center;
-                margin: 24px 0;
-            }
-
-            .play-button {
-                width: 56px;
-                height: 56px;
-                border-radius: 50%;
-                background: #64ffda;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                transition: all 0.3s ease;
-            }
-
-            .play-button:hover {
-                transform: scale(1.05);
-                background: #7cffe3;
-            }
-
-            .play-button i {
-                color: #0a192f;
-                font-size: 24px;
-            }
-
-            .album-action-icon {
-                color: #a8b2d1;
-                font-size: 24px;
-                cursor: pointer;
-                transition: color 0.3s ease;
-            }
-
-            .album-action-icon:hover {
-                color: #e6f1ff;
-            }
-
-            /* Artist Header Styles */
-            .artist-header {
-                display: flex;
-                gap: 30px;
-                padding: 30px;
-                background: linear-gradient(transparent, rgba(0, 0, 0, 0.5));
-                margin-bottom: 30px;
-            }
-
-            .artist-avatar {
-                width: 250px;
-                height: 250px;
-                border-radius: 50%;
-                box-shadow: 0 4px 60px rgba(0, 0, 0, 0.5);
-                object-fit: cover;
-            }
-
-            .artist-info {
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-end;
-            }
-
-            .artist-type {
-                font-size: 14px;
-                font-weight: 500;
-                margin-bottom: 8px;
-                color: #e6f1ff;
-            }
-
-            .artist-name {
-                font-size: 96px;
-                font-weight: 800;
-                margin: 8px 0;
-                color: #e6f1ff;
-                line-height: 1.1;
-            }
-
-            /* Title ngắn (dưới 12 ký tự) */
-            .artist-name {
-                font-size: 96px;
-            }
-
-            /* Title trung bình (12-20 ký tự) */
-            .artist-name[data-length="medium"] {
-                font-size: 72px;
-            }
-
-            /* Title dài (20-30 ký tự) */
-            .artist-name[data-length="long"] {
-                font-size: 60px;
-            }
-
-            /* Title rất dài (trên 30 ký tự) */
-            .artist-name[data-length="very-long"] {
-                font-size: 48px;
-            }
-
-            .artist-stats {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                color: #a8b2d1;
-                font-size: 14px;
-                margin-top: 8px;
-            }
-
-            .monthly-listeners {
-                color: #a8b2d1;
-            }
-
-            .artist-actions {
-                display: flex;
-                gap: 20px;
-                align-items: center;
-                padding: 24px 0;
-            }
-
-            .follow-button {
-                padding: 8px 32px;
-                border-radius: 20px;
-                border: 1px solid #64ffda;
-                background: transparent;
-                color: #64ffda;
-                font-weight: 600;
-                font-size: 14px;
-                cursor: pointer;
-                transition: all 0.3s ease;
-            }
-
-            .follow-button:hover {
-                background: rgba(100, 255, 218, 0.1);
-            }
-
-            /* Popular Tracks Section */
-            .popular-tracks {
-                margin: 40px 0;
-            }
-
-            .popular-tracks h2 {
-                font-size: 24px;
-                margin-bottom: 20px;
-                color: #e6f1ff;
-            }
-
-            .track-list {
-                display: flex;
-                flex-direction: column;
-                gap: 16px;
-            }
-
-            .track-item.popular {
-                display: grid;
-                grid-template-columns: 50px 1fr 100px;
-                align-items: center;
-                padding: 8px 16px;
-                border-radius: 4px;
-                transition: all 0.3s ease;
-            }
-
-            .track-item.popular:hover {
-                background: rgba(255, 255, 255, 0.1);
-            }
-
-            .track-info {
-                display: flex;
-                align-items: center;
-                gap: 16px;
-            }
-
-            .track-cover {
-                width: 40px;
-                height: 40px;
-                border-radius: 4px;
-            }
-
-            .track-details {
-                display: flex;
-                flex-direction: column;
-                gap: 4px;
-            }
-
-            .track-plays {
-                font-size: 14px;
-                color: #a8b2d1;
-            }
-
-            /* Popular Releases Section */
-            .popular-releases {
-                margin: 40px 0;
-            }
-
-            .popular-releases h2 {
-                font-size: 24px;
-                margin-bottom: 20px;
-                color: #e6f1ff;
-            }
-
-            /* Flowing buttom Section */
-            .follow-button {
-                padding: 8px 32px;
-                border-radius: 20px;
-                border: 1px solid #64ffda;
-                background: transparent;
-                color: #64ffda;
-                font-weight: 600;
-                font-size: 14px;
-                cursor: pointer;
-                transition: all 0.3s ease;
-            }
-
-            /* Thêm style mới cho trạng thái Following */
-            .follow-button.following {
-                background: #64ffda;
-                color: #0a192f;
-            }
-
-            .follow-button.following:hover {
-                background: #ff6b6b;
-                /* Màu đỏ khi hover vào nút Following */
-                border-color: #ff6b6b;
-                color: #fff;
-            }
-
-            .album-actions,
-            .artist-actions {
-                display: flex;
-                gap: 20px;
-                align-items: center;
-                margin: 24px 0;
-            }
-
-            .album-action-icon,
-            .artist-action-icon {
-                color: #a8b2d1;
-                font-size: 24px;
-                cursor: pointer;
-                transition: all 0.3s ease;
-            }
-
-            .album-action-icon:hover,
-            .artist-action-icon:hover {
-                color: #e6f1ff;
-                transform: scale(1.1);
-            }
-
-            /* Tooltip styles */
-            [title] {
-                position: relative;
-            }
-
-            [title]:hover:after {
-                content: attr(title);
-                position: absolute;
-                bottom: -30px;
-                left: 50%;
-                transform: translateX(-50%);
-                background: rgba(0, 0, 0, 0.8);
-                color: #fff;
-                padding: 4px 8px;
-                border-radius: 4px;
-                font-size: 12px;
-                white-space: nowrap;
-                z-index: 1;
+                font-family: 'Noto Sans', 'Roboto', 'Poppins', sans-serif;
             }
         </style>
-        </head>
+    </head>
 
-        <body>
-            <!-- Sidebar -->
-            <div class="sidebar">
-                <div class="logo-container">
-                    <img src="../image/mtp2k-logo.png" alt="Logo">
+    <body>
+
+        <div id="toast" class="toast"></div>
+        <script>
+            window.onload = function () {
+                const message = "${sessionScope.message}";
+                const messageType = "${sessionScope.messageType}";
+
+                if (message && messageType) {
+                    const toast = document.getElementById('toast');
+                    toast.textContent = message;
+                    toast.className = `toast ${messageType}`;
+                    toast.classList.add('show');
+
+                    setTimeout(() => {
+                        toast.classList.remove('show');
+                    }, 3000);
+
+            <%
+                session.removeAttribute("message");
+                session.removeAttribute("messageType");
+            %>
+                }
+            }
+        </script>
+
+        <!------------------------------- USER LOGIN -------------------------------------->
+        <div class="auth-buttons">
+            <c:choose>
+                <c:when test="${not empty sessionScope.user}">
+                    <div class="user-menu">
+                        <div class="user-icon" onclick="this.classList.toggle('active')">
+                            <i class="fas fa-user-circle"></i>
+                            <div class="user-dropdown">
+                                <p><strong>${sessionScope.user.fullName}</strong></p>
+                                <p>${sessionScope.user.email}</p>
+                                <div class="dropdown-menu">
+                                    <a href="#" class="dropdown-item"
+                                       onclick="showModal('profileModal'); return false;">
+                                        <i class="fas fa-user"></i> Profile
+                                    </a>
+                                    <a href="#" class="dropdown-item"
+                                       onclick="showModal('passwordModal'); return false;">
+                                        <i class="fas fa-key"></i> Change Password
+                                    </a>
+                                    <a href="#" class="dropdown-item"
+                                       onclick="showModal('emailModal'); return false;">
+                                        <i class="fas fa-envelope"></i> Change Email
+                                    </a>
+                                    <a href="#" class="dropdown-item"
+                                       onclick="showModal('phoneModal'); return false;">
+                                        <i class="fas fa-phone"></i> Change Phone Number
+                                    </a>
+                                    <div class="divider"></div>
+                                    <a href="#" class="dropdown-item" onclick="showModal('deleteAccountModal');
+                                            return false;" style="color: #ff4d4d;">
+                                        <i class="fas fa-trash-alt"></i> Delete Account
+                                    </a>
+                                    <div class="divider"></div>
+                                    <a href="${pageContext.request.contextPath}/login?action=logout"
+                                       class="logout-button">
+                                        <i class="fas fa-sign-out-alt"></i> Logout
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </c:when>
+            </c:choose>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo-container">
+                <img src="${pageContext.request.contextPath}/image/mtp2k-logo.png" alt="MTP-2K"
+                     style="border-radius: 50%;">
+            </div>
+            <ul class="nav-links">
+                <li><a href="${pageContext.request.contextPath}/home"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="${pageContext.request.contextPath}/home/search"><i class="fas fa-search"></i>
+                        Search</a></li>
+                <li><a href="${pageContext.request.contextPath}/home/library"><i class="fas fa-book"></i> Your
+                        Library</a></li>
+                <li style="margin-top: 24px"><a
+                        href="${pageContext.request.contextPath}/home/create-playlist    "><i
+                            class="fas fa-plus-square"></i> Create Playlist</a></li>
+                <li><a href="${pageContext.request.contextPath}/home/topsong"><i class="fas fa-heart"></i>
+                        Top Songs</a></li>
+            </ul>
+            <div class="footer-links">
+                <a href="#">Legal</a>
+                <a href="#">Privacy Center</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Cookies</a>
+                <a href="#">About Ads</a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Search Container -->
+            <div class="search-container">
+                <div class="search-bar">
+                    <i class="fas fa-search" style="color: #a8b2d1;"></i>
+                    <input type="text" placeholder="What do you want to listen to?">
                 </div>
-                <ul class="nav-links">
-                    <li>
-                        <i class="fas fa-home"></i>
-                        <a href="home">Home</a>
-                    </li>
-                    <li>
-                        <i class="fas fa-search"></i>
-                        <a href="search">Search</a>
-                    </li>
-                    <li>
-                        <i class="fas fa-book"></i>
-                        <a href="library">Your Library</a>
-                    </li>
-                    <li>
-                        <i class="fas fa-plus-square"></i>
-                        <a href="create-playlist">Create Playlist</a>
-                    </li>
-                    <li>
-                        <i class="fas fa-heart"></i>
-                        <a href="liked">Liked Songs</a>
-                    </li>
-                </ul>
-                <div class="footer-links">
-                    <a href="#" style="color: #a8b2d1; text-decoration: none; font-size: 12px;">Legal</a>
-                    <a href="#" style="color: #a8b2d1; text-decoration: none; font-size: 12px;">Privacy Center</a>
-                    <a href="#" style="color: #a8b2d1; text-decoration: none; font-size: 12px;">Privacy Policy</a>
-                    <a href="#" style="color: #a8b2d1; text-decoration: none; font-size: 12px;">Cookies</a>
-                    <a href="#" style="color: #a8b2d1; text-decoration: none; font-size: 12px;">About us</a>
+                <div class="nav-buttons">
+                    <a href="playlist" class="nav-button">
+                        <i class="fas fa-list-ul"></i>
+                        Playlist
+                    </a>
+                    <a href="artists" class="nav-button active">
+                        <i class="fas fa-microphone-alt"></i>
+                        Artists
+                    </a>
+                    <a href="albums" class="nav-button">
+                        <i class="fas fa-compact-disc"></i>
+                        Albums
+                    </a>
                 </div>
             </div>
 
-            <!-- Main Content -->
-            <div class="main-content">
-                <!-- Search Container -->
-                <div class="search-container">
-                    <div class="search-bar">
-                        <i class="fas fa-search" style="color: #a8b2d1;"></i>
-                        <input type="text" placeholder="What do you want to listen to?">
-                    </div>
-                    <div class="nav-buttons">
-                        <a href="playlist" class="nav-button">
-                            <i class="fas fa-list-ul"></i>
-                            Playlist
-                        </a>
-                        <a href="artists" class="nav-button active">
-                            <i class="fas fa-microphone-alt"></i>
-                            Artists
-                        </a>
-                        <a href="albums" class="nav-button">
-                            <i class="fas fa-compact-disc"></i>
-                            Albums
-                        </a>
-                    </div>
-                    <div class="account-icon">
-                        <i class="fas fa-user-circle"></i>
+            <!-- Artist Header -->
+            <div class="artist-header">
+                <img src="${pageContext.request.contextPath}/${sessionScope.artist.imageUrl}" alt="Artist Avatar" class="artist-avatar">
+                <div class="artist-info">
+                    <span class="artist-type">Artist</span>
+                    <h1 class="artist-name">${artist.name}</h1>
+                    <div class="artist-stats">
                     </div>
                 </div>
-
-                <!-- Artist Header -->
-                <div class="artist-header">
-                    <img src="../image/sontung.jpg" alt="Artist Avatar" class="artist-avatar">
-                    <div class="artist-info">
-                        <span class="artist-type">Artist</span>
-                        <h1 class="artist-name">Sơn Tùng M-TP</h1>
-                        <div class="artist-stats">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="artist-actions">
-                    <div class="play-button">
-                        <i class="fas fa-play"></i>
-                    </div>
-                    <i class="far fa-heart artist-action-icon"></i>
-                    <i class="fas fa-plus-square artist-action-icon" title="Add to Your Library"></i>
-
-                </div>
-
-                <!-- Popular Tracks Section -->
-                <section class="popular-tracks">
-                    <h2>Popular</h2>
-                    <div class="track-list">
-                        <div class="track-item popular">
-                            <div class="track-number">1</div>
-                            <div class="track-info">
-                                <img src="../image/chungtacuahientai.jpg" alt="Track Cover" class="track-cover">
-                                <div class="track-details">
-                                    <div class="track-title">Chúng Ta Của Hiện Tại</div>
-
-                                </div>
-                            </div>
-                            <div class="track-duration"></div>
-                        </div>
-
-                        <div class="track-item popular">
-                            <div class="track-number">2</div>
-                            <div class="track-info">
-                                <img src="../image/makingmyway.jpg" alt="Track Cover" class="track-cover">
-                                <div class="track-details">
-                                    <div class="track-title">Making My Way</div>
-
-                                </div>
-                            </div>
-                            <div class="track-duration"></div>
-                        </div>
-
-                        <div class="track-item popular">
-                            <div class="track-number">3</div>
-                            <div class="track-info">
-                                <img src="../image/muonroimasaocon.jpg" alt="Track Cover" class="track-cover">
-                                <div class="track-details">
-                                    <div class="track-title">Muộn Rồi Mà Sao Còn</div>
-
-                                </div>
-                            </div>
-                            <div class="track-duration"></div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Popular Releases Section -->
-                <section class="popular-releases">
-                    <div class="section-header">
-                        <h2>Popular Releases</h2>
-                        <a href="#" class="show-all">Show all</a>
-                    </div>
-                    <div class="album-section">
-                        <div class="album-card">
-                            <img src="../image/skytour.jpg" alt="Album Cover">
-                            <div class="card-info">
-                                <h3 class="card-title">Sky Tour</h3>
-                                <p class="card-description">Album • 2021</p>
-                            </div>
-                        </div>
-                        <div class="track-card">
-                            <img src="../image/muonroimasaocon.jpg" alt="Track Cover">
-                            <div class="card-info">
-                                <h3 class="card-title">Muộn rồi mà sao còn</h3>
-                                <p class="card-description">2022 • Track</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Albums Section -->
-                <section class="popular-releases">
-                    <div class="section-header">
-                        <h2>Albums</h2>
-                        <a href="#" class="show-all">Show all</a>
-                    </div>
-                    <div class="album-section">
-                        <div class="album-card">
-                            <img src="../image/skytour.jpg" alt="Album Cover">
-                            <div class="card-info">
-                                <h3 class="card-title">Sky Tour</h3>
-                                <p class="card-description">Album • 2021</p>
-                            </div>
-                        </div>
-                        <div class="album-card">
-                            <img src="../image/m-tp.jpg" alt="Album Cover">
-                            <div class="card-info">
-                                <h3 class="card-title">M-TP</h3>
-                                <p class="card-description">Album • 2021</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Track Section -->
-                <section class="popular-releases">
-                    <div class="section-header">
-                        <h2>Tracks</h2>
-                        <a href="#" class="show-all">Show all</a>
-                    </div>
-                    <div class="album-section">
-                        <div class="track-card">
-                            <img src="../image/muonroimasaocon.jpg" alt="Track Cover">
-                            <div class="card-info">
-                                <h3 class="card-title">Muộn rồi mà sao còn</h3>
-                                <p class="card-description">2022 • Track</p>
-                            </div>
-                        </div>
-                        <div class="track-card">
-                            <img src="../image/makingmyway.jpg" alt="Track Cover">
-                            <div class="card-info">
-                                <h3 class="card-title">Making My Way</h3>
-                                <p class="card-description">2023 • Track</p>
-                            </div>
-                        </div>
-                        <div class="track-card">
-                            <img src="../image/chungtacuahientai.jpg" alt="Track Cover">
-                            <div class="card-info">
-                                <h3 class="card-title">Chúng Ta Của Hiện Tại</h3>
-                                <p class="card-description">2023 • Track</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
             </div>
+
+            <div class="artist-actions">
+                <div class="play-button">
+                    <i class="fas fa-play"></i>
+                </div>
+                <i class="far fa-heart artist-action-icon"></i>
+                <i class="fas fa-plus-square artist-action-icon" title="Add to Your Library"></i>
 
             </div>
 
+            <!-- Popular Tracks Section -->
+            <section class="popular-tracks">
+                <h2>Popular</h2>
+                <div class="track-list">
+                    <div class="track-item popular">
+                        <div class="track-number">1</div>
+                        <div class="track-info">
+                            <img src="../image/chungtacuahientai.jpg" alt="Track Cover" class="track-cover">
+                            <div class="track-details">
+                                <div class="track-title">Chúng Ta Của Hiện Tại</div>
 
-            <!-- Signup Banner -->
+                            </div>
+                        </div>
+                        <div class="track-duration"></div>
+                    </div>
+
+                    <div class="track-item popular">
+                        <div class="track-number">2</div>
+                        <div class="track-info">
+                            <img src="../image/makingmyway.jpg" alt="Track Cover" class="track-cover">
+                            <div class="track-details">
+                                <div class="track-title">Making My Way</div>
+
+                            </div>
+                        </div>
+                        <div class="track-duration"></div>
+                    </div>
+
+                    <div class="track-item popular">
+                        <div class="track-number">3</div>
+                        <div class="track-info">
+                            <img src="../image/muonroimasaocon.jpg" alt="Track Cover" class="track-cover">
+                            <div class="track-details">
+                                <div class="track-title">Muộn Rồi Mà Sao Còn</div>
+
+                            </div>
+                        </div>
+                        <div class="track-duration"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Popular Releases Section -->
+            <section class="popular-releases">
+                <div class="section-header">
+                    <h2>Popular Releases</h2>
+                    <a href="#" class="show-all">Show all</a>
+                </div>
+                <div class="album-section">
+                    <div class="album-card">
+                        <img src="../image/skytour.jpg" alt="Album Cover">
+                        <div class="card-info">
+                            <h3 class="card-title">Sky Tour</h3>
+                            <p class="card-description">Album • 2021</p>
+                        </div>
+                    </div>
+                    <div class="track-card">
+                        <img src="../image/muonroimasaocon.jpg" alt="Track Cover">
+                        <div class="card-info">
+                            <h3 class="card-title">Muộn rồi mà sao còn</h3>
+                            <p class="card-description">2022 • Track</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Albums Section -->
+            <section class="popular-releases">
+                <div class="section-header">
+                    <h2>Albums</h2>
+                    <a href="#" class="show-all">Show all</a>
+                </div>
+                <div class="album-section">
+                    <div class="album-card">
+                        <img src="../image/skytour.jpg" alt="Album Cover">
+                        <div class="card-info">
+                            <h3 class="card-title">Sky Tour</h3>
+                            <p class="card-description">Album • 2021</p>
+                        </div>
+                    </div>
+                    <div class="album-card">
+                        <img src="../image/m-tp.jpg" alt="Album Cover">
+                        <div class="card-info">
+                            <h3 class="card-title">M-TP</h3>
+                            <p class="card-description">Album • 2021</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Track Section -->
+            <section class="popular-releases">
+                <div class="section-header">
+                    <h2>Tracks</h2>
+                    <a href="#" class="show-all">Show all</a>
+                </div>
+                <div class="album-section">
+                    <div class="track-card">
+                        <img src="../image/muonroimasaocon.jpg" alt="Track Cover">
+                        <div class="card-info">
+                            <h3 class="card-title">Muộn rồi mà sao còn</h3>
+                            <p class="card-description">2022 • Track</p>
+                        </div>
+                    </div>
+                    <div class="track-card">
+                        <img src="../image/makingmyway.jpg" alt="Track Cover">
+                        <div class="card-info">
+                            <h3 class="card-title">Making My Way</h3>
+                            <p class="card-description">2023 • Track</p>
+                        </div>
+                    </div>
+                    <div class="track-card">
+                        <img src="../image/chungtacuahientai.jpg" alt="Track Cover">
+                        <div class="card-info">
+                            <h3 class="card-title">Chúng Ta Của Hiện Tại</h3>
+                            <p class="card-description">2023 • Track</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+
+
+        <!-- Signup Banner -->
+        <c:if test="${empty sessionScope.user}">
             <div class="signup-banner">
                 <div class="preview-text">
                     <h3>Preview of MTP-2K</h3>
-                    <p>Sign up to get unlimited songs and podcasts with occasional ads. No credit card needed.</p>
+                    <p>Sign up to get unlimited songs and podcasts with occasional ads. No credit card needed.
+                    </p>
                 </div>
-                <a href="#" class="signup-button">Sign up free</a>
+                <a href="${pageContext.request.contextPath}/login" class="signup-button">Sign up free</a>
             </div>
+        </c:if>
+        <script>
+            // Script cho nút Follow
+            const followButton = document.querySelector('.follow-button');
+            let isFollowing = false;
 
-            <script>
-                // Script cho nút Follow
-                const followButton = document.querySelector('.follow-button');
-                let isFollowing = false;
-
-                followButton.addEventListener('click', function () {
-                    isFollowing = !isFollowing;
-                    if (isFollowing) {
-                        followButton.textContent = 'FOLLOWING';
-                        followButton.classList.add('following');
-                    } else {
-                        followButton.textContent = 'FOLLOW';
-                        followButton.classList.remove('following');
-                    }
-                });
-
-                // Thêm hover effect để hiển thị "UNFOLLOW" khi hover vào nút Following
-                followButton.addEventListener('mouseenter', function () {
-                    if (isFollowing) {
-                        followButton.textContent = 'UNFOLLOW';
-                    }
-                });
-
-                followButton.addEventListener('mouseleave', function () {
-                    if (isFollowing) {
-                        followButton.textContent = 'FOLLOWING';
-                    }
-                });
-
-                function adjustTitleSize() {
-                    const title = document.querySelector('.artist-name');
-                    const length = title.textContent.length;
-
-                    title.removeAttribute('data-length');
-
-                    if (length > 30) {
-                        title.setAttribute('data-length', 'very-long');
-                    } else if (length > 20) {
-                        title.setAttribute('data-length', 'long');
-                    } else if (length > 12) {
-                        title.setAttribute('data-length', 'medium');
-                    }
+            followButton.addEventListener('click', function () {
+                isFollowing = !isFollowing;
+                if (isFollowing) {
+                    followButton.textContent = 'FOLLOWING';
+                    followButton.classList.add('following');
+                } else {
+                    followButton.textContent = 'FOLLOW';
+                    followButton.classList.remove('following');
                 }
+            });
 
-                window.addEventListener('load', adjustTitleSize);
-            </script>
-        </body>
+            // Thêm hover effect để hiển thị "UNFOLLOW" khi hover vào nút Following
+            followButton.addEventListener('mouseenter', function () {
+                if (isFollowing) {
+                    followButton.textContent = 'UNFOLLOW';
+                }
+            });
 
-        </html>
+            followButton.addEventListener('mouseleave', function () {
+                if (isFollowing) {
+                    followButton.textContent = 'FOLLOWING';
+                }
+            });
+
+            function adjustTitleSize() {
+                const title = document.querySelector('.artist-name');
+                const length = title.textContent.length;
+
+                title.removeAttribute('data-length');
+
+                if (length > 30) {
+                    title.setAttribute('data-length', 'very-long');
+                } else if (length > 20) {
+                    title.setAttribute('data-length', 'long');
+                } else if (length > 12) {
+                    title.setAttribute('data-length', 'medium');
+                }
+            }
+
+            window.addEventListener('load', adjustTitleSize);
+        </script>
+
+
+        <!-- Add these modal forms before closing body tag -->
+        <!-- Password Change Modal -->
+        <div id="passwordModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeModal('passwordModal')">&times;</span>
+                <h2 class="modal-title">Change Password</h2>
+                <form action="${pageContext.request.contextPath}/login" method="post">
+                    <input type="hidden" name="action" value="updatePassword">
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password</label>
+                        <input type="password" id="currentPassword" name="currentPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" id="newPassword" name="newPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm New Password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        <span id="passwordError" class="error-message"></span>
+                    </div>
+                    <button type="submit" class="submit-btn" onclick="return validatePasswordForm()">Update
+                        Password</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Email Change Modal -->
+        <div id="emailModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeModal('emailModal')">&times;</span>
+                <h2 class="modal-title">Change Email</h2>
+                <form action="${pageContext.request.contextPath}/login" method="post">
+                    <input type="hidden" name="action" value="updateEmail">
+                    <div class="form-group">
+                        <label for="newEmail">New Email</label>
+                        <input type="email" id="newEmail" name="newEmail" required>
+                        <span id="emailError" class="error-message"></span>
+                    </div>
+                    <button type="submit" class="submit-btn" onclick="return validateEmailForm()">Update
+                        Email</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Phone Change Modal -->
+        <div id="phoneModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeModal('phoneModal')">&times;</span>
+                <h2 class="modal-title">Change Phone Number</h2>
+                <form action="${pageContext.request.contextPath}/login" method="post">
+                    <input type="hidden" name="action" value="updatePhone">
+                    <div class="form-group">
+                        <label for="newPhone">New Phone Number</label>
+                        <input type="tel" id="newPhone" name="newPhone" pattern="[0-9]{10}" required>
+                        <span id="phoneError" class="error-message"></span>
+                    </div>
+                    <button type="submit" class="submit-btn" onclick="return validatePhoneForm()">Update
+                        Phone</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Add profile modal before closing body tag -->
+        <div id="profileModal" class="modal">
+            <div class="modal-content" style="max-width: 600px;">
+                <span class="close-modal" onclick="closeModal('profileModal')">&times;</span>
+                <h2 class="modal-title">Profile Information</h2>
+                <div class="profile-details" style="margin-top: 20px;">
+                    <div class="detail-item">
+                        <label>Username</label>
+                        <p>${sessionScope.user.userName}</p>
+                    </div>
+                    <div class="detail-item">
+                        <label>Full Name</label>
+                        <p>${sessionScope.user.fullName}</p>
+                    </div>
+                    <div class="detail-item">
+                        <label>Email</label>
+                        <p>${sessionScope.user.email}</p>
+                    </div>
+                    <div class="detail-item">
+                        <label>Phone Number</label>
+                        <p>${sessionScope.user.phone}</p>
+                    </div>
+                    <div class="detail-item">
+                        <label>Member Since</label>
+                        <p><fmt:formatDate value="${sessionScope.user.createdAt}" pattern="dd/MM/yyyy"/></p>
+                    </div>
+                    <div class="detail-item">
+                        <label>Subscription Status</label>
+                        <p>
+                            <c:choose>
+                                <c:when test="${sessionScope.user.premiumExpiry == null}">
+                                    <span class="premium-badge standard">Standard Account</span>
+                                </c:when>
+                                <c:otherwise>
+                                    <span class="premium-badge premium">
+                                        Premium until: <fmt:formatDate value="${sessionScope.user.premiumExpiry}" pattern="dd/MM/yyyy"/>
+                                    </span>
+                                </c:otherwise>
+                            </c:choose>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add the delete account modal before closing body tag -->
+        <div id="deleteAccountModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeModal('deleteAccountModal')">&times;</span>
+                <h2 class="modal-title" style="color: #ff4d4d;">Delete Account</h2>
+                <p style="color: #e6f1ff; margin-bottom: 20px;">Are you sure you want to delete your account? This action cannot be undone.</p>
+                <form action="${pageContext.request.contextPath}/login" method="post">
+                    <input type="hidden" name="action" value="deleteAccount">
+                    <div class="form-group">
+                        <label for="confirmPassword">Enter your password to confirm</label>
+                        <input type="password" id="confirmDeletePassword" name="confirmPassword" required>
+                        <span id="deleteAccountError" class="error-message"></span>
+                    </div>
+                    <button type="submit" class="submit-btn" style="background: #ff4d4d; color: white;" onclick="return confirmDelete()">Delete Account</button>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            // Update the onclick handlers in your dropdown menu items
+            document.querySelector('a[href*="change-password"]').onclick = function (e) {
+                e.preventDefault();
+                showModal('passwordModal');
+            };
+
+            document.querySelector('a[href*="change-email"]').onclick = function (e) {
+                e.preventDefault();
+                showModal('emailModal');
+            };
+
+            document.querySelector('a[href*="change-phone"]').onclick = function (e) {
+                e.preventDefault();
+                showModal('phoneModal');
+            };
+
+            function showModal(modalId) {
+                const modal = document.getElementById(modalId);
+                modal.style.display = 'flex';
+            }
+
+            function closeModal(modalId) {
+                const modal = document.getElementById(modalId);
+                modal.style.display = 'none';
+            }
+
+            // Form validation functions
+            function validatePasswordForm() {
+                const newPass = document.getElementById('newPassword').value;
+                const confirmPass = document.getElementById('confirmPassword').value;
+                const errorElement = document.getElementById('passwordError');
+
+                if (newPass !== confirmPass) {
+                    errorElement.textContent = 'Passwords do not match!';
+                    return false;
+                }
+                if (newPass.length < 6) {
+                    errorElement.textContent = 'Password must be at least 6 characters long!';
+                    return false;
+                }
+                return true;
+            }
+
+            function validateEmailForm() {
+                const email = document.getElementById('newEmail').value;
+                const errorElement = document.getElementById('emailError');
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                if (!emailRegex.test(email)) {
+                    errorElement.textContent = 'Please enter a valid email address!';
+                    return false;
+                }
+                return true;
+            }
+
+            function validatePhoneForm() {
+                const phone = document.getElementById('newPhone').value;
+                const errorElement = document.getElementById('phoneError');
+                const phoneRegex = /^[0-9]{10}$/;
+
+                if (!phoneRegex.test(phone)) {
+                    errorElement.textContent = 'Please enter a valid 10-digit phone number!';
+                    return false;
+                }
+                return true;
+            }
+
+            function confirmDelete() {
+                return confirm('Are you absolutely sure you want to delete your account? This action cannot be undone.');
+            }
+        </script>
+
+    </body>
+</html>

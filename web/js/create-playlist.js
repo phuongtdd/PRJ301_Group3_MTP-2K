@@ -1,82 +1,3 @@
-// Sample data for SEARCH - Dữ liệu mẫu cho tìm kiếm
-const sampleSearchSongs = [
-    {
-        id: 1,
-        title: "Đánh Đổi",
-        artist: "OBITO",
-        album: "Đánh Đổi",
-        duration: "0:00",
-        img: "/image/danhdoi.jpg",
-        audioSrc: "/music/danhdoi.mp3",
-    },
-    {
-        id: 2,
-        title: "Thiên Lý Ơi",
-        artist: "Jack",
-        album: "Jack5M",
-        duration: "3:03",
-        img: "/image/thienlyoi.jpg",
-        audioSrc: "/music/thienlyoi.mp3",
-    },
-    {
-        id: 3,
-        title: "Drunk",
-        artist: "Keshi",
-        album: "Keshi",
-        duration: "2:54",
-        img: "/image/drunk.jpg",
-        audioSrc: "/music/drunk.mp3",
-    },
-    {
-        id: 4,
-        title: "Making My Way",
-        artist: "Sơn Tùng",
-        album: "Sky",
-        duration: "3:35",
-        img: "/image/makingmyway.jpg",
-        audioSrc: "/makingmyway.mp3",
-    }
-];
-
-// Sample data for QUEUE - Dữ liệu mẫu cho danh sách phát
-const sampleQueueSongs = [
-    {
-        id: 101, // ID khác với search songs để tránh trùng lặp
-        title: "Muộn rồi mà sao còn",
-        artist: "Sơn Tùng",
-        album: "Sky Tour",
-        duration: "4:35",
-        img: "/image/muonroimasaocon.jpg",
-        audioSrc: "/music/MuonRoiMaSaoCon.mp3",
-    },
-    {
-        id: 102,
-        title: "Đánh Đổi",
-        artist: "Obito",
-        album: "Đánh Đổi",
-        duration: "3:15",
-        img: "/image/danhdoi.jpg",
-        audioSrc: "/music/danhdoi.mp3",
-    },
-    {
-        id: 103,
-        title: "drunk",
-        artist: "Keshi",
-        album: "Keshi",
-        duration: "3:52",
-        img: "/image/drunk.jpg",
-        audioSrc: "/music/drunk.mp3",
-    },
-    {
-        id: 104,
-        title: "Thiên Lý Ơi",
-        artist: "Jack",
-        album: "Jack5M",
-        duration: "4:12",
-        img: "/image/thienlyoi.jpg",
-        audioSrc: "/music/thienlyoi.mp3",
-    }
-];
 
 // Global variables
 let selectedSongs = []
@@ -180,7 +101,9 @@ document.addEventListener("DOMContentLoaded", () => {
   function init() {
     // Set up initial playlist with sample queue data ONLY
     playlist = [...sampleQueueSongs]
-    updateQueue()
+    
+    // Initialize song durations
+    initializeSongDurations()
 
     // Set up event listeners
     searchInput.addEventListener("input", handleSearch)
@@ -331,16 +254,56 @@ document.addEventListener("DOMContentLoaded", () => {
   // Add this function to get audio duration
   async function getAudioDuration(audioSrc) {
     return new Promise((resolve) => {
-      const audio = new Audio(window.contextPath + audioSrc)
-      audio.addEventListener('loadedmetadata', () => {
-        const duration = formatTime(audio.duration)
-        audio.remove() // Cleanup
-        resolve(duration)
-      })
-      audio.addEventListener('error', () => {
-        resolve('0:00') // Return default duration on error
-      })
+        try {
+            const audio = new Audio(window.contextPath + audioSrc)
+            
+            const errorHandler = () => {
+                console.error('Error loading audio:', audioSrc)
+                resolve('0:00')
+                audio.remove()
+            }
+
+            const loadHandler = () => {
+                try {
+                    const duration = formatTime(audio.duration)
+                    resolve(duration)
+                } catch (err) {
+                    console.error('Error getting duration:', err)
+                    resolve('0:00')
+                } finally {
+                    audio.remove()
+                }
+            }
+
+            audio.addEventListener('loadedmetadata', loadHandler)
+            audio.addEventListener('error', errorHandler)
+            
+            // Set a timeout in case the audio load hangs
+            setTimeout(() => {
+                errorHandler()
+            }, 5000)
+        } catch (err) {
+            console.error('Error creating audio element:', err)
+            resolve('0:00')
+        }
     })
+  }
+
+  // Initialize function to update all sample songs with actual durations
+  async function initializeSongDurations() {
+    // Update search songs
+    for (const song of sampleSearchSongs) {
+      song.duration = await getAudioDuration(song.audioSrc)
+    }
+    
+    // Update queue songs
+    for (const song of sampleQueueSongs) {
+      song.duration = await getAudioDuration(song.audioSrc)
+    }
+    
+    // Update initial display
+    updateQueue()
+    populateSearchResults(sampleSearchSongs)
   }
 
   async function createSongRow(song, index, isSelected) {
@@ -536,13 +499,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Update document title
     document.title = `${track.title} - ${track.artist} | MTP-2K`
-
-    // Update now playing in queue
-    updateNowPlayingQueue(track)
   }
 
-  function updateNowPlayingQueue(track) {
+  async function updateNowPlayingQueue(track) {
     nowPlayingQueue.innerHTML = ""
+
+    // Get actual duration
+    const duration = await getAudioDuration(track.audioSrc)
+    track.duration = duration
 
     const queueItem = document.createElement("div")
     queueItem.className = "queue-item active"
@@ -556,7 +520,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="queue-item-title">${track.title}</div>
                 <div class="queue-item-artist">${track.artist}</div>
             </div>
-            <div class="queue-item-duration">${track.duration}</div>
+            <div class="queue-item-duration">${duration}</div>
         `
 
     nowPlayingQueue.appendChild(queueItem)
@@ -1002,7 +966,7 @@ document.addEventListener("DOMContentLoaded", () => {
     queueBtn.classList.remove("active")
   }
 
-  function updateQueue() {
+  async function updateQueue() {
     // Clear current queue
     queueContent.innerHTML = ""
 
@@ -1028,41 +992,50 @@ document.addEventListener("DOMContentLoaded", () => {
       ]
     }
 
-    // Update now playing in queue
-    if (queue[0]) {
-      updateNowPlayingQueue(queue[0])
-    }
-
-    // Populate queue (skip the first item as it's the current track)
-    queue.slice(1).forEach((track, index) => {
-      const queueItem = document.createElement("div")
-      queueItem.className = "queue-item"
-
-      // Add temporary indicator if the track is temporary
-      const temporaryClass = track.isTemporary ? "temporary-track" : ""
-      
-      queueItem.innerHTML = `
-        <div class="queue-item-img">
-          <img src="${window.contextPath + track.img}" alt="${track.title}">
-        </div>
-        <div class="queue-item-info ${temporaryClass}">
-          <div class="queue-item-title">${track.title}</div>
-          <div class="queue-item-artist">${track.artist}</div>
-        </div>
-        <div class="queue-item-duration">${track.duration}</div>
-      `
-
-      queueItem.addEventListener("click", () => {
-        // Find the track in the queue and update currentTrackIndex
-        const trackIndex = playlist.findIndex(t => t.id === track.id)
-        if (trackIndex !== -1) {
-          currentTrackIndex = trackIndex
-          playTrack(playlist[currentTrackIndex])
+    try {
+        // Update now playing in queue
+        if (queue[0]) {
+            const currentDuration = await getAudioDuration(queue[0].audioSrc)
+            queue[0].duration = currentDuration
+            await updateNowPlayingQueue(queue[0])
         }
-      })
 
-      queueContent.appendChild(queueItem)
-    })
+        // Populate queue (skip the first item as it's the current track)
+        for (const track of queue.slice(1)) {
+            const queueItem = document.createElement("div")
+            queueItem.className = "queue-item"
+
+            // Get actual duration for each track
+            const duration = await getAudioDuration(track.audioSrc)
+            
+            // Add temporary indicator if the track is temporary
+            const temporaryClass = track.isTemporary ? "temporary-track" : ""
+            
+            queueItem.innerHTML = `
+                <div class="queue-item-img">
+                    <img src="${window.contextPath + track.img}" alt="${track.title}">
+                </div>
+                <div class="queue-item-info ${temporaryClass}">
+                    <div class="queue-item-title">${track.title}</div>
+                    <div class="queue-item-artist">${track.artist}</div>
+                </div>
+                <div class="queue-item-duration">${duration}</div>
+            `
+
+            queueItem.addEventListener("click", () => {
+                // Find the track in the queue and update currentTrackIndex
+                const trackIndex = playlist.findIndex(t => t.id === track.id)
+                if (trackIndex !== -1) {
+                    currentTrackIndex = trackIndex
+                    playTrack(playlist[currentTrackIndex])
+                }
+            })
+
+            queueContent.appendChild(queueItem)
+        }
+    } catch (error) {
+        console.error("Error updating queue:", error)
+    }
   }
 
   function openExpandedPlayer() {

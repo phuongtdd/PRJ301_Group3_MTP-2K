@@ -1,5 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,676 +13,207 @@
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/library.css">
         <!-- Additional library-specific styles -->
-        <style>
-            .library-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 25px;
-            }
-
-            .library-filters {
-                display: flex;
-                gap: 15px;
-                margin-bottom: 25px;
-            }
-
-            .filter-btn {
-                background-color: #233554;
-                color: #e6f1ff;
-                border: none;
-                padding: 8px 16px;
-                border-radius: 20px;
-                font-size: 14px;
-                cursor: pointer;
-                transition: all 0.3s ease;
-            }
-
-            .filter-btn:hover {
-                background-color: #2c4269;
-            }
-
-            .filter-btn.active {
-                background-color: #64ffda;
-                color: #0a192f;
-            }
-
-            .library-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-                gap: 24px;
-                margin-bottom: 40px;
-            }
-
-            .library-item {
-                background-color: #112240;
-                border-radius: 8px;
-                overflow: hidden;
-                transition: all 0.3s ease;
-                cursor: pointer;
-                position: relative;
-                border: 1px solid rgba(100, 255, 218, 0.1);
-            }
-
-            .library-item:hover {
-                background-color: #1d3a6a;
-                transform: translateY(-5px);
-                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            }
-
-            .library-item-img {
-                width: 100%;
-                aspect-ratio: 1;
-                overflow: hidden;
-                position: relative;
-            }
-
-            .library-item-img img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                transition: transform 0.3s ease;
-            }
-
-            .library-item:hover .library-item-img img {
-                transform: scale(1.05);
-            }
-
-            .library-item-overlay {
-                position: absolute;
-                bottom: 10px;
-                right: 10px;
-                opacity: 0;
-                transition: opacity 0.3s ease;
-            }
-
-            .library-item:hover .library-item-overlay {
-                opacity: 1;
-            }
-
-            .play-btn {
-                width: 45px;
-                height: 45px;
-                border-radius: 50%;
-                background-color: #64ffda;
-                color: #0a192f;
-                border: none;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 18px;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            }
-
-            .play-btn:hover {
-                transform: scale(1.1);
-                background-color: #1ed760;
-            }
-
-            .library-item-info {
-                padding: 16px;
-            }
-
-            .library-item-title {
-                font-size: 16px;
-                font-weight: 600;
-                color: #e6f1ff;
-                margin-bottom: 8px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-
-            .library-item-subtitle {
-                font-size: 14px;
-                color: #a8b2d1;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-
-            .library-item-badge {
-                position: absolute;
-                top: 10px;
-                left: 10px;
-                background-color: rgba(10, 25, 47, 0.7);
-                color: #64ffda;
-                padding: 4px 8px;
-                border-radius: 4px;
-                font-size: 12px;
-                font-weight: 500;
-                backdrop-filter: blur(5px);
-            }
-
-            .section-divider {
-                margin: 40px 0;
-                border-top: 1px solid rgba(100, 255, 218, 0.1);
-            }
-
-            .recent-activity {
-                margin-bottom: 40px;
-            }
-
-            .activity-list {
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .activity-item {
-                display: flex;
-                align-items: center;
-                gap: 15px;
-                padding: 10px;
-                border-radius: 8px;
-                transition: background-color 0.2s ease;
-            }
-
-            .activity-item:hover {
-                background-color: rgba(100, 255, 218, 0.05);
-            }
-
-            .activity-img {
-                width: 50px;
-                height: 50px;
-                border-radius: 4px;
-                overflow: hidden;
-            }
-
-            .activity-img img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
-
-            .activity-info {
-                flex: 1;
-            }
-
-            .activity-title {
-                font-size: 14px;
-                font-weight: 500;
-                color: #e6f1ff;
-                margin-bottom: 4px;
-            }
-
-            .activity-subtitle {
-                font-size: 12px;
-                color: #a8b2d1;
-            }
-
-            .activity-time {
-                font-size: 12px;
-                color: #64ffda;
-            }
-
-            .create-playlist-btn {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                background-color: transparent;
-                color: #64ffda;
-                border: 1px solid #64ffda;
-                padding: 10px 20px;
-                border-radius: 30px;
-                font-size: 14px;
-                cursor: pointer;
-                transition: all 0.3s ease;
-            }
-
-            .create-playlist-btn:hover {
-                background-color: rgba(100, 255, 218, 0.1);
-                transform: translateY(-2px);
-            }
-
-            /* Responsive adjustments for library grid */
-            @media (max-width: 992px) {
-                .library-grid {
-                    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-                    gap: 20px;
-                }
-            }
-
-            @media (max-width: 768px) {
-                .library-grid {
-                    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-                    gap: 15px;
-                }
-
-                .library-filters {
-                    overflow-x: auto;
-                    padding-bottom: 10px;
-                    margin-bottom: 15px;
-                }
-            }
-
-            @media (max-width: 576px) {
-                .library-grid {
-                    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-                    gap: 10px;
-                }
-
-                .library-item-info {
-                    padding: 10px;
-                }
-
-                .library-item-title {
-                    font-size: 14px;
-                }
-
-                .library-item-subtitle {
-                    font-size: 12px;
-                }
-            }
-
-            /* Expanded Playlist/Album View Styles */
-            .expanded-playlist {
-                position: fixed;
-                top: 0;
-                left: 240px;
-                right: 0;
-                bottom: 90px;
-                background: #0a192f;
-                z-index: 1000;
-                display: none;
-                overflow-y: auto;
-                padding: 24px;
-            }
-
-            .expanded-playlist.active {
-                display: block;
-            }
-
-            .expanded-playlist-header {
-                display: flex;
-                gap: 24px;
-                margin-bottom: 32px;
-                padding: 20px;
-                background: #112240;
-                border-radius: 12px;
-                border: 1px solid rgba(100, 255, 218, 0.1);
-            }
-
-            .playlist-cover-large {
-                width: 232px;
-                height: 232px;
-                border-radius: 8px;
-                overflow: hidden;
-            }
-
-            .playlist-cover-large img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
-
-            .playlist-info-large {
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-end;
-                color: #fff;
-            }
-
-            .playlist-type {
-                font-size: 13px;
-                font-weight: 700;
-                text-transform: uppercase;
-                margin-bottom: 8px;
-                color: #64ffda;
-                letter-spacing: 1.5px;
-            }
-
-            .playlist-title-large {
-                font-size: 72px;
-                font-weight: 900;
-                margin: 0;
-                margin-bottom: 16px;
-                color: #fff;
-                letter-spacing: -2px;
-                line-height: 1.1;
-            }
-
-            .playlist-description {
-                font-size: 14px;
-                color: #a8b2d1;
-                margin-bottom: 16px;
-                line-height: 1.6;
-                max-width: 800px;
-            }
-
-            .playlist-details-large {
-                font-size: 14px;
-                color: #e6f1ff;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
-
-            .playlist-owner {
-                font-weight: 600;
-            }
-
-            .playlist-stats {
-                color: #a8b2d1;
-            }
-
-            .expanded-playlist-controls {
-                padding: 24px 0;
-                display: flex;
-                align-items: center;
-                gap: 32px;
-            }
-
-            .playlist-play-btn {
-                width: 56px;
-                height: 56px;
-                border-radius: 50%;
-                background-color: #64ffda;
-                border: none;
-                color: #0a192f;
-                font-size: 24px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                transition: all 0.3s ease;
-            }
-
-            .playlist-play-btn:hover {
-                transform: scale(1.1);
-                background-color: #1ed760;
-            }
-
-            .playlist-songs-header {
-                display: grid;
-                grid-template-columns: 50px 1fr 1fr 100px;
-                padding: 12px 16px;
-                margin-bottom: 16px;
-                color: #64ffda;
-                font-size: 14px;
-                font-weight: 600;
-                letter-spacing: 1px;
-                text-transform: uppercase;
-                background: #112240;
-                border-radius: 8px;
-                border: 1px solid rgba(100, 255, 218, 0.1);
-            }
-
-            .playlist-songs-list {
-                display: flex;
-                flex-direction: column;
-                gap: 1px;
-            }
-
-            .playlist-song-item {
-                display: grid;
-                grid-template-columns: 50px 1fr 1fr 100px;
-                padding: 8px 16px;
-                color: #fff;
-                border-radius: 4px;
-                cursor: pointer;
-                transition: background-color 0.2s ease;
-                min-height: 60px;
-                align-items: center;
-                border-bottom: 1px solid rgba(100, 255, 218, 0.1);
-            }
-
-            .playlist-song-item:hover {
-                background-color: rgba(255,255,255,0.1);
-            }
-
-            .song-number {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: #b3b3b3;
-                font-size: 14px;
-                width: 100%;
-                height: 100%;
-            }
-
-            .song-info {
-                display: flex;
-                align-items: center;
-                gap: 16px;
-            }
-
-            .song-info img {
-                width: 40px;
-                height: 40px;
-                object-fit: cover;
-                border-radius: 4px;
-            }
-
-            .song-details {
-                display: flex;
-                flex-direction: column;
-            }
-
-            .song-title {
-                color: #fff;
-                margin-bottom: 4px;
-            }
-
-            .song-artist {
-                color: #b3b3b3;
-                font-size: 14px;
-            }
-
-            .song-album {
-                color: #b3b3b3;
-                display: flex;
-                align-items: center;
-            }
-
-            .song-duration {
-                color: #b3b3b3;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 100%;
-            }
-
-            .song-duration-header {
-                text-align: center;
-            }
-
-            .expanded-playlist-close {
-                position: fixed;
-                top: 24px;
-                right: 32px;
-                background: none;
-                border: none;
-                color: #fff;
-                font-size: 24px;
-                cursor: pointer;
-                width: 32px;
-                height: 32px;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: all 0.3s ease;
-            }
-
-            .expanded-playlist-close:hover {
-                background-color: rgba(255,255,255,0.1);
-            }
-
-            @media (max-width: 768px) {
-                .expanded-playlist {
-                    left: 0;
-                }
-
-                .playlist-cover-large {
-                    width: 192px;
-                    height: 192px;
-                }
-
-                .playlist-title-large {
-                    font-size: 48px;
-                }
-            }
-
-            body {
-                margin: 0;
-                padding: 0;
-                font-family: 'Poppins', sans-serif;
-                background-color: #0a192f;
-                color: #e6f1ff;
-                overflow-y: scroll !important;
-            }
-
-
-
-            .progress-tooltip {
-                position: absolute;
-                top: -30px;
-                left: 0;
-                background: #112240;
-                color: #fff;
-                padding: 4px 8px;
-                border-radius: 4px;
-                font-size: 12px;
-                pointer-events: none;
-                opacity: 0;
-                transition: opacity 0.2s ease;
-            }
-
-            .progress-bar:hover .progress-tooltip,
-            .expanded-progress-bar:hover .progress-tooltip {
-                opacity: 1;
-            }
-        </style>
 
         <!-- Add base URL for JavaScript -->
         <script>
-        window.contextPath = '${pageContext.request.contextPath}';
-        // samleSongs là tất cả các nhạc có sẵn
-        const sampleSongs = [
-            {
-                id: 1,
-                title: "Đánh Đổi",
-                artist: "OBITO",
-                album: "Đánh Đổi",
-                duration: "0:00",
-                img: "/image/danhdoi.jpg",
-                audioSrc: "/music/danhdoi.mp3",
-            },
-            {
-                id: 2,
-                title: "Thiên Lý Ơi",
-                artist: "Jack",
-                album: "Jack5M",
-                duration: "0:00",
-                img: "/image/thienlyoi.jpg",
-                audioSrc: "/music/thienlyoi.mp3",
-            },
-            {
-                id: 3,
-                title: "Drunk",
-                artist: "Keshi",
-                album: "Keshi",
-                duration: "0:00",
-                img: "/image/drunk.jpg",
-                audioSrc: "/music/drunk.mp3",
-            },
-            {
-                id: 4,
-                title: "Making My Way",
-                artist: "Sơn Tùng",
-                album: "Sky",
-                duration: "0:00",
-                img: "/image/makingmyway.jpg",
-                audioSrc: "/music/makingmyway.mp3",
-            },
-            {
-                id: 5,
-                title: "Muộn rồi mà sao còn",
-                artist: "Sơn Tùng",
-                album: "Sky Tour",
-                duration: "0:00",
-                img: "/image/muonroimasaocon.jpg",
-                audioSrc: "/music/MuonRoiMaSaoCon.mp3",
-            }
-        ];
+            window.contextPath = '${pageContext.request.contextPath}';
+            // samleSongs là tất cả các nhạc có sẵn
+            const sampleSongs = [
+                {
+                    id: 1,
+                    title: "Đánh Đổi",
+                    artist: "OBITO",
+                    album: "Đánh Đổi",
+                    duration: "0:00",
+                    img: "/image/danhdoi.jpg",
+                    audioSrc: "/music/danhdoi.mp3",
+                },
+                {
+                    id: 2,
+                    title: "Thiên Lý Ơi",
+                    artist: "Jack",
+                    album: "Jack5M",
+                    duration: "0:00",
+                    img: "/image/thienlyoi.jpg",
+                    audioSrc: "/music/thienlyoi.mp3",
+                },
+                {
+                    id: 3,
+                    title: "Drunk",
+                    artist: "Keshi",
+                    album: "Keshi",
+                    duration: "0:00",
+                    img: "/image/drunk.jpg",
+                    audioSrc: "/music/drunk.mp3",
+                },
+                {
+                    id: 4,
+                    title: "Making My Way",
+                    artist: "Sơn Tùng",
+                    album: "Sky",
+                    duration: "0:00",
+                    img: "/image/makingmyway.jpg",
+                    audioSrc: "/music/makingmyway.mp3",
+                },
+                {
+                    id: 5,
+                    title: "Muộn rồi mà sao còn",
+                    artist: "Sơn Tùng",
+                    album: "Sky Tour",
+                    duration: "0:00",
+                    img: "/image/muonroimasaocon.jpg",
+                    audioSrc: "/music/MuonRoiMaSaoCon.mp3",
+                }
+            ];
 
-        // Dữ liệu mẫu cho thư viện
-        // nó sẽ lấy từ sameSongs cho playlist, ví dụ songs: [sampleSongs[0], sampleSongs[1]]
-        const samplePlaylists = [
-            {
-                id: 1,
-                title: "My Favorites",
-                type: "Playlist",
-                img: "/image/playlist-image.jpg",
-                description: "A personal collection of all-time favorites. These songs have been with me through thick and thin, each one holding special memories and emotions.",
-                songs: [sampleSongs[0], sampleSongs[1], sampleSongs[2], sampleSongs[3], sampleSongs[4]]
-            },
-            {
-                id: 2,
-                title: "Chill Vibes",
-                type: "Playlist",
-                img: "/image/playlist-image.jpg",
-                isNew: true,
-                description: "Perfect for relaxation and unwinding. Smooth melodies and gentle rhythms create a peaceful atmosphere for your quiet moments.",
-                songs: [sampleSongs[1], sampleSongs[2], sampleSongs[4]]
-            },
-            {
-                id: 3,
-                title: "Late Night Drive",
-                type: "Playlist",
-                img: "/image/playlist-image.jpg",
-                description: "Your companion for those midnight drives. A mix of atmospheric tracks that perfectly complement the quiet of the night and the open road.",
-                songs: [sampleSongs[2], sampleSongs[0], sampleSongs[3]]
-            },
-            {
-                id: 4,
-                title: "Workout Mix",
-                type: "Playlist",
-                img: "/image/playlist-image.jpg",
-                description: "High-energy tracks to fuel your workout. Keep your motivation high and your energy higher with this powerful collection of songs.",
-                songs: [sampleSongs[3], sampleSongs[4], sampleSongs[1]]
-            }
-        ];
+            // Dữ liệu mẫu cho thư viện
+            // nó sẽ lấy từ sameSongs cho playlist, ví dụ songs: [sampleSongs[0], sampleSongs[1]]
+            const samplePlaylists = [
+                {
+                    id: 1,
+                    title: "My Favorites",
+                    type: "Playlist",
+                    img: "/image/playlist-image.jpg",
+                    description: "A personal collection of all-time favorites. These songs have been with me through thick and thin, each one holding special memories and emotions.",
+                    songs: [sampleSongs[0], sampleSongs[1], sampleSongs[2], sampleSongs[3], sampleSongs[4]]
+                },
+                {
+                    id: 2,
+                    title: "Chill Vibes",
+                    type: "Playlist",
+                    img: "/image/playlist-image.jpg",
+                    isNew: true,
+                    description: "Perfect for relaxation and unwinding. Smooth melodies and gentle rhythms create a peaceful atmosphere for your quiet moments.",
+                    songs: [sampleSongs[1], sampleSongs[2], sampleSongs[4]]
+                },
+                {
+                    id: 3,
+                    title: "Late Night Drive",
+                    type: "Playlist",
+                    img: "/image/playlist-image.jpg",
+                    description: "Your companion for those midnight drives. A mix of atmospheric tracks that perfectly complement the quiet of the night and the open road.",
+                    songs: [sampleSongs[2], sampleSongs[0], sampleSongs[3]]
+                },
+                {
+                    id: 4,
+                    title: "Workout Mix",
+                    type: "Playlist",
+                    img: "/image/playlist-image.jpg",
+                    description: "High-energy tracks to fuel your workout. Keep your motivation high and your energy higher with this powerful collection of songs.",
+                    songs: [sampleSongs[3], sampleSongs[4], sampleSongs[1]]
+                }
+            ];
 
-        // tương tự playlist
-        const sampleAlbums = [
-            {
-                id: 5,
-                title: "Sky Tour",
-                type: "Album",
-                artist: "Sơn Tùng",
-                img: "/image/muonroimasaocon.jpg",
-                description: "A groundbreaking album that showcases Sơn Tùng's unique artistry and vision. Each track tells a story of ambition, love, and personal growth.",
-                songs: [sampleSongs[4]]
-            },
-            {
-                id: 6,
-                title: "Đánh Đổi",
-                type: "Album",
-                artist: "OBITO",
-                img: "/image/danhdoi.jpg",
-                description: "OBITO's masterful blend of modern sounds and emotional depth. An album that explores the complexities of life's choices and their consequences.",
-                songs: [sampleSongs[0]]
-            }
-        ];
+            // tương tự playlist
+            const sampleAlbums = [
+                {
+                    id: 5,
+                    title: "Sky Tour",
+                    type: "Album",
+                    artist: "Sơn Tùng",
+                    img: "/image/muonroimasaocon.jpg",
+                    description: "A groundbreaking album that showcases Sơn Tùng's unique artistry and vision. Each track tells a story of ambition, love, and personal growth.",
+                    songs: [sampleSongs[4]]
+                },
+                {
+                    id: 6,
+                    title: "Đánh Đổi",
+                    type: "Album",
+                    artist: "OBITO",
+                    img: "/image/danhdoi.jpg",
+                    description: "OBITO's masterful blend of modern sounds and emotional depth. An album that explores the complexities of life's choices and their consequences.",
+                    songs: [sampleSongs[0]]
+                }
+            ];
         </script>
     </head>
 
     <body>
+
+        <div id="toast" class="toast"></div>
+        <script>
+            window.onload = function () {
+                const message = "${sessionScope.message}";
+                const messageType = "${sessionScope.messageType}";
+                if (message && messageType) {
+                    const toast = document.getElementById('toast');
+                    toast.textContent = message;
+                    toast.className = `toast ${messageType}`;
+                    toast.classList.add('show');
+                    setTimeout(() => {
+                        toast.classList.remove('show');
+                    }, 3000);
+            <%
+                session.removeAttribute("message");
+                session.removeAttribute("messageType");
+            %>
+                }
+            }
+        </script>
+
+        <!------------------------------- USER LOGIN -------------------------------------->
+        <div class="auth-buttons">
+            <c:choose>
+                <c:when test="${not empty sessionScope.user}">
+                    <div class="user-menu">
+                        <div class="user-icon" onclick="this.classList.toggle('active')">
+                            <i class="fas fa-user-circle"></i>
+                            <div class="user-dropdown">
+                                <p><strong>${sessionScope.user.fullName}</strong></p>
+                                <p>${sessionScope.user.email}</p>
+                                <div class="dropdown-menu">
+                                    <a href="#" class="dropdown-item"
+                                       onclick="showModal('profileModal'); return false;">
+                                        <i class="fas fa-user"></i> Profile
+                                    </a>
+                                    <a href="#" class="dropdown-item"
+                                       onclick="showModal('passwordModal'); return false;">
+                                        <i class="fas fa-key"></i> Change Password
+                                    </a>
+                                    <a href="#" class="dropdown-item"
+                                       onclick="showModal('emailModal'); return false;">
+                                        <i class="fas fa-envelope"></i> Change Email
+                                    </a>
+                                    <a href="#" class="dropdown-item"
+                                       onclick="showModal('phoneModal'); return false;">
+                                        <i class="fas fa-phone"></i> Change Phone Number
+                                    </a>
+                                    <div class="divider"></div>
+                                    <a href="#" class="dropdown-item" onclick="showModal('deleteAccountModal');
+                                            return false;" style="color: #ff4d4d;">
+                                        <i class="fas fa-trash-alt"></i> Delete Account
+                                    </a>
+                                    <div class="divider"></div>
+                                    <a href="${pageContext.request.contextPath}/login?action=logout"
+                                       class="logout-button">
+                                        <i class="fas fa-sign-out-alt"></i> Logout
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </c:when>
+            </c:choose>
+        </div>
+
+        <!------------------------------- USER LOGIN -------------------------------------->
+
         <div class="sidebar">
             <div class="logo-container">
-                <!-- Update logo image path -->
-                <img src="${pageContext.request.contextPath}/image/mtp2k-logo.png" alt="MTP-2K" style="border-radius: 50%;">
+                <img src="${pageContext.request.contextPath}/image/mtp2k-logo.png" alt="MTP-2K"
+                     style="border-radius: 50%;">
             </div>
             <ul class="nav-links">
-                <li><a href="home"><i class="fas fa-home"></i> Home</a></li>
-                <li><a href="${pageContext.request.contextPath}/home/search"><i class="fas fa-search"></i> Search</a></li>
-                <li style="margin-top: 0px; background: rgba(100, 255, 218, 0.1);"><a href="${pageContext.request.contextPath}/home/library" style="color: #64ffda;"><i class="fas fa-book"></i> Your Library</a></li>
-                <li style="margin-top: 24px;"><a href="${pageContext.request.contextPath}/home/create-playlist"><i class="fas fa-plus-square"></i> Create Playlist</a></li>
-                <li><a href="${pageContext.request.contextPath}/home/liked-songs"><i class="fas fa-heart"></i> Liked Songs</a></li>
+                <li><a href="${pageContext.request.contextPath}/home"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="${pageContext.request.contextPath}/home/search"><i class="fas fa-search"></i>
+                        Search</a></li>
+                <li><a href="${pageContext.request.contextPath}/home/library"><i class="fas fa-book"></i> Your
+                        Library</a></li>
+                <li style="margin-top: 24px"><a
+                        href="${pageContext.request.contextPath}/home/create-playlist    "><i
+                            class="fas fa-plus-square"></i> Create Playlist</a></li>
+                <li><a href="${pageContext.request.contextPath}/home/topsong"><i class="fas fa-heart"></i>
+                        Top Songs</a></li>
             </ul>
             <div class="footer-links">
                 <a href="#">Legal</a>
@@ -838,75 +371,91 @@
                 </div>
             </div>
         </div>
-
-        <!-- Music Player -->
-        <div class="music-player">     
-            <div class="now-playing">
-                <div class="now-playing-img" id="nowPlayingImg">
-                    <!-- COMMENT: Default album art image path in the image folder -->
-                    <img id="currentSongImg" src="${pageContext.request.contextPath}/image/m-tp.jpg" alt="Now Playing">
+        <!--------------------------------------------------- SIGNUPBANNER ----------------------------------------------------->
+        <c:if test="${empty sessionScope.user}">
+            <div class="signup-banner">
+                <div class="preview-text">
+                    <h3>Preview of MTP-2K</h3>
+                    <p>Sign up to get unlimited songs and podcasts with occasional ads. No credit card needed.
+                    </p>
                 </div>
-                <div class="now-playing-info">
-                    <div class="now-playing-title" id="currentSongTitle">Not Playing</div>
-                    <div class="now-playing-artist" id="currentSongArtist"></div>
-                </div>
-                <div class="now-playing-actions">
-                    <button class="option-btn" id="expandBtn" title="Expand">
-                        <i class="fas fa-expand-alt"></i>
-                    </button>
-                </div>
+                <a href="${pageContext.request.contextPath}/login" class="signup-button">Sign up free</a>
             </div>
+        </c:if>
 
-            <div class="player-controls">
-                <div class="control-buttons">
-                    <button class="control-btn" id="shuffleBtn" title="Shuffle">
-                        <i class="fas fa-random"></i>
-                    </button>
-                    <button class="control-btn" id="prevBtn" title="Previous">
-                        <i class="fas fa-step-backward"></i>
-                    </button>
-                    <button class="play-pause-btn" id="playPauseBtn" title="Play/Pause">
-                        <i class="fas fa-play"></i>
-                    </button>
-                    <button class="control-btn" id="nextBtn" title="Next">
-                        <i class="fas fa-step-forward"></i>
-                    </button>
-                    <button class="control-btn" id="repeatBtn" title="Repeat">
-                        <i class="fas fa-redo"></i>
-                    </button>
-                </div>
+        <!-------------------------------------------------------- Music Player ----------------------------------------------------->
+        <c:if test="${ not empty sessionScope.user}">
 
-                <div class="progress-container">
-                    <span class="progress-time" id="currentTime">0:00</span>
-                    <div class="progress-bar" id="progressBar">
-                        <div class="progress" id="progress">
-                            <div class="progress-handle"></div>
-                        </div>
-                        <div class="progress-tooltip" id="progressTooltip">0:00</div>
+            <div class="music-player">     
+                <div class="now-playing">
+                    <div class="now-playing-img" id="nowPlayingImg">
+                        <!-- COMMENT: Default album art image path in the image folder -->
+                        <img id="currentSongImg" src="${pageContext.request.contextPath}/image/m-tp.jpg" alt="Now Playing">
                     </div>
-                    <span class="progress-time" id="totalTime">0:00</span>
+                    <div class="now-playing-info">
+                        <div class="now-playing-title" id="currentSongTitle">Not Playing</div>
+                        <div class="now-playing-artist" id="currentSongArtist"></div>
+                    </div>
+                    <div class="now-playing-actions">
+                        <button class="option-btn" id="expandBtn" title="Expand">
+                            <i class="fas fa-expand-alt"></i>
+                        </button>
+                    </div>
                 </div>
-            </div>
 
-            <div class="player-options">
-                <button class="option-btn" id="queueBtn" title="Queue">
-                    <i class="fas fa-list"></i>
-                </button>
-                <div class="volume-control">
-                    <button class="option-btn" id="volumeBtn" title="Volume">
-                        <i class="fas fa-volume-up"></i>
-                    </button>
-                    <div class="volume-slider-container">
-                        <div class="volume-bar" id="volumeBar">
-                            <div class="volume-level" id="volumeLevel">
-                                <div class="volume-handle"></div>
+                <div class="player-controls">
+                    <div class="control-buttons">
+                        <button class="control-btn" id="shuffleBtn" title="Shuffle">
+                            <i class="fas fa-random"></i>
+                        </button>
+                        <button class="control-btn" id="prevBtn" title="Previous">
+                            <i class="fas fa-step-backward"></i>
+                        </button>
+                        <button class="play-pause-btn" id="playPauseBtn" title="Play/Pause">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <button class="control-btn" id="nextBtn" title="Next">
+                            <i class="fas fa-step-forward"></i>
+                        </button>
+                        <button class="control-btn" id="repeatBtn" title="Repeat">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                    </div>
+
+                    <div class="progress-container">
+                        <span class="progress-time" id="currentTime">0:00</span>
+                        <div class="progress-bar" id="progressBar">
+                            <div class="progress" id="progress">
+                                <div class="progress-handle"></div>
                             </div>
-                            <div class="volume-tooltip" id="volumeTooltip">70%</div>
+                            <div class="progress-tooltip" id="progressTooltip">0:00</div>
+                        </div>
+                        <span class="progress-time" id="totalTime">0:00</span>
+                    </div>
+                </div>
+
+                <div class="player-options">
+                    <button class="option-btn" id="queueBtn" title="Queue">
+                        <i class="fas fa-list"></i>
+                    </button>
+                    <div class="volume-control">
+                        <button class="option-btn" id="volumeBtn" title="Volume">
+                            <i class="fas fa-volume-up"></i>
+                        </button>
+                        <div class="volume-slider-container">
+                            <div class="volume-bar" id="volumeBar">
+                                <div class="volume-level" id="volumeLevel">
+                                    <div class="volume-handle"></div>
+                                </div>
+                                <div class="volume-tooltip" id="volumeTooltip">70%</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </c:if>
+        <!-------------------------------------------------------- Music Player ----------------------------------------------------->
+
 
         <!-- Queue Panel -->
         <div class="queue-panel" id="queuePanel">
@@ -1092,6 +641,205 @@
                     });
                 });
             });
+        </script>
+
+        <!-- Add these modal forms before closing body tag -->
+        <!-- Password Change Modal -->
+        <div id="passwordModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeModal('passwordModal')">&times;</span>
+                <h2 class="modal-title">Change Password</h2>
+                <form action="${pageContext.request.contextPath}/login" method="post">
+                    <input type="hidden" name="action" value="updatePassword">
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password</label>
+                        <input type="password" id="currentPassword" name="currentPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" id="newPassword" name="newPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm New Password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        <span id="passwordError" class="error-message"></span>
+                    </div>
+                    <button type="submit" class="submit-btn" onclick="return validatePasswordForm()">Update
+                        Password</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Email Change Modal -->
+        <div id="emailModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeModal('emailModal')">&times;</span>
+                <h2 class="modal-title">Change Email</h2>
+                <form action="${pageContext.request.contextPath}/login" method="post">
+                    <input type="hidden" name="action" value="updateEmail">
+                    <div class="form-group">
+                        <label for="newEmail">New Email</label>
+                        <input type="email" id="newEmail" name="newEmail" required>
+                        <span id="emailError" class="error-message"></span>
+                    </div>
+                    <button type="submit" class="submit-btn" onclick="return validateEmailForm()">Update
+                        Email</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Phone Change Modal -->
+        <div id="phoneModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeModal('phoneModal')">&times;</span>
+                <h2 class="modal-title">Change Phone Number</h2>
+                <form action="${pageContext.request.contextPath}/login" method="post">
+                    <input type="hidden" name="action" value="updatePhone">
+                    <div class="form-group">
+                        <label for="newPhone">New Phone Number</label>
+                        <input type="tel" id="newPhone" name="newPhone" pattern="[0-9]{10}" required>
+                        <span id="phoneError" class="error-message"></span>
+                    </div>
+                    <button type="submit" class="submit-btn" onclick="return validatePhoneForm()">Update
+                        Phone</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Add profile modal before closing body tag -->
+        <div id="profileModal" class="modal">
+            <div class="modal-content" style="max-width: 600px;">
+                <span class="close-modal" onclick="closeModal('profileModal')">&times;</span>
+                <h2 class="modal-title">Profile Information</h2>
+                <div class="profile-details" style="margin-top: 20px;">
+                    <div class="detail-item">
+                        <label>Username</label>
+                        <p>${sessionScope.user.userName}</p>
+                    </div>
+                    <div class="detail-item">
+                        <label>Full Name</label>
+                        <p>${sessionScope.user.fullName}</p>
+                    </div>
+                    <div class="detail-item">
+                        <label>Email</label>
+                        <p>${sessionScope.user.email}</p>
+                    </div>
+                    <div class="detail-item">
+                        <label>Phone Number</label>
+                        <p>${sessionScope.user.phone}</p>
+                    </div>
+                    <div class="detail-item">
+                        <label>Member Since</label>
+                        <p><fmt:formatDate value="${sessionScope.user.createdAt}" pattern="dd/MM/yyyy"/></p>
+                    </div>
+                    <div class="detail-item">
+                        <label>Subscription Status</label>
+                        <p>
+                            <c:choose>
+                                <c:when test="${sessionScope.user.premiumExpiry == null}">
+                                    <span class="premium-badge standard">Standard Account</span>
+                                </c:when>
+                                <c:otherwise>
+                                    <span class="premium-badge premium">
+                                        Premium until: <fmt:formatDate value="${sessionScope.user.premiumExpiry}" pattern="dd/MM/yyyy"/>
+                                    </span>
+                                </c:otherwise>
+                            </c:choose>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add the delete account modal before closing body tag -->
+        <div id="deleteAccountModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeModal('deleteAccountModal')">&times;</span>
+                <h2 class="modal-title" style="color: #ff4d4d;">Delete Account</h2>
+                <p style="color: #e6f1ff; margin-bottom: 20px;">Are you sure you want to delete your account? This action cannot be undone.</p>
+                <form action="${pageContext.request.contextPath}/login" method="post">
+                    <input type="hidden" name="action" value="deleteAccount">
+                    <div class="form-group">
+                        <label for="confirmPassword">Enter your password to confirm</label>
+                        <input type="password" id="confirmDeletePassword" name="confirmPassword" required>
+                        <span id="deleteAccountError" class="error-message"></span>
+                    </div>
+                    <button type="submit" class="submit-btn" style="background: #ff4d4d; color: white;" onclick="return confirmDelete()">Delete Account</button>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            // Update the onclick handlers in your dropdown menu items
+            document.querySelector('a[href*="change-password"]').onclick = function (e) {
+                e.preventDefault();
+                showModal('passwordModal');
+            };
+
+            document.querySelector('a[href*="change-email"]').onclick = function (e) {
+                e.preventDefault();
+                showModal('emailModal');
+            };
+
+            document.querySelector('a[href*="change-phone"]').onclick = function (e) {
+                e.preventDefault();
+                showModal('phoneModal');
+            };
+
+            function showModal(modalId) {
+                const modal = document.getElementById(modalId);
+                modal.style.display = 'flex';
+            }
+
+            function closeModal(modalId) {
+                const modal = document.getElementById(modalId);
+                modal.style.display = 'none';
+            }
+
+            // Form validation functions
+            function validatePasswordForm() {
+                const newPass = document.getElementById('newPassword').value;
+                const confirmPass = document.getElementById('confirmPassword').value;
+                const errorElement = document.getElementById('passwordError');
+
+                if (newPass !== confirmPass) {
+                    errorElement.textContent = 'Passwords do not match!';
+                    return false;
+                }
+                if (newPass.length < 6) {
+                    errorElement.textContent = 'Password must be at least 6 characters long!';
+                    return false;
+                }
+                return true;
+            }
+
+            function validateEmailForm() {
+                const email = document.getElementById('newEmail').value;
+                const errorElement = document.getElementById('emailError');
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                if (!emailRegex.test(email)) {
+                    errorElement.textContent = 'Please enter a valid email address!';
+                    return false;
+                }
+                return true;
+            }
+
+            function validatePhoneForm() {
+                const phone = document.getElementById('newPhone').value;
+                const errorElement = document.getElementById('phoneError');
+                const phoneRegex = /^[0-9]{10}$/;
+
+                if (!phoneRegex.test(phone)) {
+                    errorElement.textContent = 'Please enter a valid 10-digit phone number!';
+                    return false;
+                }
+                return true;
+            }
+
+            function confirmDelete() {
+                return confirm('Are you absolutely sure you want to delete your account? This action cannot be undone.');
+            }
         </script>
     </body>
 </html>

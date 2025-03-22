@@ -1,4 +1,4 @@
-// Library page specific functionality
+    // Library page specific functionality
 document.addEventListener("DOMContentLoaded", () => {
     // Các biến toàn cục cho trình phát nhạc
     let audioPlayer = document.getElementById("audioPlayer");

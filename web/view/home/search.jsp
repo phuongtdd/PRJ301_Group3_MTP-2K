@@ -10,915 +10,51 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Music Library</title>
         <link rel="stylesheet" href="styles.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
               rel="stylesheet">
-        <style>
-
-            /* Custom scrollbar styles */
-            ::-webkit-scrollbar {
-                width: 8px;
-            }
-
-            ::-webkit-scrollbar-track {
-                background: rgba(2, 12, 27, 0.95);
-            }
-
-            ::-webkit-scrollbar-thumb {
-                background: #64ffda;
-                border-radius: 4px;
-            }
-
-            ::-webkit-scrollbar-thumb:hover {
-                background: #4ad3b3;
-            }
-            /* Keep existing styles */
-            body {
-                display: flex;
-                background-color: #0a192f;
-                color: #e6f1ff;
-                font-family: 'Poppins', sans-serif;
-                margin: 0;
-            }
-
-            /* Keep all existing styles up to main-content */
-
-            .main-content {
-                margin-left: 260px;
-                padding: 30px;
-                width: calc(100% - 290px);
-                margin-bottom: 100px;
-            }
-
-            /* Add new search bar styles */
-            .search-container {
-                margin-bottom: 30px;
-                padding: 15px 0;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                background: #112240;
-                border-radius: 10px;
-                padding: 15px 25px;
-                margin-top: -10px;
-            }
-
-            .search-bar {
-                background: #283447;
-                border-radius: 25px;
-                padding: 12px 20px;
-                display: flex;
-                align-items: center;
-                width: 400px;
-            }
-
-            .search-bar input {
-                background: transparent;
-                border: none;
-                color: #e6f1ff;
-                font-size: 14px;
-                width: 100%;
-                margin-left: 10px;
-                outline: none;
-            }
-
-            .search-bar input::placeholder {
-                color: #a8b2d1;
-            }
-
-            .auth-buttons {
-                display: flex;
-                gap: 20px;
-                align-items: center;
-            }
-
-            .login-btn, .signup-btn {
-                padding: 10px 25px;
-                border-radius: 20px;
-                font-weight: 600;
-                font-size: 14px;
-                text-decoration: none;
-                transition: all 0.3s ease;
-            }
-
-            .login-btn {
-                background: #64ffda;
-                color: #0a192f;
-                border: 1px solid #64ffda;
-
-            }
-
-            .login-btn:hover {
-                background: transparent;
-                color: #64ffda;
-            }
-
-            .signup-btn {
-                color: #64ffda;
-                border: 1px solid #64ffda;
-                background: transparent;
-            }
-
-            .signup-btn:hover {
-                background: rgba(100, 255, 218, 0.1);
-            }
-
-            /* Add genre grid styles */
-            .genre-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-                gap: 24px;
-                margin-bottom: 40px;
-            }
-
-            .genre-card {
-                background: #112240;
-                border-radius: 8px;
-                padding: 20px;
-                position: relative;
-                overflow: hidden;
-                min-height: 180px;
-                transition: all 0.3s ease;
-            }
-
-            .genre-card:hover {
-                background: #233554;
-                transform: scale(1.02);
-            }
-
-            .genre-title {
-                color: #e6f1ff;
-                font-size: 24px;
-                font-weight: 700;
-                margin: 0;
-                position: relative;
-                z-index: 2;
-            }
-
-            .sidebar {
-                width: 240px;
-                background: rgba(2, 12, 27, 0.95);
-                padding: 20px;
-                height: calc(100vh - 60px);
-                position: fixed;
-                display: flex;
-                flex-direction: column;
-                overflow-y: auto;
-                padding-bottom: 80px;
-                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
-                backdrop-filter: blur(10px);
-            }
-
-            .logo-container {
-                margin-bottom: 30px;
-                text-align: center;
-            }
-
-            .logo-container img {
-                width: 120px;
-                height: 120px;
-                border-radius: 50%;
-                box-shadow: 0 0 20px rgba(100, 255, 218, 0.2);
-                transition: transform 0.3s ease;
-            }
-
-            .logo-container img:hover {
-                transform: scale(1.05);
-            }
-
-            .nav-links {
-                list-style: none;
-                padding: 0;
-                margin: 0;
-            }
-
-            .nav-links li {
-                padding: 12px 15px;
-                margin: 5px 0;
-                border-radius: 8px;
-                display: flex;
-                align-items: center;
-                gap: 15px;
-                transition: all 0.3s ease;
-            }
-
-            .nav-links li:hover {
-                background: rgba(23, 42, 69, 0.8);
-                transform: translateX(5px);
-            }
-
-            .nav-links a {
-                color: #a8b2d1;
-                text-decoration: none;
-                font-size: 14px;
-                font-weight: 500;
-                transition: color 0.3s ease;
-                width: 100%;
-            }
-
-            .nav-links a:hover {
-                color: #64ffda;
-            }
-
-            .nav-links i {
-                font-size: 16px;
-                width: 20px;
-                text-align: center;
-            }
-
-            .footer-links {
-                margin-top: auto;
-                padding: 15px 0;
-                border-top: 1px solid rgba(100, 255, 218, 0.1);
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-                padding-bottom: 70px;
-            }
-
-            .footer-links a {
-                color: #a8b2d1;
-                text-decoration: none;
-                font-size: 12px;
-                transition: color 0.3s ease;
-                padding: 4px 0;
-            }
-
-            .footer-links a:hover {
-                color: #64ffda;
-            }
-
-            .language-selector {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                color: #e6f1ff;
-                padding: 8px 15px;
-                border: 1px solid #64ffda;
-                border-radius: 20px;
-                width: fit-content;
-                margin: 15px 0;
-                font-size: 13px;
-                cursor: pointer;
-                transition: all 0.3s ease;
-            }
-
-            .language-selector:hover {
-                background: rgba(100, 255, 218, 0.1);
-            }
-
-            .main-content {
-                margin-left: 260px;
-                padding: 30px;
-                width: calc(100% - 290px);
-                margin-bottom: 100px;
-            }
-
-            .section-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 25px;
-            }
-
-            .section-title {
-                font-size: 26px;
-                color: #64ffda;
-                margin: 0;
-                font-weight: 600;
-                letter-spacing: 0.5px;
-            }
-
-            .show-all {
-                color: #64ffda;
-                text-decoration: none;
-                font-size: 14px;
-                padding: 8px 15px;
-                border: 1px solid #64ffda;
-                border-radius: 20px;
-                transition: all 0.3s ease;
-                font-weight: 500;
-            }
-
-            .show-all:hover {
-                background: rgba(100, 255, 218, 0.1);
-            }
-
-            .signup-banner {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                background: linear-gradient(90deg, #0a192f, #1a365d);
-                padding: 15px 30px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                z-index: 100;
-                border-top: 1px solid #64ffda;
-                height: 60px;
-            }
-
-            .signup-banner .preview-text {
-                color: #a8b2d1;
-            }
-
-            .preview-text h3 {
-                font-size: 12px;
-                text-transform: uppercase;
-                margin: 0 0 8px 0;
-                letter-spacing: 0.1em;
-                color: #64ffda;
-                font-weight: 600;
-            }
-
-            .preview-text p {
-                font-size: 14px;
-                margin: 0;
-                font-weight: 400;
-            }
-
-            .signup-button {
-                background: #64ffda;
-                color: #0a192f;
-                padding: 12px 32px;
-                border-radius: 20px;
-                text-decoration: none;
-                font-weight: 600;
-                font-size: 14px;
-                transition: all 0.3s ease;
-                letter-spacing: 0.5px;
-            }
-
-            .signup-button:hover {
-                background: transparent;
-                color: #64ffda;
-                border: 1px solid #64ffda;
-            }
-
-            /* Keep all existing styles */
-
-            /* Keep existing artist-section, album-section, and signup-banner styles */
-
-            .dropdown-menu {
-                margin-top: 10px;
-            }
-
-            .dropdown-item {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                color: #e6f1ff;
-                text-decoration: none;
-                padding: 8px;
-                border-radius: 6px;
-                transition: all 0.3s ease;
-                font-size: 13px;
-            }
-
-            .dropdown-item:hover {
-                background: rgba(100, 255, 218, 0.1);
-                color: #64ffda;
-            }
-
-            .dropdown-item i {
-                width: 14px;
-                text-align: center;
-            }
-
-            .divider {
-                height: 1px;
-                background: rgba(100, 255, 218, 0.1);
-                margin: 6px 0;
-            }
-
-            .user-dropdown {
-                width: 180px;
-            }
-
-            .user-menu {
-                position: relative;
-                z-index: 1000;
-            }
-
-            .user-icon {
-                position: relative;
-                display: flex;
-                align-items: center;
-                cursor: pointer;
-                color: #64ffda;
-                font-size: 32px;
-            }
-
-            .user-dropdown {
-                display: none;
-                position: absolute;
-                top: 35px;
-                right: 0;
-                background: #112240;
-                padding: 12px;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-                text-align: left;
-                width: 180px;
-                border: 1px solid rgba(100, 255, 218, 0.2);
-                z-index: 1001;
-            }
-
-            .user-icon.active .user-dropdown {
-                display: block;
-            }
-
-            .user-dropdown p {
-                margin: 6px 0;
-                font-size: 13px;
-                color: #e6f1ff;
-                word-break: break-word;
-            }
-
-            .user-dropdown p strong {
-                color: #64ffda;
-                display: block;
-                margin-bottom: 3px;
-            }
-
-            .logout-button {
-                display: block;
-                color: #ff4d4d;
-                text-decoration: none;
-                font-weight: 500;
-                padding: 8px;
-                border-radius: 6px;
-                transition: all 0.3s ease;
-                text-align: center;
-                margin-top: 10px;
-                border: 1px solid transparent;
-                font-size: 13px;
-            }
-
-            .logout-button:hover {
-                background: rgba(255, 77, 77, 0.1);
-                border-color: #ff4d4d;
-            }
-            @media (max-width: 768px) {
-                .sidebar {
-                    width: 180px;
-                }
-
-                .main-content {
-                    margin-left: 200px;
-                    width: calc(100% - 230px);
-                }
-
-                .artist-section,
-                .album-section {
-                    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-                }
-            }
-
-            @media (max-width: 480px) {
-                .sidebar {
-                    width: 100%;
-                    height: auto;
-                    position: relative;
-                    padding-bottom: 20px;
-                }
-
-                .main-content {
-                    margin-left: 0;
-                    width: 100%;
-                    padding: 20px;
-                }
-
-                .artist-section,
-                .album-section {
-                    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-                }
-
-                .signup-banner {
-                    flex-direction: column;
-                    text-align: center;
-                    height: auto;
-                    padding: 20px;
-                }
-
-                .signup-button {
-                    margin-top: 15px;
-                }
-            }
-
-            .dropdown-menu {
-                margin-top: 10px;
-            }
-
-            .dropdown-item {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                color: #e6f1ff;
-                text-decoration: none;
-                padding: 8px;
-                border-radius: 6px;
-                transition: all 0.3s ease;
-                font-size: 13px;
-            }
-
-            .dropdown-item:hover {
-                background: rgba(100, 255, 218, 0.1);
-                color: #64ffda;
-            }
-
-            .dropdown-item i {
-                width: 14px;
-                text-align: center;
-            }
-
-            .divider {
-                height: 1px;
-                background: rgba(100, 255, 218, 0.1);
-                margin: 6px 0;
-            }
-
-            .user-dropdown {
-                width: 180px;
-            }
-
-            /* Update modal container styles */
-            .modal {
-                display: none;
-                position: fixed;
-                z-index: 1000;
-                left: 0;
-                top: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0, 0, 0, 0.7);
-                /* Add these properties for centering */
-                display: none;
-                align-items: center;
-                justify-content: center;
-            }
-
-            /* Update profile modal styles */
-            .profile-modal {
-                max-width: 800px !important;
-                width: 90%;
-                background: linear-gradient(to bottom right, #1a1a2e, #16213e) !important;
-                border-radius: 20px !important;
-                padding: 30px !important;
-                box-shadow: 0 0 30px rgba(0, 0, 0, 0.5) !important;
-                /* Remove any margin/transform that might affect centering */
-                margin: 0 auto;
-                position: relative;
-                /* Add max-height to prevent overflow on smaller screens */
-                max-height: 90vh;
-                overflow-y: auto;
-            }
-
-            /* Add smooth scrollbar for overflow content */
-            .profile-modal::-webkit-scrollbar {
-                width: 8px;
-            }
-
-            .profile-modal::-webkit-scrollbar-track {
-                background: rgba(255, 255, 255, 0.1);
-                border-radius: 4px;
-            }
-
-            .profile-modal::-webkit-scrollbar-thumb {
-                background: rgba(100, 255, 218, 0.3);
-                border-radius: 4px;
-            }
-
-            .modal-content {
-                background: #112240;
-                margin: 15% auto;
-                padding: 25px;
-                border: 1px solid #64ffda;
-                border-radius: 8px;
-                width: 90%;
-                max-width: 400px;
-                position: relative;
-            }
-
-            .close-modal {
-                position: absolute;
-                right: 15px;
-                top: 10px;
-                color: #64ffda;
-                font-size: 24px;
-                cursor: pointer;
-            }
-
-            .modal-title {
-                color: #64ffda;
-                margin-bottom: 20px;
-                font-size: 18px;
-            }
-
-            .form-group {
-                margin-bottom: 15px;
-            }
-
-            .form-group label {
-                display: block;
-                color: #a8b2d1;
-                margin-bottom: 5px;
-                font-size: 14px;
-            }
-
-            .form-group input {
-                width: 100%;
-                padding: 10px;
-                border: 1px solid #233554;
-                border-radius: 4px;
-                background: #0a192f;
-                color: #e6f1ff;
-                font-size: 14px;
-            }
-
-            .form-group input:focus {
-                border-color: #64ffda;
-                outline: none;
-            }
-
-            .submit-btn {
-                background: #64ffda;
-                color: #0a192f;
-                padding: 10px 20px;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-                font-weight: 600;
-                width: 100%;
-                margin-top: 10px;
-            }
-
-            .submit-btn:hover {
-                background: #4ad3b3;
-            }
-
-            .error-message {
-                color: #ff4d4d;
-                font-size: 12px;
-                margin-top: 5px;
-            }
-
-            .premium-badge {
-                padding: 5px 15px;
-                border-radius: 15px;
-                font-size: 14px;
-                font-weight: 600;
-            }
-
-            .premium {
-                background: rgba(100, 255, 218, 0.1);
-                color: #64ffda;
-                border: 1px solid #64ffda;
-            }
-
-            .standard {
-                background: rgba(255, 77, 77, 0.1);
-                color: #ff4d4d;
-                border: 1px solid #ff4d4d;
-            }
-
-            /* Adjust modal content for profile */
-            #profileModal .modal-content {
-                max-width: 600px;
-            }
-
-            #profileModal .profile-details {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 15px;
-                margin-top: 20px;
-            }
-
-            #profileModal .detail-item {
-                background: rgba(2, 12, 27, 0.5);
-                padding: 15px;
-                border-radius: 8px;
-                border: 1px solid rgba(100, 255, 218, 0.1);
-            }
-
-            #profileModal .detail-item label {
-                color: #64ffda;
-                font-size: 12px;
-                text-transform: uppercase;
-                letter-spacing: 0.1em;
-                display: block;
-                margin-bottom: 5px;
-            }
-
-            #profileModal .detail-item p {
-                color: #e6f1ff;
-                margin: 0;
-                font-size: 14px;
-            }
-
-            @media (max-width: 480px) {
-                #profileModal .profile-details {
-                    grid-template-columns: 1fr;
-                }
-            }
-
-            .profile-modal-header {
-                display: flex;
-                align-items: center;
-                gap: 30px;
-                margin-bottom: 40px;
-                padding-bottom: 20px;
-                border-bottom: 1px solid rgba(100, 255, 218, 0.1);
-            }
-
-            .profile-avatar-large {
-                width: 100px;
-                height: 100px;
-                background: linear-gradient(135deg, #64ffda, #0a192f);
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .profile-avatar-large i {
-                font-size: 40px;
-                color: #fff;
-            }
-
-            .profile-title {
-                flex: 1;
-            }
-
-            .profile-title h2 {
-                color: #64ffda;
-                margin: 0 0 10px 0;
-                font-size: 28px;
-            }
-
-            .membership-badge {
-                padding: 5px 15px;
-                border-radius: 20px;
-                font-size: 14px;
-                font-weight: 500;
-            }
-
-            .membership-badge.premium {
-                background: linear-gradient(135deg, rgba(100, 255, 218, 0.1), rgba(100, 255, 218, 0.2));
-                color: #64ffda;
-                border: 1px solid #64ffda;
-            }
-
-            .membership-badge.standard {
-                background: linear-gradient(135deg, rgba(255, 77, 77, 0.1), rgba(255, 77, 77, 0.2));
-                color: #ff4d4d;
-                border: 1px solid #ff4d4d;
-            }
-
-            .profile-info-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                gap: 20px;
-            }
-
-            .info-card {
-                background: rgba(255, 255, 255, 0.05);
-                padding: 20px;
-                border-radius: 15px;
-                transition: transform 0.3s ease, box-shadow 0.3s ease;
-                position: relative;
-                overflow: hidden;
-            }
-
-            .info-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            }
-
-            .info-card i {
-                font-size: 20px;
-                color: #64ffda;
-                margin-bottom: 10px;
-            }
-
-            .info-card label {
-                display: block;
-                color: #8892b0;
-                font-size: 12px;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-                margin-bottom: 5px;
-            }
-
-            .info-card p {
-                color: #e6f1ff;
-                font-size: 16px;
-                margin: 0;
-                word-break: break-word;
-            }
-
-            @media (max-width: 768px) {
-                .profile-modal {
-                    width: 95%;
-                    padding: 20px !important;
-                }
-
-                .profile-modal-header {
-                    flex-direction: column;
-                    text-align: center;
-                    gap: 15px;
-                }
-
-                .profile-info-grid {
-                    grid-template-columns: 1fr;
-                }
-            }
-
-            .toast {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 15px 25px;
-                border-radius: 8px;
-                z-index: 9999;
-                font-size: 14px;
-                font-weight: 500;
-                display: none;
-            }
-
-            .toast.success {
-                background: rgba(100, 255, 218, 0.9);
-                color: #0a192f;
-                border: 1px solid #64ffda;
-            }
-
-            .toast.error {
-                background: rgba(255, 77, 77, 0.9);
-                color: white;
-                border: 1px solid #ff4d4d;
-            }
-
-            .toast.show {
-                display: block;
-                animation: fadeIn 0.3s, fadeOut 0.3s 2.7s;
-            }
-
-            @keyframes fadeIn {
-                from {
-                    opacity: 0;
-                }
-                to {
-                    opacity: 1;
-                }
-            }
-
-            @keyframes fadeOut {
-                from {
-                    opacity: 1;
-                }
-                to {
-                    opacity: 0;
-                }
-            }
-        </style>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/search.css" />
     </head>
+
     <body>
+
         <div id="toast" class="toast"></div>
         <script>
             window.onload = function () {
-                const message = "${sessionScope.message}";
-                const messageType = "${sessionScope.messageType}";
+                var message = "${sessionScope.message}";
+                if (message && message.trim() !== "") {
+                    var toast = document.getElementById("toast");
+                    var messageType = "${sessionScope.messageType}";
 
-                if (message && messageType) {
-                    const toast = document.getElementById('toast');
                     toast.textContent = message;
-                    toast.className = `toast ${messageType}`;
-                    toast.classList.add('show');
+                    toast.className = "toast show " + (messageType || "info");
 
-                    setTimeout(() => {
-                        toast.classList.remove('show');
+                    setTimeout(function () {
+                        toast.classList.remove("show");
                     }, 3000);
-
-            <%
-                session.removeAttribute("message");
-                session.removeAttribute("messageType");
-            %>
                 }
-            }
+            };
         </script>
+        <% session.removeAttribute("message");
+            session.removeAttribute("messageType");%>
         <!-- Keep existing sidebar -->
         <div class="sidebar">
             <div class="logo-container">
-                <img src="<%= request.getContextPath()%>/image/mtp2k-logo.png" alt="MTP-2K"
+                <img src="${pageContext.request.contextPath}/image/mtp2k-logo.png" alt="MTP-2K"
                      style="border-radius: 50%;">
             </div>
             <ul class="nav-links">
                 <li><a href="${pageContext.request.contextPath}/home"><i class="fas fa-home"></i> Home</a></li>
-                <li><a href="${pageContext.request.contextPath}/home/search"><i class="fas fa-search"></i> Search</a></li>
-                <li><a href="${pageContext.request.contextPath}/home/library"><i class="fas fa-book"></i> Your Library</a></li>
-                <li style="margin-top: 24px"><a href="${pageContext.request.contextPath}/home/create-playlist    "><i class="fas fa-plus-square"></i> Create Playlist</a></li>
-                <li><a href="${pageContext.request.contextPath}/home/liked-songs"><i class="fas fa-heart"></i> Liked Songs</a></li>
+                <li><a href="${pageContext.request.contextPath}/home/search"><i class="fas fa-search"></i>
+                        Search</a></li>
+                <li><a href="${pageContext.request.contextPath}/home/library"><i class="fas fa-book"></i> Your
+                        Library</a></li>
+                <li style="margin-top: 24px"><a
+                        href="${pageContext.request.contextPath}/home/create-playlist    "><i
+                            class="fas fa-plus-square"></i> Create Playlist</a></li>
+                <li><a href="${pageContext.request.contextPath}/home/topsong"><i class="fas fa-heart"></i>
+                        Top Songs</a></li>
             </ul>
             <div class="footer-links">
                 <a href="#">Legal</a>
@@ -932,10 +68,12 @@
         <div class="main-content">
             <!-- Add search bar -->
             <div class="search-container">
-                <div class="search-bar">
+                <form action="search" method="GET" class="search-bar"
+                      onsubmit="return handleSearchSubmit(event)">
                     <i class="fas fa-search" style="color: #a8b2d1;"></i>
-                    <input type="text" placeholder="What do you want to listen to?">
-                </div>
+                    <input type="text" name="q" placeholder="What do you want to listen to?"
+                           oninput="searchItems(this.value)" id="searchInput">
+                </form>
 
                 <!------------------------------- USER LOGIN -------------------------------------->
                 <div class="auth-buttons">
@@ -965,7 +103,9 @@
                                                 <i class="fas fa-phone"></i> Change Phone Number
                                             </a>
                                             <div class="divider"></div>
-                                            <a href="#" class="dropdown-item" onclick="showModal('deleteAccountModal'); return false;" style="color: #ff4d4d;">
+                                            <a href="#" class="dropdown-item"
+                                               onclick="showModal('deleteAccountModal'); return false;"
+                                               style="color: #ff4d4d;">
                                                 <i class="fas fa-trash-alt"></i> Delete Account
                                             </a>
                                             <div class="divider"></div>
@@ -980,13 +120,67 @@
                         </c:when>
                         <c:otherwise>
                             <a href="${pageContext.request.contextPath}/login" class="login-btn">Log in</a>
-                            <a href="${pageContext.request.contextPath}/login?action=signup" class="signup-btn">Sign up</a>
+                            <a href="${pageContext.request.contextPath}/login?action=signup"
+                               class="signup-btn">Sign up</a>
                         </c:otherwise>
                     </c:choose>
                 </div>
 
-                <!------------------------------ USER LOGIN --------------------------------------------->
+                <!-- Search Results Container -->
+                <div id="searchResults" class="search-results" style="display: none;">
+                    <!-- Tracks Section -->
+                    <div class="search-section">
+                        <h3>Songs</h3>
+                        <div class="tracks-list">
+                            <c:forEach items="${tracks}" var="track">
+                                <div class="search-item">
+                                    <img src="${track.imageUrl}" alt="${track.title}"
+                                         class="search-item-img">
+                                    <div class="search-item-info">
+                                        <a href="track?id=${track.trackID}">${track.title}</a>
+                                        <span>Song</span>
+                                    </div>
+                                </div>
+                            </c:forEach>
+                        </div>
+                    </div>
 
+                    <!-- Artists Section -->
+                    <div class="search-section">
+                        <h3>Artists</h3>
+                        <div class="artists-list">
+                            <c:forEach items="${artists}" var="artist">
+                                <form action="${pageContext.request.contextPath}/home/artist" method="POST" class="search-item artist-form">
+                                    <input type="hidden" name="id" value="${artist.artistID}">
+                                    <img src="${artist.imageUrl}" alt="${artist.name}" class="search-item-img">
+                                    <div class="search-item-info">
+                                        <span class="artist-name">${artist.name}</span>
+                                        <span>Artist</span>
+                                    </div>
+                                    <button type="submit" class="full-area-button"></button>
+                                </form>
+                            </c:forEach>
+                        </div>
+                    </div>
+
+                    <!-- Albums Section -->
+                    <div class="search-section">
+                        <h3>Albums</h3>
+                        <div class="albums-list">
+                            <c:forEach items="${albums}" var="album">
+                                <form action="${pageContext.request.contextPath}/home/album" method="POST" class="search-item album-form">
+                                    <input type="hidden" name="id" value="${album.albumID}">
+                                    <img src="${album.imageUrl}" alt="${album.title}" class="search-item-img">
+                                    <div class="search-item-info">
+                                        <span class="album-title">${album.title}</span>
+                                        <span>Album</span>
+                                    </div>
+                                    <button type="submit" class="full-area-button"></button>
+                                </form>
+                            </c:forEach>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="section-header">
@@ -1028,15 +222,16 @@
             </div>
 
 
-
             <!-- Keep existing signup banner -->
             <c:if test="${empty sessionScope.user}">
                 <div class="signup-banner">
                     <div class="preview-text">
                         <h3>Preview of MTP-2K</h3>
-                        <p>Sign up to get unlimited songs and podcasts with occasional ads. No credit card needed.</p>
+                        <p>Sign up to get unlimited songs and podcasts with occasional ads. No credit card
+                            needed.</p>
                     </div>
-                    <a href="${pageContext.request.contextPath}/login" class="signup-button">Sign up free</a>
+                    <a href="${pageContext.request.contextPath}/login" class="signup-button">Sign up
+                        free</a>
                 </div>
             </c:if>
 
@@ -1129,7 +324,9 @@
                     </div>
                     <div class="detail-item">
                         <label>Member Since</label>
-                        <p><fmt:formatDate value="${sessionScope.user.createdAt}" pattern="dd/MM/yyyy"/></p>
+                        <p>
+                            <fmt:formatDate value="${sessionScope.user.createdAt}" pattern="dd/MM/yyyy" />
+                        </p>
                     </div>
                     <div class="detail-item">
                         <label>Subscription Status</label>
@@ -1140,7 +337,9 @@
                                 </c:when>
                                 <c:otherwise>
                                     <span class="premium-badge premium">
-                                        Premium until: <fmt:formatDate value="${sessionScope.user.premiumExpiry}" pattern="dd/MM/yyyy"/>
+                                        Premium until:
+                                        <fmt:formatDate value="${sessionScope.user.premiumExpiry}"
+                                                        pattern="dd/MM/yyyy" />
                                     </span>
                                 </c:otherwise>
                             </c:choose>
@@ -1155,7 +354,8 @@
             <div class="modal-content">
                 <span class="close-modal" onclick="closeModal('deleteAccountModal')">&times;</span>
                 <h2 class="modal-title" style="color: #ff4d4d;">Delete Account</h2>
-                <p style="color: #e6f1ff; margin-bottom: 20px;">Are you sure you want to delete your account? This action cannot be undone.</p>
+                <p style="color: #e6f1ff; margin-bottom: 20px;">Are you sure you want to delete your
+                    account? This action cannot be undone.</p>
                 <form action="${pageContext.request.contextPath}/login" method="post">
                     <input type="hidden" name="action" value="deleteAccount">
                     <div class="form-group">
@@ -1163,7 +363,8 @@
                         <input type="password" id="confirmDeletePassword" name="confirmPassword" required>
                         <span id="deleteAccountError" class="error-message"></span>
                     </div>
-                    <button type="submit" class="submit-btn" style="background: #ff4d4d; color: white;" onclick="return confirmDelete()">Delete Account</button>
+                    <button type="submit" class="submit-btn" style="background: #ff4d4d; color: white;"
+                            onclick="return confirmDelete()">Delete Account</button>
                 </form>
             </div>
         </div>
@@ -1239,6 +440,107 @@
             function confirmDelete() {
                 return confirm('Are you absolutely sure you want to delete your account? This action cannot be undone.');
             }
+        </script>
+
+        <script>
+            let searchTimeout;
+
+            function handleSearchSubmit(event) {
+                event.preventDefault();
+                const query = document.getElementById('searchInput').value;
+                if (query.trim()) {
+                    searchItems(query);
+                }
+                return false;
+            }
+
+            function searchItems(query) {
+                clearTimeout(searchTimeout);
+                const searchResults = document.getElementById('searchResults');
+
+                if (!query.trim()) {
+                    searchResults.style.display = 'none';
+                    return;
+                }
+
+                searchTimeout = setTimeout(() => {
+                    console.log('Searching for:', query);
+                    fetch('${pageContext.request.contextPath}/search?q=' + encodeURIComponent(query) + '&ajax=true')
+                            .then(response => {
+                                console.log('Response status:', response.status);
+                                return response.json();
+                            })
+                            .then(data => {
+                                console.log('Search results:', data);
+                                updateSearchResults(data);
+                                searchResults.style.display = 'block';
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                searchResults.style.display = 'none';
+                            });
+                }, 300);
+            }
+
+            function updateSearchResults(data) {
+                const searchResults = document.getElementById('searchResults');
+                searchResults.style.display = 'block';
+                const contextPath = '${pageContext.request.contextPath}';
+
+                // Update tracks
+                const tracksList = document.querySelector('.tracks-list');
+                tracksList.innerHTML = data.tracks.map(function (track) {
+                    const imageUrl = track.imageUrl.startsWith('http') ? track.imageUrl : contextPath + '/' + track.imageUrl;
+                    return '<form action="' + contextPath + '/home/track" method="POST" class="search-item artist-form">' +
+                            '<input type="hidden" name="id" value="' + track.trackID + '">' +
+                            '<img src="' + imageUrl + '" alt="' + track.title + '" class="search-item-img">' +
+                            '<div class="search-item-info">' +
+                            '<span class="track-title">' + track.title + '</span>' +
+                            '<span>Track</span>' +
+                            '</div>' +
+                            '<button type="submit" class="full-area-button"></button>' +
+                            '</form>';
+                }).join('');
+
+                // Update artists - Sử dụng form POST thay vì thẻ <a>
+                const artistsList = document.querySelector('.artists-list');
+                artistsList.innerHTML = data.artists.map(function (artist) {
+                    const imageUrl = artist.imageUrl.startsWith('http') ? artist.imageUrl : contextPath + '/' + artist.imageUrl;
+                    return '<form action="' + contextPath + '/home/artist" method="POST" class="search-item artist-form">' +
+                            '<input type="hidden" name="id" value="' + artist.artistID + '">' +
+                            '<img src="' + imageUrl + '" alt="' + artist.name + '" class="search-item-img">' +
+                            '<div class="search-item-info">' +
+                            '<span class="artist-name">' + artist.name + '</span>' +
+                            '<span>Artist</span>' +
+                            '</div>' +
+                            '<button type="submit" class="full-area-button"></button>' +
+                            '</form>';
+                }).join('');
+
+                // Update albums - Sử dụng form POST tương tự
+                const albumsList = document.querySelector('.albums-list');
+                albumsList.innerHTML = data.albums.map(function (album) {
+                    const imageUrl = album.imageUrl.startsWith('http') ? album.imageUrl : contextPath + '/' + album.imageUrl;
+                    return '<form action="' + contextPath + '/home/album" method="POST" class="search-item album-form">' +
+                            '<input type="hidden" name="id" value="' + album.albumID + '">' +
+                            '<img src="' + imageUrl + '" alt="' + album.title + '" class="search-item-img">' +
+                            '<div class="search-item-info">' +
+                            '<span class="album-title">' + album.title + '</span>' +
+                            '<span>Album</span>' +
+                            '</div>' +
+                            '<button type="submit" class="full-area-button"></button>' +
+                            '</form>';
+                }).join('');
+            }
+
+            // Close search results when clicking outside
+            document.addEventListener('click', function (event) {
+                const searchResults = document.getElementById('searchResults');
+                const searchBar = document.querySelector('.search-bar');
+                if (!searchResults.contains(event.target) && !searchBar.contains(event.target)) {
+                    searchResults.style.display = 'none';
+                }
+            });
         </script>
 
     </body>

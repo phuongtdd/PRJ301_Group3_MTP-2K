@@ -434,4 +434,43 @@ public class TrackDAO {
 
         return tracks;
     }
+
+    // Lấy tất cả tracks của một artist theo artistID
+    public List<Track> getTracksByArtistId(int artistId) {
+        List<Track> tracks = new ArrayList<>();
+        
+        String query = "SELECT t.* FROM Tracks t " +
+                      "JOIN Track_Artists ta ON t.trackID = ta.trackID " +
+                      "WHERE ta.artistID = ? " +
+                      "ORDER BY t.releaseDate DESC";
+        
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, artistId);
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Track track = new Track();
+                    track.setTrackID(rs.getInt("trackID"));
+                    track.setTitle(rs.getString("title"));
+                    track.setReleaseDate(rs.getDate("releaseDate"));
+                    track.setImageUrl(rs.getString("image_url"));
+                    track.setFileUrl(rs.getString("file_url"));
+                    track.setDescription(rs.getString("description"));
+                    track.setRecord(rs.getInt("record"));
+                    
+                    // Get genres for this track
+                    track.setGenres(getGenresForTrack(track.getTrackID()));
+                    
+                    // Get artists for this track
+                    track.setArtists(getArtistsForTrack(track.getTrackID()));
+                    
+                    tracks.add(track);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TrackDAO.class.getName()).log(Level.SEVERE, "Error getting tracks for artist: " + artistId, ex);
+        }
+        
+        return tracks;
+    }
 }

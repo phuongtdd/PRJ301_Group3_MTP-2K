@@ -142,6 +142,22 @@ public class HomeServlet extends HttpServlet {
                 } else {
                     request.setAttribute("error", "Artist not found!");
                 }
+
+                TrackDAO trackDAO = new TrackDAO();
+                List<Track> artistTracks = trackDAO.getTracksByArtistId(artID);
+                session.setAttribute("artistTracks", artistTracks);
+
+                List<Album> artistAlbums = artistDAO.getAlbumsByArtistId(artID);
+                if (artistAlbums != null && !artistAlbums.isEmpty()) {
+                    System.out.println("✅ Đã lấy " + artistAlbums.size() + " album cho nghệ sĩ ID: " + artID);
+                    for (Album album : artistAlbums) {
+                        System.out.println("Album: " + album.getTitle() + ", ID: " + album.getAlbumID() + ", ArtistID: " + album.getArtistID());
+                    }
+                } else {
+                    System.out.println("❌ Không có album nào cho nghệ sĩ ID: " + artID);
+                }
+                session.setAttribute("artistAlbums", artistAlbums);
+
             } catch (Exception e) {
                 request.setAttribute("error", "Invalid Artist ID!");
             }
@@ -162,17 +178,23 @@ public class HomeServlet extends HttpServlet {
                 int alID = Integer.parseInt(albumID);
                 Album album = artistDAO.getAlbumById(alID);
 
-                int artistID = album.getArtistID(); // Lấy ID của artist từ album
-
-                Artist artist = artistDAO.getArtistById(artistID); // Lấy thông tin artist
-
-                // Lưu đối tượng artist vào session
-                session.setAttribute("artist", artist);
-
-                session.setAttribute("artistId", alID);  // Lưu ID vào session
-
                 if (album != null) {
-                    session.setAttribute("album", album); // Lưu thông tin artist vào session
+                    int artistID = album.getArtistID(); // Lấy ID của artist từ album
+                    Artist artist = artistDAO.getArtistById(artistID); // Lấy thông tin artist
+
+                    // Lưu đối tượng artist vào session
+                    session.setAttribute("artist", artist);
+                    session.setAttribute("album", album); // Lưu thông tin album vào session
+                    session.setAttribute("artistId", artistID);  // Lưu artistID vào session
+
+                    // Lấy danh sách tracks của artist thông qua Track_Artists
+                    TrackDAO trackDAO = new TrackDAO();
+                    List<Track> albumTracks = trackDAO.getTracksByArtistId(artistID);
+                    session.setAttribute("tracks", albumTracks);
+
+                    // Lấy danh sách albums khác của cùng artist
+                    List<Album> artistAlbums = artistDAO.searchAlbums(null, String.valueOf(artistID));
+                    session.setAttribute("artistAlbums", artistAlbums);
                 } else {
                     request.setAttribute("error", "Album not found!");
                 }

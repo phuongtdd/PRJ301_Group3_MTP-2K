@@ -386,6 +386,36 @@ public class ArtistDAO {
         return tracks;
     }
 
+    /**
+     * Lấy danh sách album của một nghệ sĩ theo ID
+     */
+    public List<Album> getAlbumsByArtistId(int artistId) {
+        List<Album> albums = new ArrayList<>();
+        String query = "SELECT * FROM Albums WHERE artistID = ? ORDER BY releaseDate DESC";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, artistId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Album album = new Album(
+                            rs.getInt("albumID"),
+                            rs.getString("title"),
+                            rs.getDate("releaseDate"),
+                            rs.getString("description"),
+                            rs.getInt("artistID"),
+                            rs.getString("image_url")
+                    );
+                    albums.add(album);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ArtistDAO.class.getName())
+                    .log(Level.SEVERE, "Error getting albums for artist ID " + artistId, ex);
+        }
+        return albums;
+    }
+
     public static void main(String[] args) {
         ArtistDAO dao = new ArtistDAO();
         List<Track> tracks = dao.searchTracksByName("Drunk");

@@ -86,19 +86,19 @@ public class Track implements Serializable {
     public void setRecord(int record) {
         this.record = record;
     }
-
+    
     public List<Genre> getGenres() {
         return genres;
     }
-
+    
     public void setGenres(List<Genre> genres) {
         this.genres = genres;
     }
-
+    
     public List<Artist> getArtists() {
         return artists;
     }
-
+    
     public void setArtists(List<Artist> artists) {
         this.artists = artists;
     }

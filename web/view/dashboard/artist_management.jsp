@@ -231,12 +231,12 @@
             </div>
             <ul class="nav-menu">
                 <li><a href="${pageContext.request.contextPath}/admin" class="${currentPage == 'dashboard' ? 'active' : ''}"><i class="fas fa-home"></i> Dashboard</a></li>
-                <li><a href="${pageContext.request.contextPath}/admin/usermanagement"><i class="fas fa-users"></i> User Management</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/usermanagement" class="${currentPage == 'user-management' ? 'active' : ''}"><i class="fas fa-users"></i> User Management</a></li>
                 <li><a href="${pageContext.request.contextPath}/admin/orders" class="${currentPage == 'order-management' ? 'active' : ''}"><i class="fas fa-shopping-cart"></i> Orders</a></li>
                 <li><a href="${pageContext.request.contextPath}/admin/tracks" class="${currentPage == 'track-management' ? 'active' : ''}"><i class="fas fa-music"></i> Tracks</a></li>
                 <li><a href="${pageContext.request.contextPath}/admin/albums" class="${currentPage == 'album-management' ? 'active' : ''}"><i class="fas fa-compact-disc"></i> Albums</a></li>
                 <li><a href="${pageContext.request.contextPath}/admin/artists" class="${currentPage == 'artist-management' ? 'active' : ''}"><i class="fas fa-user-circle"></i> Artists</a></li>
-                <li><a href="${pageContext.request.contextPath}/admin/logout><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin?action=logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </div>
 
@@ -280,7 +280,7 @@
                 <c:forEach items="${artists}" var="artist">
                     <div class="artist-card">
                         <div class="artist-image-container">
-                            <img src="${artist.imageUrl}" alt="${artist.name}" class="artist-image">
+                            <img src="${pageContext.request.contextPath}/${artist.imageUrl}" alt="${artist.name}" class="artist-image">
                         </div>
                         <div class="artist-info">
                             <div class="artist-name">${artist.name}</div>
@@ -302,8 +302,8 @@
                     </div>
                 </c:forEach>
             </div>
-
-            <!-- Table View -->
+<%-- 
+--%>            <!-- Table View -->
             <table class="data-table artist-table">
                 <thead>
                     <tr>
@@ -318,7 +318,7 @@
                         <tr>
                             <td>
                                 <div style="display: flex; align-items: center; gap: 10px;">
-                                    <img src="${artist.imageUrl}" alt="${artist.name}" 
+                                    <img src="${pageContext.request.contextPath}/${artist.imageUrl}" alt="${artist.name}" 
                                          style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
                                     <span>${artist.name}</span>
                                 </div>
@@ -376,7 +376,7 @@
                     Không tìm thấy nghệ sĩ nào
                 </c:if>
             </div>
-        </div>
+        </div> 
 
         <!-- Add/Edit Artist Modal -->
         <div id="artistModal" class="modal">

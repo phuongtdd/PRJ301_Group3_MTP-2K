@@ -53,13 +53,11 @@ public class TrackDAO {
         }
         return tracks;
     }
-
     // Lấy chi tiết một track theo ID
     public Track getTrackById(int trackId) {
         String query = "SELECT * FROM Tracks WHERE trackID = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, trackId);
-
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     Track track = new Track();
@@ -137,7 +135,6 @@ public class TrackDAO {
         }
         return artists;
     }
-
     // Lấy tất cả genres
     public List<Genre> getAllGenres() {
         List<Genre> genres = new ArrayList<>();
@@ -175,21 +172,18 @@ public class TrackDAO {
                 try (ResultSet rs = stmt.getGeneratedKeys()) {
                     if (rs.next()) {
                         int trackId = rs.getInt(1);
-
                         // Add genres
                         if (genreIds != null) {
                             for (Integer genreId : genreIds) {
                                 addTrackGenre(trackId, genreId);
                             }
                         }
-
                         // Add artists
                         if (artistIds != null) {
                             for (Integer artistId : artistIds) {
                                 addTrackArtist(trackId, artistId);
                             }
                         }
-
                         return trackId;
                     }
                 }
@@ -215,7 +209,6 @@ public class TrackDAO {
             stmt.setDate(2, track.getReleaseDate() != null ? new java.sql.Date(track.getReleaseDate().getTime()) : null);
             stmt.setString(3, track.getFileUrl());
             stmt.setInt(4, track.getRecord());
-
             int paramIndex = 5;
             if (track.getImageUrl() != null && !track.getImageUrl().isEmpty()) {
                 stmt.setString(paramIndex++, track.getImageUrl());
@@ -233,7 +226,6 @@ public class TrackDAO {
                         addTrackGenre(track.getTrackID(), genreId);
                     }
                 }
-
                 // Update artists
                 if (artistIds != null) {
                     deleteTrackArtists(track.getTrackID());
@@ -241,7 +233,6 @@ public class TrackDAO {
                         addTrackArtist(track.getTrackID(), artistId);
                     }
                 }
-
                 return true;
             }
         } catch (SQLException ex) {
@@ -347,7 +338,6 @@ public class TrackDAO {
         List<Track> tracks = new ArrayList<>();
         StringBuilder query = new StringBuilder();
         query.append("SELECT DISTINCT t.* FROM Tracks t ");
-
         // Joins cần thiết
         if (artistName != null && !artistName.trim().isEmpty()) {
             query.append("JOIN Track_Artists ta ON t.trackID = ta.trackID ");

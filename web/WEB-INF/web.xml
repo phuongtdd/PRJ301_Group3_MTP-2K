@@ -35,36 +35,7 @@
     <welcome-file-list>
         <welcome-file>home</welcome-file>
     </welcome-file-list>
-    
-    <servlet>
-        <servlet-name>UserManagementController</servlet-name>
-        <servlet-class>controller.UserManagementController</servlet-class>
-    </servlet>
-    
-    <servlet>
-        <servlet-name>DashboardController</servlet-name>
-        <servlet-class>controller.DashboardController</servlet-class>
-    </servlet>
-    
-    <servlet>
-        <servlet-name>OrderManagement</servlet-name>
-        <servlet-class>controller.OrderManagement</servlet-class>
-    </servlet>
-    
-    <servlet>
-        <servlet-name>ArtistManagementController</servlet-name>
-        <servlet-class>controller.ArtistManagementController</servlet-class>
-    </servlet>
-    
-    <servlet>
-        <servlet-name>TracksManagementController</servlet-name>
-        <servlet-class>controller.TracksManagementController</servlet-class>
-    </servlet>
-    
-    <servlet>
-        <servlet-name>AlbumManagementController</servlet-name>
-        <servlet-class>controller.AlbumManagementController</servlet-class>
-    </servlet>
+
     
     <servlet>
         <servlet-name>AdminController</servlet-name>
@@ -76,35 +47,6 @@
         </multipart-config>
     </servlet>
     
-    <servlet-mapping>
-        <servlet-name>UserManagementController</servlet-name>
-        <url-pattern>/user-management</url-pattern>
-    </servlet-mapping>
-    
-    <servlet-mapping>
-        <servlet-name>DashboardController</servlet-name>
-        <url-pattern>/dashboard</url-pattern>
-    </servlet-mapping>
-    
-    <servlet-mapping>
-        <servlet-name>OrderManagement</servlet-name>
-        <url-pattern>/order-management</url-pattern>
-    </servlet-mapping>
-    
-    <servlet-mapping>
-        <servlet-name>ArtistManagementController</servlet-name>
-        <url-pattern>/artist-management</url-pattern>
-    </servlet-mapping>
-    
-    <servlet-mapping>
-        <servlet-name>TracksManagementController</servlet-name>
-        <url-pattern>/track-management</url-pattern>
-    </servlet-mapping>
-    
-    <servlet-mapping>
-        <servlet-name>AlbumManagementController</servlet-name>
-        <url-pattern>/album-management</url-pattern>
-    </servlet-mapping>
     
     <servlet-mapping>
         <servlet-name>AdminController</servlet-name>

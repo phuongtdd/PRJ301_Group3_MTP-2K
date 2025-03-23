@@ -29,7 +29,7 @@ public class ArtistDAO {
         }
     }
 
-    //Lấy danh sách artists
+    // Lấy danh sách artists
     public List<Artist> getArtists() {
         List<Artist> artists = new ArrayList<>();
         String query = "SELECT * FROM Artists";
@@ -49,7 +49,7 @@ public class ArtistDAO {
         return artists;
     }
 
-    //Lấy danh sách album
+    // Lấy danh sách album
     public List<Album> getAlbums() {
         List<Album> albums = new ArrayList<>();
         String query = "SELECT * FROM Albums";
@@ -70,7 +70,7 @@ public class ArtistDAO {
         return albums;
     }
 
-    //Tìm kiếm album theo tên và nghệ sĩ
+    // Tìm kiếm album theo tên và nghệ sĩ
     public List<Album> searchAlbums(String searchTerm, String artistFilter) {
         List<Album> albums = new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder();
@@ -127,12 +127,11 @@ public class ArtistDAO {
                             rs.getDate("releaseDate"),
                             rs.getString("description"),
                             rs.getInt("artistID"),
-                            rs.getString("image_url")
-                    );
+                            rs.getString("image_url"));
                     // Thêm tên nghệ sĩ vào thuộc tính description
                     // String artistName = rs.getString("artist_name");
                     // if (artistName != null) {
-                    //     album.setDescription(album.getDescription() + " - Artist: " + artistName);
+                    // album.setDescription(album.getDescription() + " - Artist: " + artistName);
                     // }
                     albums.add(album);
                 }
@@ -269,7 +268,7 @@ public class ArtistDAO {
         }
     }
 
-    //Lấy artist bằng ID
+    // Lấy artist bằng ID
     public Artist getArtistById(int artistId) {
         String query = "SELECT * FROM Artists WHERE artistID = ?";
 
@@ -283,8 +282,7 @@ public class ArtistDAO {
                             rs.getString("name"),
                             rs.getString("gender"),
                             rs.getString("description"),
-                            rs.getString("image_url")
-                    );
+                            rs.getString("image_url"));
                 }
             }
         } catch (SQLException e) {
@@ -294,7 +292,7 @@ public class ArtistDAO {
         return null;
     }
 
-    //Lấy Album bằng ID
+    // Lấy Album bằng ID
     public Album getAlbumById(int albumID) {
         String query = "SELECT * FROM Albums WHERE albumID = ?";
 
@@ -309,8 +307,7 @@ public class ArtistDAO {
                             rs.getDate("releaseDate"),
                             rs.getString("description"),
                             rs.getInt("artistID"),
-                            rs.getString("image_url")
-                    );
+                            rs.getString("image_url"));
                 }
             }
         } catch (SQLException e) {
@@ -339,7 +336,8 @@ public class ArtistDAO {
     }
 
     // Thêm album mới bằng tên nghệ sĩ (sử dụng stored procedure)
-    public boolean addAlbumByArtistName(String artistName, String title, Date releaseDate, String description, String imageUrl) {
+    public boolean addAlbumByArtistName(String artistName, String title, Date releaseDate, String description,
+            String imageUrl) {
         String query = "{CALL addAlbumByArtistName(?, ?, ?, ?, ?)}";
         try (CallableStatement stmt = conn.prepareCall(query)) {
             stmt.setString(1, artistName);
@@ -351,7 +349,8 @@ public class ArtistDAO {
             stmt.execute();
             return true;
         } catch (SQLException ex) {
-            Logger.getLogger(ArtistDAO.class.getName()).log(Level.SEVERE, "Error adding album by artist name: {0}", ex.getMessage());
+            Logger.getLogger(ArtistDAO.class.getName()).log(Level.SEVERE, "Error adding album by artist name: {0}",
+                    ex.getMessage());
             return false;
         }
     }
@@ -404,8 +403,7 @@ public class ArtistDAO {
                             rs.getDate("releaseDate"),
                             rs.getString("description"),
                             rs.getInt("artistID"),
-                            rs.getString("image_url")
-                    );
+                            rs.getString("image_url"));
                     albums.add(album);
                 }
             }
@@ -414,6 +412,47 @@ public class ArtistDAO {
                     .log(Level.SEVERE, "Error getting albums for artist ID " + artistId, ex);
         }
         return albums;
+    }
+
+    /**
+     * Kiểm tra xem nghệ sĩ đã tồn tại theo tên hay chưa, nếu chưa thì tạo mới
+     * 
+     * @param artist Đối tượng Artist chứa thông tin cần thêm/tìm kiếm (chỉ cần
+     *               name)
+     * @return ID của nghệ sĩ (ID hiện có nếu đã tồn tại, ID mới nếu thêm mới)
+     */
+    public int changeArtist(Artist artist) {
+        // Trước tiên, tìm kiếm nghệ sĩ theo tên
+        String searchQuery = "SELECT artistID FROM Artists WHERE LOWER(name) = LOWER(?)";
+        try (PreparedStatement ps = conn.prepareStatement(searchQuery)) {
+            ps.setString(1, artist.getName().trim());
+
+            try (ResultSet rs = ps.executeQuery()) {
+                // Nếu tìm thấy nghệ sĩ, trả về ID
+                if (rs.next()) {
+                    return rs.getInt("artistID");
+                }
+            }
+
+            // Nếu không tìm thấy, thêm nghệ sĩ mới
+            String insertQuery = "INSERT INTO Artists (name) VALUES (?)";
+            try (PreparedStatement insertPs = conn.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS)) {
+                insertPs.setString(1, artist.getName().trim());
+
+                int affectedRows = insertPs.executeUpdate();
+                if (affectedRows > 0) {
+                    try (ResultSet generatedKeys = insertPs.getGeneratedKeys()) {
+                        if (generatedKeys.next()) {
+                            return generatedKeys.getInt(1);
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(ArtistDAO.class.getName())
+                    .log(Level.SEVERE, "Error in changeArtist: {0}", e.getMessage());
+        }
+        return -1; // Trả về -1 nếu có lỗi
     }
 
     public static void main(String[] args) {

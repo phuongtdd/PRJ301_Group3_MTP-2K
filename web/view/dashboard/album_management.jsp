@@ -131,6 +131,7 @@
                 background: rgba(10, 25, 47, 0.8);
                 backdrop-filter: blur(5px);
                 z-index: 1000;
+                overflow-y: auto;
             }
 
             .modal-content {
@@ -139,10 +140,8 @@
                 padding: 30px;
                 width: 90%;
                 max-width: 500px;
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
+                position: relative;
+                margin: 50px auto;
                 box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             }
 
@@ -339,7 +338,7 @@
                 <li><a href="${pageContext.request.contextPath}/admin/tracks" class="${currentPage == 'track-management' ? 'active' : ''}"><i class="fas fa-music"></i> Tracks</a></li>
                 <li><a href="${pageContext.request.contextPath}/admin/albums" class="${currentPage == 'album-management' ? 'active' : ''}"><i class="fas fa-compact-disc"></i> Albums</a></li>
                 <li><a href="${pageContext.request.contextPath}/admin/artists" class="${currentPage == 'artist-management' ? 'active' : ''}"><i class="fas fa-user-circle"></i> Artists</a></li>
-                <li><a href="${pageContext.request.contextPath}/admin/logout><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin?action=logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </div>
 
@@ -380,7 +379,7 @@
                 <c:forEach items="${albums}" var="album">
                     <div class="album-card">
                         <div class="album-image-container">
-                            <img src="${album.imageUrl}" alt="${album.title}" class="album-image">
+                            <img src="${pageContext.request.contextPath}/${album.imageUrl}" alt="${album.title}" class="album-image">
                         </div>
                         <div class="album-info">
                             <div class="album-title">${album.title}</div>
@@ -401,8 +400,8 @@
                             </div>
                             <div class="card-actions">
                                 <div class="action-icons">
-                                    <i class="fas fa-edit" onclick="editAlbum(${album.albumID})"></i>
-                                    <i class="fas fa-trash" onclick="deleteAlbum(${album.albumID})"></i>
+                                    <i class="fas fa-edit edit-album-btn" data-id="${album.albumID}"></i>
+                                    <i class="fas fa-trash delete-album-btn" data-id="${album.albumID}"></i>
                                 </div>
                             </div>
                         </div>
@@ -453,6 +452,57 @@
                     </form>
                 </div>
             </div>
+            
+            <!-- Edit Album Modal -->
+            <div id="editAlbumModal" class="modal">
+                <div class="modal-content">
+                    <h2>Edit Album</h2>
+                    <form action="${pageContext.request.contextPath}/admin?action=update-album" method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="albumId" id="edit-album-id">
+                        <div class="form-group">
+                            <label>Album Title</label>
+                            <input type="text" name="name" id="edit-album-title" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Release Date</label>
+                            <input type="date" name="releaseDate" id="edit-album-releaseDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea name="description" id="edit-album-description" rows="4"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Artist</label>
+                            <div class="artist-selection">
+                                <select name="artist_id" id="edit-artist-select">
+                                    <option value="">-- Choose artist --</option>
+                                    <c:forEach items="${artists}" var="artist">
+                                        <option value="${artist.artistID}">${artist.name}</option>
+                                    </c:forEach>
+                                </select>
+                                <!-- <div class="artist-direct-input" style="margin-top: 10px;">
+                                    <label>
+                                        <input type="checkbox" name="useArtistName" id="edit-use-artist-name"> Use artist name directly
+                                    </label>
+                                    <input type="text" name="artist_name" id="edit-artist-name" style="display: none; margin-top: 10px;" placeholder="Enter artist name...">
+                                </div> -->
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Album Cover</label>
+                            <div class="current-image" style="margin-bottom: 10px;">
+                                <img id="edit-album-current-image" src="" alt="Current album cover" style="max-width: 100px; max-height: 100px; display: block;">
+                                <small>Current image (upload a new one to replace)</small>
+                            </div>
+                            <input type="file" name="image" accept="image/*">
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" onclick="closeEditModal()">Cancel</button>
+                            <button type="submit">Update Album</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
 
         <script>
@@ -463,14 +513,84 @@
             function closeModal() {
                 document.getElementById('albumModal').style.display = 'none';
             }
+            
+            function closeEditModal() {
+                document.getElementById('editAlbumModal').style.display = 'none';
+            }
 
             function editAlbum(albumId) {
-                window.location.href = '${pageContext.request.contextPath}/admin?action=edit-album&id=' + albumId;
+                // Lấy thông tin album từ server
+                fetch('${pageContext.request.contextPath}/admin?action=get-album&id=' + albumId)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(album => {
+                        // Điền thông tin vào form chỉnh sửa
+                        document.getElementById('edit-album-id').value = album.albumID;
+                        document.getElementById('edit-album-title').value = album.title;
+                        
+                        // Format ngày
+                        if (album.releaseDate) {
+                            const date = new Date(album.releaseDate);
+                            const year = date.getFullYear();
+                            const month = String(date.getMonth() + 1).padStart(2, '0');
+                            const day = String(date.getDate()).padStart(2, '0');
+                            document.getElementById('edit-album-releaseDate').value = `${year}-${month}-${day}`;
+                        }
+                        
+                        document.getElementById('edit-album-description').value = album.description || '';
+                        
+                        // Chọn nghệ sĩ
+                        const artistSelect = document.getElementById('edit-artist-select');
+                        artistSelect.value = album.artistID;
+                        
+                        // Hiển thị ảnh hiện tại
+                        const currentImageElem = document.getElementById('edit-album-current-image');
+                        if (album.imageUrl) {
+                            currentImageElem.src = album.imageUrl;
+                            currentImageElem.style.display = 'block';
+                            currentImageElem.parentElement.style.display = 'block';
+                        } else {
+                            currentImageElem.style.display = 'none';
+                            currentImageElem.parentElement.style.display = 'none';
+                        }
+                        
+                        // Hiển thị modal
+                        document.getElementById('editAlbumModal').style.display = 'block';
+                    })
+                    .catch(error => {
+                        console.error('Error fetching album details:', error);
+                        alert('Failed to get album details. Please try again.');
+                    });
             }
 
             function deleteAlbum(albumId) {
                 if (confirm('Are you sure you want to delete this album?')) {
-                    window.location.href = '${pageContext.request.contextPath}/admin?action=delete-album&id=' + albumId;
+                    // Tạo form để thực hiện POST request
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '${pageContext.request.contextPath}/admin';
+                    
+                    // Thêm action parameter
+                    const actionInput = document.createElement('input');
+                    actionInput.type = 'hidden';
+                    actionInput.name = 'action';
+                    actionInput.value = 'delete-album';
+                    form.appendChild(actionInput);
+                    
+                    // Thêm albumId parameter
+                    const albumIdInput = document.createElement('input');
+                    albumIdInput.type = 'hidden';
+                    albumIdInput.name = 'albumId';
+                    albumIdInput.value = albumId;
+                    form.appendChild(albumIdInput);
+                    
+                    // Thêm form vào body và submit
+                    document.body.appendChild(form);
+                    form.submit();
                 }
             }
 
@@ -479,27 +599,23 @@
                 const artistSearch = document.getElementById('artistSearch');
                 const artistSearchResults = document.getElementById('artistSearchResults');
                 const artistSelect = document.getElementById('artistSelect');
-                const useArtistNameCheckbox = document.getElementById('useArtistName');
-                const directArtistNameInput = document.getElementById('directArtistName');
-
+                const useArtistNameCheckbox = document.getElementById('edit-use-artist-name');
+                const directArtistNameInput = document.getElementById('edit-artist-name');
+                
                 // Xử lý checkbox nhập tên nghệ sĩ trực tiếp
                 if (useArtistNameCheckbox) {
                     useArtistNameCheckbox.addEventListener('change', function () {
                         if (this.checked) {
                             // Hiển thị ô nhập tên nghệ sĩ trực tiếp
                             directArtistNameInput.style.display = 'block';
-                            // Ẩn select box và ô tìm kiếm
-                            artistSelect.style.display = 'none';
-                            artistSearch.parentElement.style.display = 'none';
-                            // Giữ nguyên name cho các trường input
+                            // Ẩn select box
+                            document.getElementById('edit-artist-select').style.display = 'none';
                         } else {
                             // Ẩn ô nhập tên nghệ sĩ trực tiếp
                             directArtistNameInput.style.display = 'none';
-                            // Hiển thị select box và ô tìm kiếm
-                            artistSelect.style.display = 'block';
-                            artistSearch.parentElement.style.display = 'block';
-                            // Xóa giá trị của trường nhập tên nghệ sĩ
                             directArtistNameInput.value = '';
+                            // Hiển thị select box
+                            document.getElementById('edit-artist-select').style.display = 'block';
                         }
                     });
                 }
@@ -576,11 +692,38 @@
                 }
             });
 
+            // Thêm event listeners cho các nút chỉnh sửa và xóa album
+            document.addEventListener('DOMContentLoaded', function() {
+                // Thêm listeners cho nút edit
+                const editButtons = document.querySelectorAll('.edit-album-btn');
+                editButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const albumId = this.getAttribute('data-id');
+                        editAlbum(albumId);
+                    });
+                });
+                
+                // Thêm listeners cho nút delete
+                const deleteButtons = document.querySelectorAll('.delete-album-btn');
+                deleteButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const albumId = this.getAttribute('data-id');
+                        deleteAlbum(albumId);
+                    });
+                });
+            });
+
             // Close modal when clicking outside
-            window.onclick = function (event) {
-                var modal = document.getElementById('albumModal');
-                if (event.target == modal) {
-                    modal.style.display = "none";
+            window.onclick = function(event) {
+                const addModal = document.getElementById('albumModal');
+                const editModal = document.getElementById('editAlbumModal');
+                
+                if (event.target == addModal) {
+                    addModal.style.display = "none";
+                }
+                
+                if (event.target == editModal) {
+                    editModal.style.display = "none";
                 }
             }
         </script>

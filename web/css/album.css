@@ -269,6 +269,7 @@ body {
     font-weight: 400;
 }
 
+/* Add new search bar styles */
 .search-container {
     margin-bottom: 30px;
     padding: 15px 25px;
@@ -278,6 +279,8 @@ body {
     background: #112240;
     border-radius: 10px;
     margin-top: -10px;
+    position: relative;
+    z-index: 1000;
 }
 
 .search-bar {
@@ -303,17 +306,6 @@ body {
     color: #a8b2d1;
 }
 
-.account-icon {
-    color: #64ffda;
-    font-size: 24px;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-.account-icon:hover {
-    color: #a8b2d1;
-}
-
 .auth-buttons {
     display: flex;
     gap: 20px;
@@ -334,23 +326,12 @@ body {
     background: #64ffda;
     color: #0a192f;
     border: 1px solid #64ffda;
+
 }
 
 .login-btn:hover {
     background: transparent;
     color: #64ffda;
-}
-
-.signup-button {
-    background: #64ffda;
-    color: #0a192f;
-    padding: 12px 32px;
-    border-radius: 20px;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 14px;
-    transition: all 0.3s ease;
-    letter-spacing: 0.5px;
 }
 
 .signup-btn {
@@ -362,6 +343,10 @@ body {
 .signup-btn:hover {
     background: rgba(100, 255, 218, 0.1);
 }
+
+
+
+/* Add new search bar styles */
 
 .nav-buttons {
     display: flex;
@@ -680,6 +665,7 @@ body {
     margin-bottom: 20px;
     color: #e6f1ff;
 }
+
 .section-header {
     background: #112240;
     padding: 24px;
@@ -1182,6 +1168,7 @@ body {
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }
@@ -1191,8 +1178,119 @@ body {
     from {
         opacity: 1;
     }
+
     to {
         opacity: 0;
     }
 }
 
+
+
+
+.search-bar {
+    flex-grow: 1;
+    margin-right: 20px;
+    position: relative;
+}
+
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    max-width: 600px;
+    background: #282828;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    max-height: 80vh;
+    overflow-y: auto;
+    margin-top: 10px;
+}
+
+.search-section {
+    margin-bottom: 20px;
+}
+
+.search-section h3 {
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.search-item {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    position: relative;
+}
+
+.search-item:hover {
+    background-color: #3e3e3e;
+}
+
+.search-item-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    margin-right: 12px;
+    object-fit: cover;
+}
+
+.search-item-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.search-item-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.search-item-info a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.search-item-info span {
+    color: #a8b2d1;
+    font-size: 0.9em;
+}
+
+.no-results {
+    color: #a8b2d1;
+    text-align: center;
+    padding: 20px;
+}
+
+.artist-form,
+.album-form {
+    position: relative;
+}
+
+.search-item.artist-form,
+.search-item.album-form {
+    position: relative;
+    cursor: pointer;
+}
+
+.full-area-button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.artist-name,
+.album-title {
+    font-weight: bold;
+    color: #fff;
+}

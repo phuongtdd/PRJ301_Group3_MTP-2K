@@ -25,6 +25,11 @@
         <url-pattern>/home/album</url-pattern>
         <url-pattern>/home/track</url-pattern>
         <url-pattern>/home/topsong</url-pattern>
+        <url-pattern>/home/genre</url-pattern>
+        <url-pattern>/home/all-artists</url-pattern>
+        <url-pattern>/home/all-albums</url-pattern>
+        <url-pattern>/home/artist-tracks</url-pattern>
+        <url-pattern>/home/artist-albums</url-pattern>
     </servlet-mapping>
     
     <servlet-mapping>

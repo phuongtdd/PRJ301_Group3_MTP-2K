@@ -7,13 +7,14 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>MTP-2K</title>
+        <title>All Artists - MTP-2K</title>
         <link rel="stylesheet" href="styles.css">
         <link rel="stylesheet"
               href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
               rel="stylesheet">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css"/>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/show-all.css">
     </head>
 
     <body>
@@ -32,14 +33,17 @@
                     setTimeout(() => {
                         toast.classList.remove('show');
                     }, 3000);
-
-            <%
-                session.removeAttribute("message");
-                session.removeAttribute("messageType");
-            %>
                 }
             }
         </script>
+        
+        <% 
+            // Clean up session attributes
+            if (session.getAttribute("message") != null) {
+                session.removeAttribute("message");
+                session.removeAttribute("messageType");
+            }
+        %>
 
         <!------------------------------- USER LOGIN -------------------------------------->
         <div class="auth-buttons">
@@ -115,47 +119,28 @@
         </div>
 
         <div class="main-content">
+            <div class="all-container">
+                <div class="all-header">
+                    <h1 class="all-title">All Artists</h1>
+                    <a href="${pageContext.request.contextPath}/home" class="back-button">Back to Home</a>
+                </div>
 
-            <div class="section-header">
-                <h2 class="section-title">Artists</h2>
-                <a href="${pageContext.request.contextPath}/home/all-artists" class="show-all">Show All</a>
+                <div class="grid-container">
+                    <c:forEach var="artist" items="${allArtists}">
+                        <form action="${pageContext.request.contextPath}/home/artist" method="POST" class="artist-card">
+                            <input type="hidden" name="id" value="${artist.artistID}">
+                            <img src="${pageContext.request.contextPath}/${artist.imageUrl}" alt="${artist.name}">
+                            <div class="card-info">
+                                <h3 class="card-title">${artist.name}</h3>
+                                <p class="card-description">${artist.description}</p>
+                            </div>
+                            <button type="submit" class="full-area-button"></button>
+                        </form>
+                    </c:forEach>
+                </div>
             </div>
-            <div class="artist-section">
-                <c:forEach var="artist" items="${artist}" begin="0" end="4">
-                    <form action="${pageContext.request.contextPath}/home/artist" method="POST" class="artist-card">
-                        <input type="hidden" name="id" value="${artist.artistID}">
-                        <img src="${pageContext.request.contextPath}/${artist.imageUrl}" alt="${artist.name}">
-                        <div class="card-info">
-                            <h3 class="card-title">${artist.name}</h3>
-                            <p class="card-description">${artist.description}</p>
-                        </div>
-                        <button type="submit" class="full-area-button"></button>
-                    </form>
-
-                </c:forEach>
-            </div>
-
-
-
-            <div class="section-header">
-                <h2 class="section-title">Albums</h2>
-                <a href="${pageContext.request.contextPath}/home/all-albums" class="show-all">Show All</a>
-            </div>
-            <div class="album-section">
-                <c:forEach var="album" items="${album}" begin="0" end="4">
-                    <form action="${pageContext.request.contextPath}/home/album" method="POST" class="album-card">
-                        <input type="hidden" name="id" value="${album.albumID}">
-                        <img src="${pageContext.request.contextPath}/${album.imageUrl}" alt="${album.title}">
-                        <div class="card-info">
-                            <h3 class="card-title">${album.title}</h3>
-                            <p class="card-description">${album.description}</p>
-                        </div>
-                        <button type="submit" class="full-area-button2"></button>
-                    </form>
-                </c:forEach>
-            </div>
-
         </div>
+
 
         <c:if test="${empty sessionScope.user}">
             <div class="signup-banner">

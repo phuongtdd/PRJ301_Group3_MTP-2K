@@ -14,6 +14,7 @@ public class Genre implements Serializable {
 
     private int genreID;
     private String genreName;
+    private int trackCount;
 
     public Genre() {
     }
@@ -37,5 +38,13 @@ public class Genre implements Serializable {
 
     public void setGenreName(String genreName) {
         this.genreName = genreName;
+    }
+
+    public int getTrackCount() {
+        return trackCount;
+    }
+
+    public void setTrackCount(int trackCount) {
+        this.trackCount = trackCount;
     }
 }

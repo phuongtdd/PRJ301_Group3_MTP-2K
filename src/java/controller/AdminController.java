@@ -4,7 +4,6 @@ package controller;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
 import dao.AlbumDAO;
 import dao.ArtistDAO;
 import dao.OrderDAO;
@@ -104,6 +103,21 @@ public class AdminController extends HttpServlet {
                 case "delete-album":
                     handleDeleteAlbum(request, response);
                     break;
+                case "get-artist-tracks":
+                    getArtistTracks(request, response);
+                    break;
+                case "track-management":
+                    handleTrackManagement(request, response);
+                    break;
+                case "album-management":
+                    handleAlbumManagement(request, response);
+                    break;
+                case "artist-management":
+                    handleArtistManagement(request, response);
+                    break;
+                case "user-management":
+                    handleUserManagement(request, response);
+                    break;
                 default:
                     response.sendError(HttpServletResponse.SC_NOT_FOUND);
                     break;
@@ -199,8 +213,8 @@ public class AdminController extends HttpServlet {
         String roleFilter = request.getParameter("role");
 
         List<User> users;
-        if ((searchTerm != null && !searchTerm.trim().isEmpty()) ||
-                (roleFilter != null && !roleFilter.trim().isEmpty())) {
+        if ((searchTerm != null && !searchTerm.trim().isEmpty())
+                || (roleFilter != null && !roleFilter.trim().isEmpty())) {
             users = dao.searchUsers(searchTerm, roleFilter);
         } else {
             users = dao.getAllUsers();
@@ -242,7 +256,9 @@ public class AdminController extends HttpServlet {
         try {
             if (request.getParameter("page") != null) {
                 page = Integer.parseInt(request.getParameter("page"));
-                if (page < 1) page = 1;
+                if (page < 1) {
+                    page = 1;
+                }
             }
         } catch (NumberFormatException e) {
             page = 1;
@@ -272,7 +288,9 @@ public class AdminController extends HttpServlet {
         // Tính toán thông tin phân trang
         int totalTracks = allTracks.size();
         int totalPages = (int) Math.ceil((double) totalTracks / tracksPerPage);
-        if (page > totalPages && totalPages > 0) page = totalPages;
+        if (page > totalPages && totalPages > 0) {
+            page = totalPages;
+        }
 
         // Lấy danh sách bài hát cho trang hiện tại
         int startIdx = (page - 1) * tracksPerPage;
@@ -309,8 +327,8 @@ public class AdminController extends HttpServlet {
         String artistFilter = request.getParameter("artistFilter");
 
         List<Album> albums;
-        if ((searchTerm != null && !searchTerm.trim().isEmpty()) ||
-                (artistFilter != null && !artistFilter.trim().isEmpty())) {
+        if ((searchTerm != null && !searchTerm.trim().isEmpty())
+                || (artistFilter != null && !artistFilter.trim().isEmpty())) {
             albums = dao.searchAlbums(searchTerm, artistFilter);
         } else {
             albums = dao.getAlbums();
@@ -434,7 +452,7 @@ public class AdminController extends HttpServlet {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
-        
+
         switch (action) {
             case "add-track":
                 handleAddTrack(request, response);
@@ -565,52 +583,81 @@ public class AdminController extends HttpServlet {
     private void handleAddAlbum(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            // Lấy các tham số từ form
             String title = request.getParameter("title");
             String description = request.getParameter("description");
             String releaseDateStr = request.getParameter("releaseDate");
-
+            String[] trackIDStrings = request.getParameterValues("trackID[]");
             String artistParam = request.getParameter("artistID");
-            String directArtistName = request.getParameter("directArtistName");
 
-            if (directArtistName != null && !directArtistName.trim().isEmpty()) {
-                artistParam = directArtistName;
+            // Validate các trường bắt buộc
+            if (title == null || title.trim().isEmpty() ||
+                    artistParam == null || artistParam.trim().isEmpty() ||
+                    releaseDateStr == null || releaseDateStr.trim().isEmpty()) {
+
+                request.setAttribute("errorMessage", "Please fill in all required fields");
+                request.getRequestDispatcher("/view/dashboard/album_management.jsp").forward(request, response);
+                return;
             }
 
+            // Chuyển đổi ngày
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             java.util.Date utilDate = dateFormat.parse(releaseDateStr);
             java.sql.Date releaseDate = new java.sql.Date(utilDate.getTime());
 
+            // Chuyển đổi artistID
+            int artistID = Integer.parseInt(artistParam);
+
+            // Chuyển đổi danh sách trackID
+            List<Integer> trackIDs = new ArrayList<>();
+            if (trackIDStrings != null) {
+                for (String trackIDStr : trackIDStrings) {
+                    if (trackIDStr != null && !trackIDStr.trim().isEmpty()) {
+                        try {
+                            trackIDs.add(Integer.parseInt(trackIDStr.trim()));
+                        } catch (NumberFormatException e) {
+                            Logger.getLogger(AdminController.class.getName())
+                                    .log(Level.WARNING, "Invalid track ID: " + trackIDStr);
+                        }
+                    }
+                }
+            }
+
+            // Xử lý upload ảnh
             Part filePart = request.getPart("image");
-            // Không thêm timestamp cho file hình ảnh
-            String fileName = getSubmittedFileName(filePart);
-            String uploadPath = getServletContext().getRealPath("image/");
+            if (filePart != null && filePart.getSize() > 0) {
+                String fileName = getSubmittedFileName(filePart);
+                String uploadPath = getServletContext().getRealPath("image/");
 
-            File uploadDir = new File(uploadPath);
-            if (!uploadDir.exists()) {
-                uploadDir.mkdirs();
-            }
+                File uploadDir = new File(uploadPath);
+                if (!uploadDir.exists()) {
+                    uploadDir.mkdirs();
+                }
 
-            filePart.write(uploadPath + File.separator + fileName);
-            String imageUrl = "image/" + fileName;
+                filePart.write(uploadPath + File.separator + fileName);
+                String imageUrl = "image/" + fileName;
 
-            ArtistDAO dao = new ArtistDAO();
-            boolean success;
+                // Thêm album mới
+                AlbumDAO albumDAO = new AlbumDAO();
+                boolean success = albumDAO.addAlbum(title, releaseDate, description, artistID, imageUrl, trackIDs);
 
-            try {
-                int artistID = Integer.parseInt(artistParam);
-                success = dao.addAlbum(title, releaseDate, description, artistID, imageUrl);
-            } catch (NumberFormatException e) {
-                success = dao.addAlbumByArtistName(artistParam, title, releaseDate, description, imageUrl);
-            }
-
-            if (success) {
-                response.sendRedirect(request.getContextPath() + "/admin/albums");
+                if (success) {
+                    response.sendRedirect(request.getContextPath() + "/admin/albums");
+                } else {
+                    request.setAttribute("errorMessage", "Failed to add album. Please try again.");
+                    request.getRequestDispatcher("/view/dashboard/album_management.jsp").forward(request, response);
+                }
             } else {
-                request.setAttribute("errorMessage", "Failed to add album. Please try again.");
+                request.setAttribute("errorMessage", "Please select an album cover image.");
                 request.getRequestDispatcher("/view/dashboard/album_management.jsp").forward(request, response);
             }
+
+        } catch (NumberFormatException e) {
+            request.setAttribute("errorMessage", "Invalid number format: " + e.getMessage());
+            request.getRequestDispatcher("/view/dashboard/album_management.jsp").forward(request, response);
         } catch (Exception e) {
-            Logger.getLogger(AdminController.class.getName()).log(Level.SEVERE, "Error adding album", e);
+            Logger.getLogger(AdminController.class.getName())
+                    .log(Level.SEVERE, "Error adding album", e);
             request.setAttribute("errorMessage", "An error occurred: " + e.getMessage());
             request.getRequestDispatcher("/view/dashboard/album_management.jsp").forward(request, response);
         }
@@ -653,7 +700,7 @@ public class AdminController extends HttpServlet {
         try {
             // Get basic track information
             String title = request.getParameter("name");
-            
+
             // Parse release date if provided
             Date releaseDate = null;
             String releaseDateStr = request.getParameter("releaseDate");
@@ -661,45 +708,45 @@ public class AdminController extends HttpServlet {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 releaseDate = new java.sql.Date(dateFormat.parse(releaseDateStr).getTime());
             }
-            
+
             // Get record count (default to 0 if not provided)
             int record = 0;
             if (request.getParameter("record") != null && !request.getParameter("record").isEmpty()) {
                 record = Integer.parseInt(request.getParameter("record"));
             }
-            
+
             // Handle file upload for image
             Part imagePart = request.getPart("image");
             String originalImageName = getSubmittedFileName(imagePart);
             // Thêm timestamp cho ảnh để tránh trùng lặp
             String imageFileName = System.currentTimeMillis() + "_" + originalImageName;
             String imageUploadPath = getServletContext().getRealPath("image/");
-            
+
             // Handle file upload for audio file
             Part audioPart = request.getPart("audioFile");
             // Không thêm timestamp cho file audio
             String audioFileName = getSubmittedFileName(audioPart);
             String audioUploadPath = getServletContext().getRealPath("music/");
-            
+
             // Create directories if they don't exist
             File imageUploadDir = new File(imageUploadPath);
             if (!imageUploadDir.exists()) {
                 imageUploadDir.mkdirs();
             }
-            
+
             File audioUploadDir = new File(audioUploadPath);
             if (!audioUploadDir.exists()) {
                 audioUploadDir.mkdirs();
             }
-            
+
             // Write files to disk
             imagePart.write(imageUploadPath + File.separator + imageFileName);
             audioPart.write(audioUploadPath + File.separator + audioFileName);
-            
+
             // Create relative paths for database
             String imageUrl = "image/" + imageFileName;
             String fileUrl = "music/" + audioFileName;
-            
+
             // Create Track object
             Track track = new Track();
             track.setTitle(title);
@@ -707,7 +754,7 @@ public class AdminController extends HttpServlet {
             track.setImageUrl(imageUrl);
             track.setFileUrl(fileUrl);
             track.setRecord(record);
-            
+
             // Get genres (multiple selection)
             String[] genreIds = request.getParameterValues("genres");
             List<Integer> genreIdList = new ArrayList<>();
@@ -716,7 +763,7 @@ public class AdminController extends HttpServlet {
                     genreIdList.add(Integer.parseInt(genreId));
                 }
             }
-            
+
             // Get artists (multiple selection)
             String[] artistIds = request.getParameterValues("artists");
             List<Integer> artistIdList = new ArrayList<>();
@@ -725,11 +772,11 @@ public class AdminController extends HttpServlet {
                     artistIdList.add(Integer.parseInt(artistId));
                 }
             }
-            
+
             // Save to database
             TrackDAO trackDAO = new TrackDAO();
             int newTrackId = trackDAO.addTrack(track, genreIdList, artistIdList);
-            
+
             if (newTrackId > 0) {
                 request.getSession().setAttribute("message", "Track added successfully");
                 request.getSession().setAttribute("messageType", "success");
@@ -737,7 +784,7 @@ public class AdminController extends HttpServlet {
                 request.getSession().setAttribute("message", "Failed to add track");
                 request.getSession().setAttribute("messageType", "error");
             }
-            
+
             response.sendRedirect(request.getContextPath() + "/admin/tracks");
         } catch (Exception e) {
             e.printStackTrace();
@@ -860,7 +907,8 @@ public class AdminController extends HttpServlet {
         }
     }
 
-    private void handleUpdateAlbum(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void handleUpdateAlbum(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         try {
             // Lấy thông tin album từ request
             int albumID = Integer.parseInt(request.getParameter("albumId"));
@@ -868,11 +916,11 @@ public class AdminController extends HttpServlet {
             String description = request.getParameter("description");
             java.sql.Date releaseDate = null;
 
+            // Xử lý ngày phát hành
             if (request.getParameter("releaseDate") != null && !request.getParameter("releaseDate").isEmpty()) {
                 try {
                     releaseDate = java.sql.Date.valueOf(request.getParameter("releaseDate"));
                 } catch (IllegalArgumentException e) {
-                    // Xử lý lỗi định dạng ngày
                     request.getSession().setAttribute("message", "Invalid date format");
                     request.getSession().setAttribute("messageType", "error");
                     response.sendRedirect(request.getContextPath() + "/admin/albums");
@@ -880,27 +928,23 @@ public class AdminController extends HttpServlet {
                 }
             }
 
-            // Kiểm tra xem người dùng có tải lên ảnh mới không
+            // Xử lý upload ảnh
             Part imagePart = request.getPart("image");
             String imageUrl = null;
 
             if (imagePart != null && imagePart.getSize() > 0) {
                 String fileName = getSubmittedFileName(imagePart);
                 if (fileName != null && !fileName.isEmpty()) {
-                    // Không thêm timestamp cho file hình ảnh
-                    String uploadPath = getServletContext().getRealPath("") + File.separator + "uploads" + File.separator + "albums";
+                    String uploadPath = getServletContext().getRealPath("") + File.separator + "uploads"
+                            + File.separator + "albums";
 
-                    // Đảm bảo thư mục tồn tại
                     File uploadDir = new File(uploadPath);
                     if (!uploadDir.exists()) {
                         uploadDir.mkdirs();
                     }
 
-                    // Lưu file
                     String filePath = uploadPath + File.separator + fileName;
                     imagePart.write(filePath);
-
-                    // Cập nhật URL ảnh
                     imageUrl = "image/" + fileName;
                 }
             }
@@ -910,14 +954,11 @@ public class AdminController extends HttpServlet {
             String artistName = null;
 
             if (request.getParameter("useArtistName") != null && request.getParameter("useArtistName").equals("on")) {
-                // Sử dụng tên nghệ sĩ trực tiếp
                 artistName = request.getParameter("artist_name");
             } else {
-                // Sử dụng nghệ sĩ đã có
                 try {
                     artistID = Integer.parseInt(request.getParameter("artist_id"));
                 } catch (NumberFormatException e) {
-                    // Xử lý lỗi khi không tìm thấy ID nghệ sĩ
                     request.getSession().setAttribute("message", "Invalid artist selected");
                     request.getSession().setAttribute("messageType", "error");
                     response.sendRedirect(request.getContextPath() + "/admin/albums");
@@ -925,18 +966,18 @@ public class AdminController extends HttpServlet {
                 }
             }
 
-            // Khởi tạo DAO và cập nhật album
+            // Khởi tạo DAO
             AlbumDAO albumDAO = new AlbumDAO();
             ArtistDAO artistDAO = new ArtistDAO();
 
-            // Nếu sử dụng tên nghệ sĩ mới, tạo nghệ sĩ mới
+            // Xử lý nghệ sĩ mới nếu có
             if (artistName != null && !artistName.isEmpty()) {
                 Artist newArtist = new Artist();
                 newArtist.setName(artistName);
                 artistID = artistDAO.changeArtist(newArtist);
             }
 
-            // Tạo đối tượng Album với thông tin đã cập nhật
+            // Lấy thông tin album hiện tại
             Album album = albumDAO.getAlbumById(albumID);
             if (album == null) {
                 request.getSession().setAttribute("message", "Album not found");
@@ -945,20 +986,34 @@ public class AdminController extends HttpServlet {
                 return;
             }
 
+            // Cập nhật thông tin album
             album.setTitle(title);
             album.setReleaseDate(releaseDate);
             album.setDescription(description);
             if (imageUrl != null) {
                 album.setImageUrl(imageUrl);
             }
-
-            // Cập nhật artistID
             if (artistID > 0) {
                 album.setArtistID(artistID);
             }
 
-            // Cập nhật album trong cơ sở dữ liệu
-            boolean success = albumDAO.updateAlbum(album);
+            // Xử lý danh sách track
+            List<Integer> trackIDs = new ArrayList<>();
+            String[] selectedTracks = request.getParameterValues("trackID[]");
+            if (selectedTracks != null) {
+                for (String trackID : selectedTracks) {
+                    try {
+                        trackIDs.add(Integer.parseInt(trackID));
+                    } catch (NumberFormatException e) {
+                        // Bỏ qua các giá trị không hợp lệ
+                        Logger.getLogger(AdminController.class.getName())
+                                .log(Level.WARNING, "Invalid track ID: {0}", trackID);
+                    }
+                }
+            }
+
+            // Cập nhật album và tracks trong cơ sở dữ liệu
+            boolean success = albumDAO.updateAlbum(album, trackIDs);
 
             if (success) {
                 request.getSession().setAttribute("message", "Album updated successfully");
@@ -968,18 +1023,20 @@ public class AdminController extends HttpServlet {
                 request.getSession().setAttribute("messageType", "error");
             }
 
-            // Chuyển hướng trở lại trang quản lý album
+            // Chuyển hướng về trang quản lý album
             response.sendRedirect(request.getContextPath() + "/admin/albums");
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.getLogger(AdminController.class.getName())
+                    .log(Level.SEVERE, "Error updating album: {0}", e.getMessage());
             request.getSession().setAttribute("message", "An error occurred: " + e.getMessage());
             request.getSession().setAttribute("messageType", "error");
             response.sendRedirect(request.getContextPath() + "/admin/albums");
         }
     }
 
-    private void handleDeleteAlbum(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void handleDeleteAlbum(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         try {
             // Lấy ID album cần xóa
             int albumID = Integer.parseInt(request.getParameter("albumId"));
@@ -1009,7 +1066,8 @@ public class AdminController extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/admin/albums");
     }
 
-    private void getAlbumDetails(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void getAlbumDetails(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
@@ -1042,6 +1100,11 @@ public class AdminController extends HttpServlet {
                 }
 
                 jsonBuilder.append("\"artistID\":").append(album.getArtistID()).append(",");
+
+                // Add trackID if available
+                if (album.getTrackID() > 0) {
+                    jsonBuilder.append("\"trackID\":").append(album.getTrackID()).append(",");
+                }
 
                 // Xử lý imageUrl có thể null
                 if (album.getImageUrl() != null) {
@@ -1165,6 +1228,53 @@ public class AdminController extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             out.print("{\"error\":\"Server error: " + escapeJson(e.getMessage()) + "\"}");
             out.flush();
+        }
+    }
+
+    // Phương thức này lấy danh sách tracks của một artist và trả về dưới dạng JSON
+    private void getArtistTracks(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter out = response.getWriter();
+
+        try {
+            int artistId = Integer.parseInt(request.getParameter("artistId"));
+            TrackDAO trackDAO = new TrackDAO();
+            List<Track> tracks = trackDAO.getTracksByArtistId(artistId);
+
+            // Tạo JSON array
+            StringBuilder jsonBuilder = new StringBuilder();
+            jsonBuilder.append("[");
+
+            for (int i = 0; i < tracks.size(); i++) {
+                Track track = tracks.get(i);
+                jsonBuilder.append("{");
+                jsonBuilder.append("\"trackID\":").append(track.getTrackID()).append(",");
+                jsonBuilder.append("\"title\":\"").append(escapeJson(track.getTitle())).append("\"");
+                jsonBuilder.append("}");
+
+                if (i < tracks.size() - 1) {
+                    jsonBuilder.append(",");
+                }
+            }
+
+            jsonBuilder.append("]");
+
+            // Gửi JSON response
+            out.print(jsonBuilder.toString());
+            out.flush();
+        } catch (NumberFormatException e) {
+            // Xử lý lỗi nếu ID không phải số
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            out.print("[]");
+            out.flush();
+        } catch (Exception e) {
+            // Xử lý các lỗi khác
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            out.print("[]");
+            out.flush();
+            Logger.getLogger(AdminController.class.getName()).log(Level.SEVERE, "Error getting tracks for artist", e);
         }
     }
 

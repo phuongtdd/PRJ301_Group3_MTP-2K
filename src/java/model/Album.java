@@ -19,6 +19,7 @@ public class Album implements Serializable {
     private String description;
     private int artistID;
     private String imageUrl;
+    private int trackID;
 
     public Album() {
     }
@@ -30,6 +31,16 @@ public class Album implements Serializable {
         this.description = description;
         this.artistID = artistID;
         this.imageUrl = imageUrl;
+    }
+
+    public Album(int albumID, String title, Date releaseDate, String description, int artistID, String imageUrl, int trackID) {
+        this.albumID = albumID;
+        this.title = title;
+        this.releaseDate = releaseDate;
+        this.description = description;
+        this.artistID = artistID;
+        this.imageUrl = imageUrl;
+        this.trackID = trackID;
     }
 
     public int getAlbumID() {
@@ -80,9 +91,17 @@ public class Album implements Serializable {
         this.imageUrl = imageUrl;
     }
 
+    public int getTrackID() {
+        return trackID;
+    }
+
+    public void setTrackID(int trackID) {
+        this.trackID = trackID;
+    }
+
     @Override
     public String toString() {
-        return "Album{" + "albumID=" + albumID + ", title=" + title + ", releaseDate=" + releaseDate + ", description=" + description + ", artistID=" + artistID + ", imageUrl=" + imageUrl + '}';
+        return "Album{" + "albumID=" + albumID + ", title=" + title + ", releaseDate=" + releaseDate + ", description=" + description + ", artistID=" + artistID + ", imageUrl=" + imageUrl + ", trackID=" + trackID + '}';
     }
 
 }

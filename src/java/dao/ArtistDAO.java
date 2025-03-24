@@ -128,11 +128,14 @@ public class ArtistDAO {
                             rs.getString("description"),
                             rs.getInt("artistID"),
                             rs.getString("image_url"));
-                    // Thêm tên nghệ sĩ vào thuộc tính description
-                    // String artistName = rs.getString("artist_name");
-                    // if (artistName != null) {
-                    // album.setDescription(album.getDescription() + " - Artist: " + artistName);
-                    // }
+
+                    // Lấy trackID nếu có
+                    try {
+                        album.setTrackID(rs.getInt("trackID"));
+                    } catch (SQLException e) {
+                        // Nếu cột không tồn tại, giữ trackID = 0 (giá trị mặc định)
+                    }
+
                     albums.add(album);
                 }
             }
@@ -301,59 +304,102 @@ public class ArtistDAO {
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return new Album(
+                    Album album = new Album(
                             rs.getInt("albumID"),
                             rs.getString("title"),
                             rs.getDate("releaseDate"),
                             rs.getString("description"),
                             rs.getInt("artistID"),
                             rs.getString("image_url"));
+
+                    // Lấy trackID nếu có
+                    try {
+                        album.setTrackID(rs.getInt("trackID"));
+                    } catch (SQLException e) {
+                        // Nếu cột không tồn tại, giữ trackID = 0 (giá trị mặc định)
+                    }
+
+                    return album;
                 }
             }
         } catch (SQLException e) {
             Logger.getLogger(ArtistDAO.class.getName())
-                    .log(Level.SEVERE, "Error getting artist by ID: {0}", e.getMessage());
+                    .log(Level.SEVERE, "Error getting album by ID: {0}", e.getMessage());
         }
         return null;
     }
 
-    // Thêm album mới
-    public boolean addAlbum(String title, Date releaseDate, String description, int artistID, String imageUrl) {
-        String query = "INSERT INTO Albums (title, releaseDate, description, artistID, image_url) VALUES (?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, title);
-            stmt.setDate(2, new java.sql.Date(releaseDate.getTime()));
-            stmt.setString(3, description);
-            stmt.setInt(4, artistID);
-            stmt.setString(5, imageUrl);
-
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0;
-        } catch (SQLException ex) {
-            Logger.getLogger(ArtistDAO.class.getName()).log(Level.SEVERE, "Error adding album: {0}", ex.getMessage());
-            return false;
-        }
-    }
-
-    // Thêm album mới bằng tên nghệ sĩ (sử dụng stored procedure)
-    public boolean addAlbumByArtistName(String artistName, String title, Date releaseDate, String description,
-            String imageUrl) {
-        String query = "{CALL addAlbumByArtistName(?, ?, ?, ?, ?)}";
-        try (CallableStatement stmt = conn.prepareCall(query)) {
-            stmt.setString(1, artistName);
-            stmt.setString(2, title);
-            stmt.setDate(3, new java.sql.Date(releaseDate.getTime()));
-            stmt.setString(4, description);
-            stmt.setString(5, imageUrl);
-
-            stmt.execute();
-            return true;
-        } catch (SQLException ex) {
-            Logger.getLogger(ArtistDAO.class.getName()).log(Level.SEVERE, "Error adding album by artist name: {0}",
-                    ex.getMessage());
-            return false;
-        }
-    }
+    // Thêm album mới bằng tên nghệ sĩ với trackID
+//    public boolean addAlbumByArtistName(String artistName, String title, Date releaseDate, String description,
+//            String imageUrl, List<Integer> trackIDs) {
+//        String getArtistQuery = "SELECT artistID FROM Artists WHERE name = ?";
+//        String insertAlbumQuery = "INSERT INTO Albums (title, releaseDate, description, artistID, image_url) VALUES (?, ?, ?, ?, ?)";
+//        String insertAlbumTrackQuery = "INSERT INTO Album_Track (albumID, trackID) VALUES (?, ?)";
+//
+//        try {
+//            conn.setAutoCommit(false); // Bắt đầu transaction
+//
+//            // 1. Lấy artistID từ tên nghệ sĩ
+//            int artistID = -1;
+//            try (PreparedStatement stmt = conn.prepareStatement(getArtistQuery)) {
+//                stmt.setString(1, artistName);
+//                try (ResultSet rs = stmt.executeQuery()) {
+//                    if (rs.next()) {
+//                        artistID = rs.getInt("artistID");
+//                    } else {
+//                        System.out.println("⚠️ Nghệ sĩ không tồn tại: " + artistName);
+//                        return false;
+//                    }
+//                }
+//            }
+//
+//            // 2. Chèn album mới
+//            int albumID = -1;
+//            try (PreparedStatement stmt = conn.prepareStatement(insertAlbumQuery, Statement.RETURN_GENERATED_KEYS)) {
+//                stmt.setString(1, title);
+//                stmt.setDate(2, releaseDate);
+//                stmt.setString(3, description);
+//                stmt.setInt(4, artistID);
+//                stmt.setString(5, imageUrl);
+//                stmt.executeUpdate();
+//
+//                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+//                    if (generatedKeys.next()) {
+//                        albumID = generatedKeys.getInt(1);
+//                    } else {
+//                        throw new SQLException("⚠️ Không thể tạo album.");
+//                    }
+//                }
+//            }
+//
+//            // 3. Liên kết album với bài hát trong bảng Album_Track
+//            try (PreparedStatement stmt = conn.prepareStatement(insertAlbumTrackQuery)) {
+//                stmt.setInt(1, albumID);
+//                stmt.setInt(2, trackID);
+//                stmt.executeUpdate();
+//            }
+//
+//            conn.commit(); // Commit transaction
+//            System.out.println("✅ Album tạo thành công với ID: " + albumID);
+//            return true;
+//
+//        } catch (SQLException ex) {
+//            try {
+//                conn.rollback(); // Rollback nếu có lỗi
+//                System.out.println("❌ Lỗi xảy ra, rollback transaction!");
+//            } catch (SQLException rollbackEx) {
+//                rollbackEx.printStackTrace();
+//            }
+//            ex.printStackTrace();
+//            return false;
+//        } finally {
+//            try {
+//                conn.setAutoCommit(true); // Đặt lại trạng thái mặc định
+//            } catch (SQLException ex) {
+//                ex.printStackTrace();
+//            }
+//        }
+//    }
 
     public List<Track> searchTracksByName(String searchTerm) {
         List<Track> tracks = new ArrayList<>();

@@ -18,6 +18,7 @@ import jakarta.servlet.http.HttpSession;
 import model.Album;
 import model.Artist;
 import model.Track;
+import model.Genre;
 
 /**
  *
@@ -44,10 +45,12 @@ public class HomeServlet extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     private ArtistDAO artistDAO;
+     private TrackDAO trackDAO;
 
     @Override
     public void init() throws ServletException {
         artistDAO = new ArtistDAO();
+        trackDAO = new TrackDAO();
     }
 
     @Override
@@ -57,7 +60,17 @@ public class HomeServlet extends HttpServlet {
 
         switch (path) {
             case "/home/search":
+                List<Genre> genres = trackDAO.getAllGenres();
+                // Lấy số lượng bài hát cho mỗi thể loại
+                for (Genre genre : genres) {
+                    int trackCount = trackDAO.countTracksByGenre(genre.getGenreID());
+                    genre.setTrackCount(trackCount);
+                }
+                request.setAttribute("genres", genres);
                 request.getRequestDispatcher("/view/home/search.jsp").forward(request, response);
+                break;
+            case "/home/genre":
+                handleGenreView(request, response);
                 break;
             case "/home/library":
                 request.getRequestDispatcher("/view/home/library.jsp").forward(request, response);
@@ -70,6 +83,22 @@ public class HomeServlet extends HttpServlet {
                 break;
             case "/home/topsong":
                 request.getRequestDispatcher("/view/home/top_songs.jsp").forward(request, response);
+                break;
+            case "/home/all-artists":
+                handleAllArtists(request, response);
+                break;
+            case "/home/all-albums":
+                handleAllAlbums(request, response);
+                break;
+            case "/home/artist-tracks":
+                handleArtistTracks(request, response);
+                break;
+            case "/home/artist-albums":
+                handleArtistAlbums(request, response);
+                break;
+            case "/home/artist":
+                handleArtistInfor(request, response);
+                request.getRequestDispatcher("/view/home/artists.jsp").forward(request, response);
                 break;
             default:
                 handleViewArtist(request, response);
@@ -252,6 +281,98 @@ public class HomeServlet extends HttpServlet {
             }
         } else {
             request.setAttribute("error", "Track ID is required!");
+        }
+    }
+    
+    /*-----------------------------------Xử lý hiển thị bài hát theo thể loại-----------------------------------------------------------*/
+    private void handleGenreView(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String genreId = request.getParameter("id");
+        
+        if (genreId != null) {
+            try {
+                int genreID = Integer.parseInt(genreId);
+                Genre genre = trackDAO.getGenreById(genreID);
+                if (genre != null) {
+                    // Lấy danh sách bài hát theo thể loại
+                    List<Track> tracks = trackDAO.searchTracks(null, null, genreID, "releaseDate");
+                    request.setAttribute("selectedGenre", genre);
+                    request.setAttribute("tracks", tracks);
+                    
+                    // Lấy danh sách tất cả thể loại để hiển thị menu
+                    List<Genre> allGenres = trackDAO.getAllGenres();
+                    request.setAttribute("genres", allGenres);
+                    
+                    request.getRequestDispatcher("/view/home/genre.jsp").forward(request, response);
+                } else {
+                    response.sendRedirect(request.getContextPath() + "/home/search");
+                }
+            } catch (NumberFormatException e) {
+                response.sendRedirect(request.getContextPath() + "/home/search");
+            }
+        } else {
+            response.sendRedirect(request.getContextPath() + "/home/search");
+        }
+    }
+
+    /*-----------------------------------Xử lý hiển thị tất cả nghệ sĩ-----------------------------------------------------------*/
+    private void handleAllArtists(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        ArtistDAO dao = new ArtistDAO();
+        List<Artist> artists = dao.getArtists();
+        request.setAttribute("allArtists", artists);
+        request.getRequestDispatcher("/view/home/all-artists.jsp").forward(request, response);
+    }
+
+    /*-----------------------------------Xử lý hiển thị tất cả album-----------------------------------------------------------*/
+    private void handleAllAlbums(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        ArtistDAO dao = new ArtistDAO();
+        List<Album> albums = dao.getAlbums();
+        request.setAttribute("allAlbums", albums);
+        request.getRequestDispatcher("/view/home/all-albums.jsp").forward(request, response);
+    }
+
+    private void handleArtistTracks(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // Code to handle artist-tracks endpoint
+        String artistId = request.getParameter("id");
+        if (artistId != null) {
+            try {
+                int artID = Integer.parseInt(artistId);
+                TrackDAO trackDAO = new TrackDAO();
+                ArtistDAO artistDAO = new ArtistDAO();
+                Artist artist = artistDAO.getArtistById(artID);
+                List<Track> artistTracks = trackDAO.getTracksByArtistId(artID);
+                request.setAttribute("artistTracks", artistTracks);
+                request.setAttribute("artist", artist);
+                request.getRequestDispatcher("/view/home/artist-tracks.jsp").forward(request, response);
+            } catch (Exception e) {
+                request.setAttribute("error", "Invalid Artist ID!");
+            }
+        } else {
+            request.setAttribute("error", "Artist ID is required!");
+        }
+    }
+
+    private void handleArtistAlbums(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // Code to handle artist-albums endpoint
+        String artistId = request.getParameter("id");
+        if (artistId != null) {
+            try {
+                int artID = Integer.parseInt(artistId);
+                ArtistDAO artistDAO = new ArtistDAO();
+                Artist artist = artistDAO.getArtistById(artID);
+                List<Album> artistAlbums = artistDAO.getAlbumsByArtistId(artID);
+                request.setAttribute("artistAlbums", artistAlbums);
+                request.setAttribute("artist", artist);
+                request.getRequestDispatcher("/view/home/artist-albums.jsp").forward(request, response);
+            } catch (Exception e) {
+                request.setAttribute("error", "Invalid Artist ID!");
+            }
+        } else {
+            request.setAttribute("error", "Artist ID is required!");
         }
     }
 

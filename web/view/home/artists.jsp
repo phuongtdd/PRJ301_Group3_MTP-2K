@@ -223,7 +223,9 @@
 
                     <!-- Popular Tracks Section -->
                     <section class="popular-tracks">
-                        <h2>Popular</h2>
+                        <div class="section-header">
+                            <h2>Popular</h2>
+                        </div>
                         <div class="track-list">
                             <c:choose>
                                 <c:when test="${not empty sessionScope.artistTracks}">
@@ -262,10 +264,10 @@
                     </section>
 
                     <!-- Album Releases Section -->
-                    <section class="popular-releases">
+                    <section class="album-releases">
                         <div class="section-header">
-                            <h2>Popular Releases</h2>
-                            <a href="#" class="show-all">Show all</a>
+                            <h2>Albums</h2>
+                            <a href="${pageContext.request.contextPath}/home/artist-albums?id=${sessionScope.artistId}" class="show-all">Show all</a>
                         </div>
                         <div class="album-section">
                             <c:choose>
@@ -302,10 +304,10 @@
 
 
                     <!-- Track Section -->
-                    <section class="popular-releases">
+                    <section class="track-releases">
                         <div class="section-header">
                             <h2>Tracks</h2>
-                            <a href="#" class="show-all">Show all</a>
+                            <a href="${pageContext.request.contextPath}/home/artist-tracks?id=${sessionScope.artistId}" class="show-all">Show all</a>
                         </div>
                         <div class="album-section">
                             <c:choose>

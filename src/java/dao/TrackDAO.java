@@ -463,4 +463,43 @@ public class TrackDAO {
         
         return tracks;
     }
+    
+    // Đếm số bài hát theo thể loại
+    public int countTracksByGenre(int genreId) {
+        String query = "SELECT COUNT(DISTINCT t.trackID) FROM Tracks t " +
+                      "JOIN Track_Genre tg ON t.trackID = tg.trackID " +
+                      "WHERE tg.genreID = ?";
+        
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, genreId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TrackDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
+    
+    // Lấy thông tin thể loại theo ID
+    public Genre getGenreById(int genreId) {
+        String query = "SELECT * FROM Genres WHERE genreID = ?";
+        
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, genreId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Genre genre = new Genre();
+                    genre.setGenreID(rs.getInt("genreID"));
+                    genre.setGenreName(rs.getString("genreName"));
+                    return genre;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TrackDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
 }

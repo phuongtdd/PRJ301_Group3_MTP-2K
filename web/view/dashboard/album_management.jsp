@@ -429,16 +429,23 @@
                         <div class="form-group">
                             <label>Artist</label>
                             <div class="artist-selection">
-                                <select name="artistID" id="artistSelect">
+                                <select name="artistID" id="artistSelect" onchange="loadArtistTracks()">
                                     <option value="">-- Choose artist --</option>
                                     <c:forEach items="${artists}" var="artist">
                                         <option value="${artist.artistID}">${artist.name}</option>
                                     </c:forEach>
                                 </select>
-                                <!-- <div class="artist-search-container">
-                                    <input type="text" id="artistSearch" placeholder="Tìm nghệ sĩ..." class="artist-search">
-                                    <div id="artistSearchResults" class="search-results"></div>
-                                </div> -->
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Track</label>
+                            <div class="track-selection">
+                                <select name="trackID[]" id="trackSelect" multiple>
+                                    <option value="">-- Choose tracks --</option>
+                                </select>
+                                <div id="trackLoadingIndicator" style="display: none; margin-top: 10px;">
+                                    <i class="fas fa-spinner fa-spin"></i> Loading tracks...
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
@@ -474,7 +481,7 @@
                         <div class="form-group">
                             <label>Artist</label>
                             <div class="artist-selection">
-                                <select name="artist_id" id="edit-artist-select">
+                                <select name="artist_id" id="edit-artist-select" onchange="loadEditArtistTracks()">
                                     <option value="">-- Choose artist --</option>
                                     <c:forEach items="${artists}" var="artist">
                                         <option value="${artist.artistID}">${artist.name}</option>
@@ -486,6 +493,17 @@
                                     </label>
                                     <input type="text" name="artist_name" id="edit-artist-name" style="display: none; margin-top: 10px;" placeholder="Enter artist name...">
                                 </div> -->
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Track</label>
+                            <div class="track-selection">
+                                <select name="trackID" id="edit-track-select">
+                                    <option value="">-- Choose track --</option>
+                                </select>
+                                <div id="edit-track-loading-indicator" style="display: none; margin-top: 10px;">
+                                    <i class="fas fa-spinner fa-spin"></i> Loading tracks...
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
@@ -546,6 +564,18 @@
                         // Chọn nghệ sĩ
                         const artistSelect = document.getElementById('edit-artist-select');
                         artistSelect.value = album.artistID;
+                        
+                        // Load tracks for this artist
+                        loadEditArtistTracks();
+                        
+                        // If there's a track associated with this album, select it
+                        if (album.trackID) {
+                            // We need to wait for tracks to load before selecting
+                            setTimeout(() => {
+                                const trackSelect = document.getElementById('edit-track-select');
+                                trackSelect.value = album.trackID;
+                            }, 500);
+                        }
                         
                         // Hiển thị ảnh hiện tại
                         const currentImageElem = document.getElementById('edit-album-current-image');
@@ -725,6 +755,106 @@
                 if (event.target == editModal) {
                     editModal.style.display = "none";
                 }
+            }
+
+            // Function to load tracks based on selected artist
+            function loadArtistTracks() {
+                const artistId = document.getElementById('artistSelect').value;
+                const trackSelect = document.getElementById('trackSelect');
+                const loadingIndicator = document.getElementById('trackLoadingIndicator');
+                
+                // Clear current options except the first one
+                while (trackSelect.options.length > 1) {
+                    trackSelect.remove(1);
+                }
+                
+                if (!artistId) {
+                    return; // No artist selected
+                }
+                
+                // Show loading indicator
+                loadingIndicator.style.display = 'block';
+                
+                // Fetch tracks for the selected artist
+                fetch('${pageContext.request.contextPath}/admin?action=get-artist-tracks&artistId=' + artistId)
+                    .then(response => {
+                        console.log("Response status:", response.status);
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(tracks => {
+                        // Add tracks to the select element
+                        tracks.forEach(track => {
+                            const option = document.createElement('option');
+                            option.value = track.trackID;
+                            option.textContent = track.title;
+                            trackSelect.appendChild(option);
+                        });
+                        
+                        // Hide loading indicator
+                        loadingIndicator.style.display = 'none';
+                    })
+                    .catch(error => {
+                        console.error('Error fetching tracks:', error);
+                        // Hide loading indicator
+                        loadingIndicator.style.display = 'none';
+                        // Add error option
+                        const option = document.createElement('option');
+                        option.textContent = 'Error loading tracks';
+                        trackSelect.appendChild(option);
+                    });
+            }
+
+            // Function to load tracks for edit form based on selected artist
+            function loadEditArtistTracks() {
+                const artistId = document.getElementById('edit-artist-select').value;
+                const trackSelect = document.getElementById('edit-track-select');
+                const loadingIndicator = document.getElementById('edit-track-loading-indicator');
+                
+                // Clear current options except the first one
+                while (trackSelect.options.length > 1) {
+                    trackSelect.remove(1);
+                }
+                
+                if (!artistId) {
+                    return; // No artist selected
+                }
+                
+                // Show loading indicator
+                loadingIndicator.style.display = 'block';
+                
+                // Fetch tracks for the selected artist
+                fetch('${pageContext.request.contextPath}/admin?action=get-artist-tracks&artistId=' + artistId)
+                    .then(response => {
+                        console.log("Response status:", response.status);
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(tracks => {
+                        // Add tracks to the select element
+                        tracks.forEach(track => {
+                            const option = document.createElement('option');
+                            option.value = track.trackID;
+                            option.textContent = track.title;
+                            trackSelect.appendChild(option);
+                        });
+                        
+                        // Hide loading indicator
+                        loadingIndicator.style.display = 'none';
+                    })
+                    .catch(error => {
+                        console.error('Error fetching tracks:', error);
+                        // Hide loading indicator
+                        loadingIndicator.style.display = 'none';
+                        // Add error option
+                        const option = document.createElement('option');
+                        option.textContent = 'Error loading tracks';
+                        trackSelect.appendChild(option);
+                    });
             }
         </script>
     </body>

@@ -7,13 +7,16 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="contextPath" content="${pageContext.request.contextPath}">
         <title>MTP-2K</title>
         <link rel="stylesheet" href="styles.css">
         <link rel="stylesheet"
               href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
               rel="stylesheet">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css"/>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/chat.css">
+
     </head>
 
     <body>
@@ -122,7 +125,8 @@
             </div>
             <div class="artist-section">
                 <c:forEach var="artist" items="${artist}" begin="0" end="4">
-                    <form action="${pageContext.request.contextPath}/home/artist" method="POST" class="artist-card">
+                    <form action="${pageContext.request.contextPath}/home/artist" method="POST"
+                          class="artist-card">
                         <input type="hidden" name="id" value="${artist.artistID}">
                         <img src="${pageContext.request.contextPath}/${artist.imageUrl}" alt="${artist.name}">
                         <div class="card-info">
@@ -143,7 +147,8 @@
             </div>
             <div class="album-section">
                 <c:forEach var="album" items="${album}" begin="0" end="4">
-                    <form action="${pageContext.request.contextPath}/home/album" method="POST" class="album-card">
+                    <form action="${pageContext.request.contextPath}/home/album" method="POST"
+                          class="album-card">
                         <input type="hidden" name="id" value="${album.albumID}">
                         <img src="${pageContext.request.contextPath}/${album.imageUrl}" alt="${album.title}">
                         <div class="card-info">
@@ -255,7 +260,9 @@
                     </div>
                     <div class="detail-item">
                         <label>Member Since</label>
-                        <p><fmt:formatDate value="${sessionScope.user.createdAt}" pattern="dd/MM/yyyy"/></p>
+                        <p>
+                            <fmt:formatDate value="${sessionScope.user.createdAt}" pattern="dd/MM/yyyy" />
+                        </p>
                     </div>
                     <div class="detail-item">
                         <label>Subscription Status</label>
@@ -266,7 +273,9 @@
                                 </c:when>
                                 <c:otherwise>
                                     <span class="premium-badge premium">
-                                        Premium until: <fmt:formatDate value="${sessionScope.user.premiumExpiry}" pattern="dd/MM/yyyy"/>
+                                        Premium until:
+                                        <fmt:formatDate value="${sessionScope.user.premiumExpiry}"
+                                                        pattern="dd/MM/yyyy" />
                                     </span>
                                 </c:otherwise>
                             </c:choose>
@@ -281,7 +290,8 @@
             <div class="modal-content">
                 <span class="close-modal" onclick="closeModal('deleteAccountModal')">&times;</span>
                 <h2 class="modal-title" style="color: #ff4d4d;">Delete Account</h2>
-                <p style="color: #e6f1ff; margin-bottom: 20px;">Are you sure you want to delete your account? This action cannot be undone.</p>
+                <p style="color: #e6f1ff; margin-bottom: 20px;">Are you sure you want to delete your account?
+                    This action cannot be undone.</p>
                 <form action="${pageContext.request.contextPath}/login" method="post">
                     <input type="hidden" name="action" value="deleteAccount">
                     <div class="form-group">
@@ -289,7 +299,8 @@
                         <input type="password" id="confirmDeletePassword" name="confirmPassword" required>
                         <span id="deleteAccountError" class="error-message"></span>
                     </div>
-                    <button type="submit" class="submit-btn" style="background: #ff4d4d; color: white;" onclick="return confirmDelete()">Delete Account</button>
+                    <button type="submit" class="submit-btn" style="background: #ff4d4d; color: white;"
+                            onclick="return confirmDelete()">Delete Account</button>
                 </form>
             </div>
         </div>
@@ -366,6 +377,35 @@
                 return confirm('Are you absolutely sure you want to delete your account? This action cannot be undone.');
             }
         </script>
+
+        <!-- Chat Box -->
+        <c:if test="${not empty sessionScope.user}">
+        <div class="chat-container">
+            <div class="chat-icon" id="chat-icon">
+                <i class="fas fa-comment"></i>
+            </div>
+            <div class="chat-box hidden" id="chat-box">
+                <div class="chat-header">
+                    <h3>MTP-2K Assistant</h3>
+                    <button class="close-button" id="close-button">&times;</button>
+                </div>
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message ai-message">
+                        <div class="message-content">Hi there! MTP-2K always ready !</div>
+                    </div>
+                </div>
+                <div class="chat-input-container">
+                    <input type="text" class="chat-input" id="chat-input" placeholder="Type your message...">
+                    <button class="send-button" id="send-button">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        </c:if>
+
+        <!-- Include chat CSS and JS -->
+        <script src="${pageContext.request.contextPath}/js/chat.js"></script>
 
     </body>
 

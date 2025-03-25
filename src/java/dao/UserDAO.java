@@ -303,6 +303,75 @@ public class UserDAO {
         return user;
     }
 
+    // ---------------------------------------------- ✅ Tìm người dùng theo email -------------------------------------------------------//
+    public User getUserByEmail(String email) {
+        User user = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        String query = """
+                SELECT u.*, STRING_AGG(r.roleName, ',') as roles
+                FROM Users u
+                LEFT JOIN User_Roles ur ON u.userID = ur.userID
+                LEFT JOIN Roles r ON ur.roleID = r.roleID
+                WHERE u.email = ?
+                GROUP BY u.userID, u.userName, u.password, u.email, u.fullName,
+                         u.phone, u.createdAt, u.premium_expiry
+                """;
+
+        try {
+            Connection conn = DBConnection.getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setString(1, email);
+
+            System.out.println("Searching for email: " + email); // Debug log
+
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                user = new User(
+                        rs.getInt("userID"),
+                        rs.getString("userName"),
+                        rs.getString("password"),
+                        rs.getString("email"),
+                        rs.getString("fullName"),
+                        rs.getString("phone"),
+                        rs.getTimestamp("createdAt"),
+                        rs.getTimestamp("premium_expiry"));
+
+                // Convert comma-separated roles to List
+                String rolesStr = rs.getString("roles");
+                if (rolesStr != null) {
+                    List<String> rolesList = new ArrayList<>();
+                    for (String role : rolesStr.split(",")) {
+                        rolesList.add(role.trim());
+                    }
+                    user.setRoles(rolesList);
+                }
+
+                System.out.println("User found: " + user.getUserName()); // Debug log
+            } else {
+                System.out.println("No user found with email: " + email); // Debug log
+            }
+        } catch (SQLException e) {
+            System.out.println("Error in getUserByEmail: " + e.getMessage());
+            e.printStackTrace(); // Print stack trace for more detailed error info
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException e) {
+                System.out.println("Error closing resources: " + e.getMessage());
+            }
+        }
+
+        return user;
+    }
+
     public List<User> searchUsers(String searchTerm, String roleFilter) {
         List<User> users = new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder();
@@ -468,5 +537,7 @@ public class UserDAO {
         } else {
             System.out.println("User not found with ID: " + testUserId);
         }
+        System.out.println("TEST EMAIL");
+        System.out.println(userDAO.getUserByEmail("phuong3dong@gmail.com"));
     }
 }

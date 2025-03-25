@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="6.1" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_1.xsd">
-    
     <servlet>
         <servlet-name>HomeServlet</servlet-name>
         <servlet-class>controller.HomeServlet</servlet-class>
@@ -13,7 +12,10 @@
         <servlet-name>PremiumController</servlet-name>
         <servlet-class>controller.PremiumController</servlet-class>
     </servlet>
-    
+    <servlet>
+        <servlet-name>ChatServlet</servlet-name>
+        <servlet-class>controller.ChatServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomeServlet</servlet-name>
         <url-pattern>/home</url-pattern>
@@ -26,17 +28,13 @@
         <url-pattern>/home/track</url-pattern>
         <url-pattern>/home/topsong</url-pattern>
     </servlet-mapping>
-    
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/login</url-pattern>
     </servlet-mapping>
-    
     <welcome-file-list>
         <welcome-file>home</welcome-file>
     </welcome-file-list>
-
-    
     <servlet>
         <servlet-name>AdminController</servlet-name>
         <servlet-class>controller.AdminController</servlet-class>
@@ -46,8 +44,6 @@
             <file-size-threshold>5242880</file-size-threshold>
         </multipart-config>
     </servlet>
-    
-    
     <servlet-mapping>
         <servlet-name>AdminController</servlet-name>
         <url-pattern>/admin</url-pattern>
@@ -57,17 +53,14 @@
         <url-pattern>/admin/albums</url-pattern>
         <url-pattern>/admin/artists</url-pattern>
     </servlet-mapping>
-    
     <servlet-mapping>
         <servlet-name>PremiumController</servlet-name>
         <url-pattern>/premium</url-pattern>
     </servlet-mapping>
-    
+
     <session-config>
         <session-timeout>
             30
         </session-timeout>
     </session-config>
-    
-    
 </web-app>

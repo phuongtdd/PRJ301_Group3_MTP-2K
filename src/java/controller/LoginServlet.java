@@ -9,6 +9,7 @@ import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -48,7 +49,57 @@ public class LoginServlet extends HttpServlet {
         if ("logout".equals(action)) {
             handleLogout(request, response);
             return;
+        } else if ("forgotPassword".equals(action)) {
+            // Display forgot password form
+            request.getRequestDispatcher("/view/authentication/forgot_password.jsp").forward(request, response);
+            return;
+        } else if ("resetPassword".equals(action)) {
+            // Display reset password form (after email verification)
+            String email = request.getParameter("email");
+            String code = request.getParameter("code");
+
+            if (email != null && code != null) {
+                request.setAttribute("email", email);
+                request.setAttribute("code", code);
+                request.getRequestDispatcher("/view/authentication/reset_password.jsp").forward(request, response);
+                return;
+            }
         }
+
+        // Check if user has valid cookies for auto-login
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            String savedUsername = null;
+            String savedPassword = null;
+
+            for (Cookie cookie : cookies) {
+                if ("username".equals(cookie.getName())) {
+                    savedUsername = cookie.getValue();
+                }
+                if ("password".equals(cookie.getName())) {
+                    savedPassword = cookie.getValue();
+                }
+            }
+
+            // If both cookies exist, try to auto-login
+            if (savedUsername != null && savedPassword != null) {
+                UserDAO userDAO = new UserDAO();
+                User user = userDAO.login(savedUsername, savedPassword);
+
+                if (user != null) {
+                    HttpSession session = request.getSession();
+                    session.setAttribute("user", user);
+
+                    if (user.getRoles().get(0).equals("Admin")) {
+                        response.sendRedirect(request.getContextPath() + "/admin");
+                    } else {
+                        response.sendRedirect(request.getContextPath() + "/home");
+                    }
+                    return;
+                }
+            }
+        }
+
         RequestDispatcher dispatcher = request.getRequestDispatcher("view/authentication/login_register.jsp");
         dispatcher.forward(request, response);
     }
@@ -99,6 +150,12 @@ public class LoginServlet extends HttpServlet {
             }
         } else if ("register".equals(action)) {
             handleRegister(request, response);
+        } else if ("forgotPassword".equals(action)) {
+            handleForgotPassword(request, response);
+        } else if ("verifyCode".equals(action)) {
+            handleVerifyCode(request, response);
+        } else if ("resetPassword".equals(action)) {
+            handleResetPassword(request, response);
         } else if ("updatePassword".equals(action)) {
             handleUpdatePassword(request, response);
         } else if ("updateEmail".equals(action)) {
@@ -115,16 +172,32 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
+        String remember = request.getParameter("remember");
         UserDAO userDAO = new UserDAO();
 
         User user = userDAO.login(username, password);
         if (user != null) {
             HttpSession session = request.getSession();
+            session.setAttribute("user", user);
+
+            // If "Remember Me" is checked, create cookies
+            if (remember != null && remember.equals("on")) {
+                // Create username cookie
+                Cookie usernameCookie = new Cookie("username", username);
+                usernameCookie.setMaxAge(60 * 60 * 24 * 30); // 30 days
+                usernameCookie.setPath("/");
+                response.addCookie(usernameCookie);
+
+                // Create password cookie
+                Cookie passwordCookie = new Cookie("password", password);
+                passwordCookie.setMaxAge(60 * 60 * 24 * 30); // 30 days
+                passwordCookie.setPath("/");
+                response.addCookie(passwordCookie);
+            }
+
             if (user.getRoles().get(0).equals("Admin")) {
-                session.setAttribute("user", user);
                 response.sendRedirect(request.getContextPath() + "/admin");
             } else {
-                session.setAttribute("user", user);
                 response.sendRedirect(request.getContextPath() + "/home");
             }
         } else {
@@ -246,7 +319,129 @@ public class LoginServlet extends HttpServlet {
         if (session != null) {
             session.invalidate(); // Hủy session
         }
+
+        // Delete cookies
+        Cookie usernameCookie = new Cookie("username", "");
+        usernameCookie.setMaxAge(0);
+        usernameCookie.setPath("/");
+        response.addCookie(usernameCookie);
+
+        Cookie passwordCookie = new Cookie("password", "");
+        passwordCookie.setMaxAge(0);
+        passwordCookie.setPath("/");
+        response.addCookie(passwordCookie);
+
         response.sendRedirect(request.getContextPath() + "/home"); // Chuyển về trang đăng nhập sau khi logout
+    }
+
+    // Handle forgot password request (send verification code)
+    private void handleForgotPassword(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String email = request.getParameter("email");
+
+        if (email == null || email.trim().isEmpty()) {
+            request.setAttribute("error", "Email is required!");
+            request.getRequestDispatcher("/view/authentication/forgot_password.jsp").forward(request, response);
+            return;
+        }
+
+        UserDAO userDAO = new UserDAO();
+        User user = userDAO.getUserByEmail(email);
+
+        if (user == null) {
+            request.setAttribute("error", "Email not found in our records!");
+            request.getRequestDispatcher("/view/authentication/forgot_password.jsp").forward(request, response);
+            return;
+        }
+
+        // Generate verification code
+        String code = service.VerificationService.generateCode(email, user.getUserID());
+
+        // Send verification code via email
+        boolean emailSent = service.EmailService.sendVerificationCode(email, code);
+
+        if (emailSent) {
+            request.setAttribute("email", email);
+            request.setAttribute("message", "Verification code sent to your email!");
+            request.getRequestDispatcher("/view/authentication/verify_code.jsp").forward(request, response);
+        } else {
+            request.setAttribute("error", "Failed to send verification code. Please try again.");
+            request.getRequestDispatcher("/view/authentication/forgot_password.jsp").forward(request, response);
+        }
+    }
+
+// Handle verification code validation
+    private void handleVerifyCode(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String email = request.getParameter("email");
+        String code = request.getParameter("code");
+
+        if (email == null || code == null) {
+            response.sendRedirect(request.getContextPath() + "/login?action=forgotPassword");
+            return;
+        }
+
+        boolean isValid = service.VerificationService.verifyCode(email, code);
+
+        if (isValid) {
+            // Redirect to reset password page
+            response.sendRedirect(request.getContextPath() + "/login?action=resetPassword&email=" + email + "&code=" + code);
+        } else {
+            request.setAttribute("email", email);
+            request.setAttribute("error", "Invalid or expired verification code!");
+            request.getRequestDispatcher("/view/authentication/verify_code.jsp").forward(request, response);
+        }
+    }
+
+// Handle password reset
+    private void handleResetPassword(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String email = request.getParameter("email");
+        String code = request.getParameter("code");
+        String newPassword = request.getParameter("newPassword");
+        String confirmPassword = request.getParameter("confirmPassword");
+
+        if (email == null || code == null) {
+            response.sendRedirect(request.getContextPath() + "/login?action=forgotPassword");
+            return;
+        }
+
+        if (!newPassword.equals(confirmPassword)) {
+            request.setAttribute("email", email);
+            request.setAttribute("code", code);
+            request.setAttribute("error", "Passwords do not match!");
+            request.getRequestDispatcher("/view/authentication/reset_password.jsp").forward(request, response);
+            return;
+        }
+
+        boolean isValid = service.VerificationService.verifyCode(email, code);
+
+        if (!isValid) {
+            request.setAttribute("error", "Verification code has expired. Please request a new one.");
+            request.getRequestDispatcher("/view/authentication/forgot_password.jsp").forward(request, response);
+            return;
+        }
+
+        // Get user ID from verification code
+        service.VerificationService.VerificationCode verificationCode = service.VerificationService.getVerificationCode(email);
+        int userID = verificationCode.getUserID();
+
+        // Update password
+        UserDAO userDAO = new UserDAO();
+        boolean updated = userDAO.updatePassword(userID, newPassword);
+
+        if (updated) {
+            // Remove verification code
+            service.VerificationService.removeCode(email);
+
+            request.setAttribute("message", "Password reset successful! You can now login with your new password.");
+            request.getRequestDispatcher("/view/authentication/login_register.jsp").forward(request, response);
+        } else {
+            request.setAttribute("email", email);
+            request.setAttribute("code", code);
+            request.setAttribute("error", "Failed to reset password. Please try again.");
+            request.getRequestDispatcher("/view/authentication/reset_password.jsp").forward(request, response);
+        }
     }
 
     /**

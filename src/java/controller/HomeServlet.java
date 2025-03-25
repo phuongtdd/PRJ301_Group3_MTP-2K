@@ -69,6 +69,11 @@ public class HomeServlet extends HttpServlet {
                 request.getRequestDispatcher("/view/home/likedSongs.jsp").forward(request, response);
                 break;
             case "/home/topsong":
+                TrackDAO trackDAO = new TrackDAO();
+                // Fetch top tracks
+                 List<Track> topTracks = trackDAO.getTopTracksByPlayCount(10); // Fetch top 8 tracks
+        // Set the list of tracks as a request attribute
+               request.setAttribute("topTracks", topTracks);
                 request.getRequestDispatcher("/view/home/top_songs.jsp").forward(request, response);
                 break;
             default:
@@ -130,6 +135,11 @@ public class HomeServlet extends HttpServlet {
         String artistId = request.getParameter("id");
         HttpSession session = request.getSession();
 
+        // Xóa dữ liệu cũ liên quan đến artist và album
+        session.removeAttribute("artistTracks");
+        session.removeAttribute("artistAlbums");
+        session.removeAttribute("tracks");
+
         if (artistId != null) {
             try {
                 int artID = Integer.parseInt(artistId);
@@ -144,8 +154,13 @@ public class HomeServlet extends HttpServlet {
                 }
 
                 TrackDAO trackDAO = new TrackDAO();
-                List<Track> artistTracks = trackDAO.getTracksByArtistId(artID);
-                session.setAttribute("artistTracks", artistTracks);
+// Lấy top 5 tracks có lượt nghe cao nhất của artist
+List<Track> artistTopTracks = trackDAO.getTopTracksByArtistId(artID, 5);
+session.setAttribute("artistTopTracks", artistTopTracks);
+
+// Lấy tất cả tracks của artist
+List<Track> artistTracks = trackDAO.getTracksByArtistId(artID);
+session.setAttribute("artistTracks", artistTracks);
 
                 List<Album> artistAlbums = artistDAO.getAlbumsByArtistId(artID);
                 if (artistAlbums != null && !artistAlbums.isEmpty()) {
@@ -173,6 +188,13 @@ public class HomeServlet extends HttpServlet {
         String albumID = request.getParameter("id");
         HttpSession session = request.getSession();
 
+        session.removeAttribute("artistTracks");
+        session.removeAttribute("artistAlbums");
+        session.removeAttribute("tracks");
+        session.removeAttribute("artist");
+        session.removeAttribute("album");
+        session.removeAttribute("artistId");
+
         if (albumID != null) {
             try {
                 int alID = Integer.parseInt(albumID);
@@ -187,9 +209,9 @@ public class HomeServlet extends HttpServlet {
                     session.setAttribute("album", album); // Lưu thông tin album vào session
                     session.setAttribute("artistId", artistID);  // Lưu artistID vào session
 
-                    // Lấy danh sách tracks của artist thông qua Track_Artists
+                    // Lấy danh sách tracks của album thông qua Albums_Tracks
                     TrackDAO trackDAO = new TrackDAO();
-                    List<Track> albumTracks = trackDAO.getTracksByArtistId(artistID);
+                    List<Track> albumTracks = trackDAO.getTracksByAlbumId(alID);
                     session.setAttribute("tracks", albumTracks);
 
                     // Lấy danh sách albums khác của cùng artist

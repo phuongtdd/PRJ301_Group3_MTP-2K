@@ -226,8 +226,8 @@
                         <h2>Popular</h2>
                         <div class="track-list">
                             <c:choose>
-                                <c:when test="${not empty sessionScope.artistTracks}">
-                                    <c:forEach var="track" items="${sessionScope.artistTracks}" varStatus="loop">
+                                <c:when test="${not empty sessionScope.artistTopTracks}">
+                                    <c:forEach var="track" items="${sessionScope.artistTopTracks}" varStatus="loop">
                                         <c:if test="${loop.index < 5}">
                                             <div class="track-item popular">
                                                 <form id="trackForm${track.trackID}"
@@ -264,7 +264,7 @@
                     <!-- Album Releases Section -->
                     <section class="popular-releases">
                         <div class="section-header">
-                            <h2>Popular Releases</h2>
+                            <h2>Albums</h2>
                             <a href="#" class="show-all">Show all</a>
                         </div>
                         <div class="album-section">
@@ -309,9 +309,9 @@
                         </div>
                         <div class="album-section">
                             <c:choose>
-                                <c:when test="${not empty sessionScope.artistTracks}">
-                                    <c:forEach var="track" items="${sessionScope.artistTracks}" varStatus="loop">
-                                        <c:if test="${loop.index < 4}">
+                                <c:when test="${not empty sessionScope.artistTopTracks}">
+                                    <c:forEach var="track" items="${sessionScope.artistTopTracks}" varStatus="loop">
+                                        <c:if test="${loop.index < 5}">
                                             <div class="track-card">
                                                 <form id="trackDetailForm${track.trackID}"
                                                     action="${pageContext.request.contextPath}/home/track" method="POST"

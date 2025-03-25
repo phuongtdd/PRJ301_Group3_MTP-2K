@@ -243,11 +243,13 @@
                                 <div class="track-item">
                                     <div class="track-number">${loop.index + 1}</div>
                                     <div class="track-title">
-                                        <form id="artistViewForm" action="${pageContext.request.contextPath}/home/track"
-                                            method="POST" style="display:none;">
+                                        <form id="trackViewForm_${loop.index}"
+                                            action="${pageContext.request.contextPath}/home/track" method="POST"
+                                            style="display:none;">
                                             <input type="hidden" name="id" value="${track.trackID}">
                                         </form>
-                                        <button onclick="document.getElementById('artistViewForm').submit();"
+                                        <button
+                                            onclick="document.getElementById('trackViewForm_${loop.index}').submit();"
                                             class="view-artist-btn"
                                             style="background: rgba(255,255,255,0.1); border: none; color: #a8b2d1; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
                                             ${track.title}
@@ -268,11 +270,13 @@
                             <div class="more-by-Artists">
                                 <div class="section-header">
                                     <h2>More by ${sessionScope.artist.name}</h2>
-                                    <form id="artistViewForm" action="${pageContext.request.contextPath}/home/artist"
-                                        method="POST" style="display:none;">
+                                    <form id="artistViewForm_${sessionScope.artist.artistID}"
+                                        action="${pageContext.request.contextPath}/home/artist" method="POST"
+                                        style="display:none;">
                                         <input type="hidden" name="id" value="${sessionScope.artist.artistID}">
                                     </form>
-                                    <button onclick="document.getElementById('artistViewForm').submit();"
+                                    <button
+                                        onclick="document.getElementById('artistViewForm_${sessionScope.artist.artistID}').submit();"
                                         class="view-artist-btn"
                                         style="background: rgba(255,255,255,0.1); border: none; color: #a8b2d1; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
                                         View Artist
@@ -285,14 +289,23 @@
                                         <c:forEach var="album" items="${sessionScope.artistAlbums}" varStatus="status">
                                             <c:if test="${status.index < 2}">
                                                 <div class="album-card">
-                                                    <div class="card-image-container">
+                                                    <form id="albumForm${album.albumID}"
+                                                        action="${pageContext.request.contextPath}/home/album"
+                                                        method="POST" style="display:none;">
+                                                        <input type="hidden" name="id" value="${album.albumID}">
+                                                    </form>
+                                                    <div class="card-image-container"
+                                                        onclick="document.getElementById('albumForm${album.albumID}').submit();"
+                                                        style="cursor: pointer;">
                                                         <img src="${pageContext.request.contextPath}/${album.imageUrl}"
                                                             alt="${album.title}">
                                                         <div class="hover-play-button">
                                                             <i class="fas fa-play"></i>
                                                         </div>
                                                     </div>
-                                                    <div class="card-info">
+                                                    <div class="card-info"
+                                                        onclick="document.getElementById('albumForm${album.albumID}').submit();"
+                                                        style="cursor: pointer;">
                                                         <h3 class="card-title">${album.title}</h3>
                                                         <p class="card-description">
                                                             <fmt:formatDate value="${album.releaseDate}"
@@ -311,14 +324,23 @@
                                             varStatus="status">
                                             <c:if test="${status.index < 3}">
                                                 <div class="track-card">
-                                                    <div class="card-image-container">
+                                                    <form id="trackForm${artistTrack.trackID}"
+                                                        action="${pageContext.request.contextPath}/home/track"
+                                                        method="POST" style="display:none;">
+                                                        <input type="hidden" name="id" value="${artistTrack.trackID}">
+                                                    </form>
+                                                    <div class="card-image-container"
+                                                        onclick="document.getElementById('trackForm${artistTrack.trackID}').submit();"
+                                                        style="cursor: pointer;">
                                                         <img src="${pageContext.request.contextPath}/${artistTrack.imageUrl}"
                                                             alt="${artistTrack.title}">
                                                         <div class="hover-play-button">
                                                             <i class="fas fa-play"></i>
                                                         </div>
                                                     </div>
-                                                    <div class="card-info">
+                                                    <div class="card-info"
+                                                        onclick="document.getElementById('trackForm${artistTrack.trackID}').submit();"
+                                                        style="cursor: pointer;">
                                                         <h3 class="card-title">${artistTrack.title}</h3>
                                                         <p class="card-description">
                                                             <fmt:formatDate value="${artistTrack.releaseDate}"

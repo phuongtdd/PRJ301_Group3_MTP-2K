@@ -116,10 +116,13 @@
                                                         onclick="showModal('phoneModal'); return false;">
                                                         <i class="fas fa-phone"></i> Change Phone Number
                                                     </a>
+                                                    <a href="${pageContext.request.contextPath}/premium"
+                                                        class="dropdown-item">
+                                                        <i class="fas fa-crown"></i> Premium
+                                                    </a>
                                                     <div class="divider"></div>
-                                                    <a href="#" class="dropdown-item"
-                                                        onclick="showModal('deleteAccountModal'); return false;"
-                                                        style="color: #ff4d4d;">
+                                                    <a href="#" class="dropdown-item" onclick="showModal('deleteAccountModal');
+                                                    return false;" style="color: #ff4d4d;">
                                                         <i class="fas fa-trash-alt"></i> Delete Account
                                                     </a>
                                                     <div class="divider"></div>
@@ -132,13 +135,9 @@
                                         </div>
                                     </div>
                                 </c:when>
-                                <c:otherwise>
-                                    <a href="${pageContext.request.contextPath}/login" class="login-btn">Log in</a>
-                                    <a href="${pageContext.request.contextPath}/login?action=signup"
-                                        class="signup-btn">Sign up</a>
-                                </c:otherwise>
                             </c:choose>
                         </div>
+
 
                         <!-------------------------- Search Results Container ----------------------->
                         <div id="searchResults" class="search-results" style="display: none;">
@@ -228,8 +227,8 @@
                         </div>
                         <div class="track-list">
                             <c:choose>
-                                <c:when test="${not empty sessionScope.artistTracks}">
-                                    <c:forEach var="track" items="${sessionScope.artistTracks}" varStatus="loop">
+                                <c:when test="${not empty sessionScope.artistTopTracks}">
+                                    <c:forEach var="track" items="${sessionScope.artistTopTracks}" varStatus="loop">
                                         <c:if test="${loop.index < 5}">
                                             <div class="track-item popular">
                                                 <form id="trackForm${track.trackID}"
@@ -311,9 +310,9 @@
                         </div>
                         <div class="album-section">
                             <c:choose>
-                                <c:when test="${not empty sessionScope.artistTracks}">
-                                    <c:forEach var="track" items="${sessionScope.artistTracks}" varStatus="loop">
-                                        <c:if test="${loop.index < 4}">
+                                <c:when test="${not empty sessionScope.artistTopTracks}">
+                                    <c:forEach var="track" items="${sessionScope.artistTopTracks}" varStatus="loop">
+                                        <c:if test="${loop.index < 5}">
                                             <div class="track-card">
                                                 <form id="trackDetailForm${track.trackID}"
                                                     action="${pageContext.request.contextPath}/home/track" method="POST"

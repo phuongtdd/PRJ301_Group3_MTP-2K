@@ -1,0 +1,33 @@
+.premium-btn {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(90deg, #5B9DFF, #63D2FF);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    margin-right: 15px;
+}
+
+.premium-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(91, 157, 255, 0.4);
+}
+
+.premium-btn i {
+    margin-right: 5px;
+}
+
+/* Adjust auth-buttons to properly display premium button and user icon side by side */
+.auth-buttons {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    z-index: 1000;
+}

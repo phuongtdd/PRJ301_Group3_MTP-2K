@@ -137,6 +137,46 @@ public class OrderDAO {
 
         return orderDetails;
     }
+    
+    //Tạo ORDER
+    public int createOrder(int userID, int paymentID, int premiumID, double amount) {
+        String sql = "INSERT INTO Orders (orderDate, amount, userID, paymentID, premiumID, status) "
+                + "VALUES (GETDATE(), ?, ?, ?, ?, 'Pending')";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setDouble(1, amount);
+            stmt.setInt(2, userID);
+            stmt.setInt(3, paymentID);
+            stmt.setInt(4, premiumID);
+
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows > 0) {
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        return rs.getInt(1); // Return the new orderID
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return -1; // Error occurred
+    }
+
+    public boolean updateOrderStatus(int orderID, String status) {
+        String sql = "UPDATE Orders SET status = ? WHERE orderID = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, status);
+            stmt.setInt(2, orderID);
+
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     public static void main(String[] args) {
         // Khởi tạo OrderDAO

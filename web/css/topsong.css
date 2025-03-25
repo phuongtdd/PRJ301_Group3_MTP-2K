@@ -206,7 +206,7 @@ body {
 
 .track-item {
     display: grid;
-    grid-template-columns: 50px 60px 1fr 120px 100px 80px;
+    grid-template-columns: 30px 60px 1fr 120px 80px;
     align-items: center;
     padding: 15px 20px;
     border-bottom: 1px solid rgba(100, 255, 218, 0.1);
@@ -235,6 +235,7 @@ body {
     font-size: 20px;
     font-weight: bold;
     color: #8892b0;
+    text-align: center;
 }
 
 .track-rank.rank-1 {
@@ -282,7 +283,8 @@ body {
 .track-date {
     color: #8892b0;
     font-size: 14px;
-    text-align: center;
+    text-align: right;
+    padding-right: 15px;
 }
 
 .track-duration {
@@ -297,8 +299,6 @@ body {
     color: #ff6347; /* Màu đỏ cam, tạo sự nổi bật */
     text-align: right;
 }
-
-
 
 .play-btn {
     background-color: transparent;
@@ -322,7 +322,7 @@ body {
 
 .track-list-header {
     display: grid;
-    grid-template-columns: 75px 60px 1fr 120px 130px 35px;
+    grid-template-columns: 30px 60px 1fr 120px 80px;
     align-items: center;
     padding: 10px 20px;
     border-bottom: 2px solid #64ffda;
@@ -343,26 +343,21 @@ body {
 
 /* Khoảng cách các phần tử của Track List Header*/
 .track-list-header div:nth-child(1) {
-    padding-left: 7px; /* Dịch dấu # qua phải */
-    padding-right: 10px; /* Khoảng cách giữa # và ảnh */
-}
-
-.track-list-header div:nth-child(2) {
-    padding-right: 15px; /* Khoảng cách giữa ảnh và TITLE */
+    text-align: center;
 }
 
 .track-list-header div:nth-child(3) {
-    padding-right: 25px; /* TITLE và DATE ADDED */
+    padding-left: 15px;
 }
 
 .track-list-header div:nth-child(4) {
-    padding-right: 20px; /* DATE ADDED và DURATION */
+    text-align: right;
+    padding-right: 15px;
 }
 
 .track-list-header div:nth-child(5) {
-    padding-right: 10px; /* DURATION và PLAYS */
+    text-align: right;
 }
-
 
 /* Charts section */
 /* Phần biểu đồ */
@@ -526,19 +521,23 @@ audio {
 .toast {
     position: fixed;
     bottom: 20px;
-    right: 20px;
-    background-color: rgba(100, 255, 218, 0.2);
-    border: 1px solid #64ffda;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(2, 12, 27, 0.9);
     color: #64ffda;
-    padding: 12px 20px;
+    padding: 10px 20px;
     border-radius: 5px;
-    z-index: 1000;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    z-index: 100;
 }
 
 .toast.show {
     opacity: 1;
+    visibility: visible;
 }
 
 /* Page transition overlay */

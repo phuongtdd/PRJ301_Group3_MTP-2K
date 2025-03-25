@@ -15,8 +15,8 @@
                     rel="stylesheet">
                 <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
                 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/search.css" />
-
                 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/track.css" />
+
             </head>
 
             <body>
@@ -53,7 +53,7 @@
                         <li><a href="${pageContext.request.contextPath}/home/library"><i class="fas fa-book"></i> Your
                                 Library</a></li>
                         <li style="margin-top: 24px"><a
-                                href="${pageContext.request.contextPath}/home/create-playlist    "><i
+                                href="${pageContext.request.contextPath}/home/create-playlist"><i
                                     class="fas fa-plus-square"></i> Create Playlist</a></li>
                         <li><a href="${pageContext.request.contextPath}/home/topsong"><i class="fas fa-heart"></i>
                                 Top Songs</a></li>
@@ -67,9 +67,6 @@
                     </div>
                 </div>
 
-
-
-                <!-- Main Content -->
                 <div class="main-content">
                     <!-- Add search bar -->
                     <div class="search-container">
@@ -107,10 +104,13 @@
                                                         onclick="showModal('phoneModal'); return false;">
                                                         <i class="fas fa-phone"></i> Change Phone Number
                                                     </a>
+                                                    <a href="${pageContext.request.contextPath}/premium"
+                                                        class="dropdown-item">
+                                                        <i class="fas fa-crown"></i> Premium
+                                                    </a>
                                                     <div class="divider"></div>
-                                                    <a href="#" class="dropdown-item"
-                                                        onclick="showModal('deleteAccountModal'); return false;"
-                                                        style="color: #ff4d4d;">
+                                                    <a href="#" class="dropdown-item" onclick="showModal('deleteAccountModal');
+                                            return false;" style="color: #ff4d4d;">
                                                         <i class="fas fa-trash-alt"></i> Delete Account
                                                     </a>
                                                     <div class="divider"></div>
@@ -123,13 +123,9 @@
                                         </div>
                                     </div>
                                 </c:when>
-                                <c:otherwise>
-                                    <a href="${pageContext.request.contextPath}/login" class="login-btn">Log in</a>
-                                    <a href="${pageContext.request.contextPath}/login?action=signup"
-                                        class="signup-btn">Sign up</a>
-                                </c:otherwise>
                             </c:choose>
                         </div>
+
 
                         <!-------------------------- Search Results Container ----------------------->
                         <div id="searchResults" class="search-results" style="display: none;">
@@ -227,7 +223,13 @@
 
                     <!-- Track Actions -->
                     <div class="album-actions">
-                        <div class="play-button">
+                        <div class="play-button" id="playCurrentTrack" data-track-id="${sessionScope.track.trackID}"
+                            data-track-title="${sessionScope.track.title}"
+                            data-track-image="${sessionScope.track.imageUrl}"
+                            data-track-file="${sessionScope.track.fileUrl}" data-track-artist="<c:forEach var=" artist"
+                            items="${sessionScope.track.artists}" varStatus="status">${artist.name}<c:if
+                                test="${!status.last}">, </c:if>
+                            </c:forEach>">
                             <i class="fas fa-play"></i>
                         </div>
                         <div class="action-buttons-group">
@@ -445,6 +447,8 @@
                 </div>
 
                 <!-- Add JavaScript for toggle functionality -->
+                <!----------------------------------Play Button-------------------------------->
+
                 <script>
                     function adjustTitleSize() {
                         const title = document.querySelector('.album-title');
@@ -493,6 +497,7 @@
                     // Chạy khi trang load
                     window.addEventListener('load', adjustTitleSize);
                 </script>
+                <!-- --------------------------------Play Button------------------------------ -->
 
                 <!-- Add these modal forms before closing body tag -->
                 <!-- Password Change Modal -->
@@ -800,6 +805,590 @@
                         }
                     });
                 </script>
+
+                <!-- Music Player -->
+                <c:if test="${not empty sessionScope.user}">
+                    <div class="music-player" id="musicPlayer" style="display: none;">
+                        <div class="now-playing">
+                            <div class="now-playing-img" id="nowPlayingImg">
+                                <img id="currentSongImg" src="${pageContext.request.contextPath}" alt="Now Playing">
+                            </div>
+                            <div class="now-playing-info">
+                                <div class="now-playing-title" id="currentSongTitle">Not Playing</div>
+                                <div class="now-playing-artist" id="currentSongArtist"></div>
+                            </div>
+                            <div class="now-playing-actions">
+                                <button class="option-btn" id="expandBtn" title="Expand">
+                                    <i class="fas fa-expand-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Ad banner for non-premium users -->
+                        <c:if test="${sessionScope.user.premiumExpiry == null}">
+                            <div class="ad-banner">
+                                <div class="ad-content">
+                                    <p><i class="fas fa-crown"></i> Upgrade to Premium to skip ads and fast-forward
+                                        songs!</p>
+                                    <a href="${pageContext.request.contextPath}/premium" class="premium-upgrade-btn">Get
+                                        Premium</a>
+                                </div>
+                            </div>
+                        </c:if>
+
+                        <div class="player-controls">
+                            <div class="control-buttons">
+                                <button class="control-btn" id="shuffleBtn" title="Shuffle">
+                                    <i class="fas fa-random"></i>
+                                </button>
+                                <button class="control-btn" id="prevBtn" title="Previous">
+                                    <i class="fas fa-step-backward"></i>
+                                </button>
+                                <button class="play-pause-btn" id="playPauseBtn" title="Play/Pause">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="control-btn" id="nextBtn" title="Next">
+                                    <i class="fas fa-step-forward"></i>
+                                </button>
+                                <button class="control-btn" id="repeatBtn" title="Repeat">
+                                    <i class="fas fa-redo"></i>
+                                </button>
+                            </div>
+
+                            <div class="progress-container">
+                                <span class="progress-time" id="currentTime">0:00</span>
+                                <div class="progress-bar" id="progressBar">
+                                    <div class="progress" id="progress">
+                                        <div class="progress-handle"></div>
+                                    </div>
+                                    <div class="progress-tooltip" id="progressTooltip">0:00</div>
+                                </div>
+                                <span class="progress-time" id="totalTime">0:00</span>
+                            </div>
+                        </div>
+
+                        <div class="player-options">
+                            <button class="option-btn" id="queueBtn" title="Queue">
+                                <i class="fas fa-list"></i>
+                            </button>
+                            <div class="volume-control">
+                                <button class="option-btn" id="volumeBtn" title="Volume">
+                                    <i class="fas fa-volume-up"></i>
+                                </button>
+                                <div class="volume-slider-container">
+                                    <div class="volume-bar" id="volumeBar">
+                                        <div class="volume-level" id="volumeLevel">
+                                            <div class="volume-handle"></div>
+                                        </div>
+                                        <div class="volume-tooltip" id="volumeTooltip">70%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Audio Element -->
+                    <audio id="audioPlayer"></audio>
+                </c:if>
+
+                <!--------------------------EXPANDED PLAYER-------------------------->
+                <!-- Queue Panel -->
+                <div class="queue-panel" id="queuePanel">
+                    <div class="queue-header">
+                        <div class="queue-title">Queue</div>
+                        <button class="queue-close" id="queueCloseBtn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="queue-content">
+                        <div class="queue-section">
+                            <div class="queue-section-title">Now Playing</div>
+                            <div id="nowPlayingQueue"></div>
+                        </div>
+                        <div class="queue-section">
+                            <div class="queue-section-title">Next Up</div>
+                            <div id="queueContent"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Expanded Player -->
+                <div class="expanded-player" id="expandedPlayer">
+                    <button class="expanded-close" id="expandedCloseBtn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <div class="expanded-content">
+                        <div class="expanded-img">
+                            <!-- COMMENT: Default expanded player album art image path in the image folder -->
+                            <img id="expandedImg" src="${pageContext.request.contextPath}/image/m-tp.jpg"
+                                alt="Now Playing">
+                        </div>
+                        <div class="expanded-info">
+                            <div class="expanded-title" id="expandedTitle">Not Playing</div>
+                            <div class="expanded-artist" id="expandedArtist"></div>
+                        </div>
+                        <div class="expanded-controls">
+                            <div class="expanded-progress">
+                                <span class="progress-time" id="expandedCurrentTime">0:00</span>
+                                <div class="expanded-progress-bar" id="expandedProgressBar">
+                                    <div class="expanded-progress-level" id="expandedProgress">
+                                        <div class="expanded-progress-handle"></div>
+                                    </div>
+                                    <div class="progress-tooltip" id="expandedProgressTooltip">0:00</div>
+                                </div>
+                                <span class="progress-time" id="expandedTotalTime">0:00</span>
+                            </div>
+                            <div class="expanded-buttons">
+                                <button class="expanded-btn" id="expandedShuffleBtn" title="Shuffle">
+                                    <i class="fas fa-random"></i>
+                                </button>
+                                <button class="expanded-btn" id="expandedPrevBtn" title="Previous">
+                                    <i class="fas fa-step-backward"></i>
+                                </button>
+                                <button class="expanded-play-btn" id="expandedPlayBtn" title="Play/Pause">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="expanded-btn" id="expandedNextBtn" title="Next">
+                                    <i class="fas fa-step-forward"></i>
+                                </button>
+                                <button class="expanded-btn" id="expandedRepeatBtn" title="Repeat">
+                                    <i class="fas fa-redo"></i>
+                                </button>
+                            </div>
+
+                            <!-- Added volume control to expanded player -->
+                            <div class="expanded-volume-control">
+                                <button class="expanded-btn" id="expandedVolumeBtn" title="Volume">
+                                    <i class="fas fa-volume-up"></i>
+                                </button>
+                                <div class="expanded-volume-slider-container">
+                                    <div class="expanded-volume-bar" id="expandedVolumeBar">
+                                        <div class="expanded-volume-level" id="expandedVolumeLevel">
+                                            <div class="expanded-volume-handle"></div>
+                                        </div>
+                                        <div class="expanded-volume-tooltip" id="expandedVolumeTooltip">70%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        // Lấy các phần tử DOM
+                        const playButton = document.getElementById('playCurrentTrack');
+                        const audioPlayer = document.getElementById('audioPlayer');
+                        const musicPlayer = document.querySelector('.music-player');
+
+                        // Thêm sự kiện click cho nút play
+                        if (playButton) {
+                            playButton.addEventListener('click', function () {
+                                // Lấy thông tin track từ data attributes
+                                const trackId = this.getAttribute('data-track-id');
+                                const trackTitle = this.getAttribute('data-track-title');
+                                const trackArtist = this.getAttribute('data-track-artist');
+                                const trackImage = this.getAttribute('data-track-image');
+                                const trackFile = this.getAttribute('data-track-file');
+
+                                // Hiển thị music player nếu đang ẩn
+                                if (musicPlayer && musicPlayer.style.display === 'none') {
+                                    musicPlayer.style.display = 'flex';
+                                }
+
+                                // Cập nhật thông tin bài hát trong player
+                                document.getElementById('currentSongImg').src = '${pageContext.request.contextPath}/' + trackImage;
+                                document.getElementById('currentSongTitle').textContent = trackTitle;
+                                document.getElementById('currentSongArtist').textContent = trackArtist;
+
+                                // Cập nhật thông tin trong expanded player
+                                document.getElementById('expandedImg').src = '${pageContext.request.contextPath}/' + trackImage;
+                                document.getElementById('expandedTitle').textContent = trackTitle;
+                                document.getElementById('expandedArtist').textContent = trackArtist;
+
+                                // Thiết lập nguồn âm thanh và phát
+                                audioPlayer.src = '${pageContext.request.contextPath}/' + trackFile;
+                                audioPlayer.load();
+                                audioPlayer.play();
+
+                                // Cập nhật biểu tượng play/pause
+                                document.querySelector('#playPauseBtn i').className = 'fas fa-pause';
+                                document.querySelector('#expandedPlayBtn i').className = 'fas fa-pause';
+
+                                // Log để debug
+                                console.log('Playing track:', trackTitle, 'by', trackArtist);
+                                console.log('Track file URL:', '${pageContext.request.contextPath}/' + trackFile);
+                            });
+                        }
+
+                        // Xử lý nút play/pause trong music player
+                        const playPauseBtn = document.getElementById('playPauseBtn');
+                        if (playPauseBtn) {
+                            playPauseBtn.addEventListener('click', togglePlayPause);
+                        }
+
+                        const expandedPlayBtn = document.getElementById('expandedPlayBtn');
+                        if (expandedPlayBtn) {
+                            expandedPlayBtn.addEventListener('click', togglePlayPause);
+                        }
+
+                        // Hàm chuyển đổi phát/tạm dừng
+                        function togglePlayPause() {
+                            if (audioPlayer.paused) {
+                                audioPlayer.play();
+                                document.querySelector('#playPauseBtn i').className = 'fas fa-pause';
+                                document.querySelector('#expandedPlayBtn i').className = 'fas fa-pause';
+                            } else {
+                                audioPlayer.pause();
+                                document.querySelector('#playPauseBtn i').className = 'fas fa-play';
+                                document.querySelector('#expandedPlayBtn i').className = 'fas fa-play';
+                            }
+                        }
+
+                        // Cập nhật tiến trình phát
+                        audioPlayer.addEventListener('timeupdate', function () {
+                            const currentTime = audioPlayer.currentTime;
+                            const duration = audioPlayer.duration || 0;
+                            const progressPercent = (currentTime / duration) * 100;
+
+                            // Cập nhật thanh tiến trình
+                            document.getElementById('progress').style.width = progressPercent + '%';
+                            document.getElementById('expandedProgress').style.width = progressPercent + '%';
+
+                            // Cập nhật thời gian
+                            document.getElementById('currentTime').textContent = formatTime(currentTime);
+                            document.getElementById('expandedCurrentTime').textContent = formatTime(currentTime);
+                        });
+
+                        // Cập nhật thời lượng khi metadata được tải
+                        audioPlayer.addEventListener('loadedmetadata', function () {
+                            const duration = audioPlayer.duration || 0;
+                            document.getElementById('totalTime').textContent = formatTime(duration);
+                            document.getElementById('expandedTotalTime').textContent = formatTime(duration);
+                        });
+
+                        // Định dạng thời gian
+                        function formatTime(seconds) {
+                            const minutes = Math.floor(seconds / 60);
+                            const remainingSeconds = Math.floor(seconds % 60);
+                            return minutes + ':' + (remainingSeconds < 10 ? '0' : '') + remainingSeconds;
+                        }
+
+                        // Xử lý click vào thanh tiến trình
+                        const progressBar = document.getElementById('progressBar');
+                        if (progressBar) {
+                            progressBar.addEventListener('click', function (e) {
+                                <c:choose>
+                                    <c:when test="${sessionScope.user.premiumExpiry == null}">
+                                        // Non-premium users can't fast-forward
+                                        showPremiumRestrictionMessage();
+                                    </c:when>
+                                    <c:otherwise>
+                                        const width = this.clientWidth;
+                                        const clickX = e.offsetX;
+                                        const duration = audioPlayer.duration;
+                                        audioPlayer.currentTime = (clickX / width) * duration;
+                                    </c:otherwise>
+                                </c:choose>
+                            });
+                        }
+
+                        const expandedProgressBar = document.getElementById('expandedProgressBar');
+                        if (expandedProgressBar) {
+                            expandedProgressBar.addEventListener('click', function (e) {
+                                <c:choose>
+                                    <c:when test="${sessionScope.user.premiumExpiry == null}">
+                                        // Non-premium users can't fast-forward
+                                        showPremiumRestrictionMessage();
+                                    </c:when>
+                                    <c:otherwise>
+                                        const width = this.clientWidth;
+                                        const clickX = e.offsetX;
+                                        const duration = audioPlayer.duration;
+                                        audioPlayer.currentTime = (clickX / width) * duration;
+                                    </c:otherwise>
+                                </c:choose>
+                            });
+                        }
+
+                        // Function to show premium restriction message
+                        function showPremiumRestrictionMessage() {
+                            const toast = document.getElementById('toast');
+                            toast.textContent = "Fast-forward is a premium feature. Upgrade to Premium to unlock!";
+                            toast.className = "toast warning";
+                            toast.classList.add('show');
+                            setTimeout(() => {
+                                toast.classList.remove('show');
+                            }, 3000);
+                        }
+
+                        // Xử lý nút mở rộng player
+                        const expandBtn = document.getElementById('expandBtn');
+                        const expandedPlayer = document.getElementById('expandedPlayer');
+                        const expandedCloseBtn = document.getElementById('expandedCloseBtn');
+
+                        if (expandBtn && expandedPlayer && expandedCloseBtn) {
+                            expandBtn.addEventListener('click', function () {
+                                expandedPlayer.classList.add('active');
+                            });
+
+                            expandedCloseBtn.addEventListener('click', function () {
+                                expandedPlayer.classList.remove('active');
+                            });
+                        }
+
+                        // Xử lý điều chỉnh âm lượng
+                        const volumeBtn = document.getElementById('volumeBtn');
+                        const volumeBar = document.getElementById('volumeBar');
+                        const volumeLevel = document.getElementById('volumeLevel');
+                        const volumeTooltip = document.getElementById('volumeTooltip');
+
+                        if (volumeBtn && volumeBar && volumeLevel && volumeTooltip) {
+                            // Thiết lập âm lượng mặc định
+                            audioPlayer.volume = 0.7;
+                            volumeLevel.style.width = '70%';
+
+                            // Hiển thị/ẩn thanh âm lượng khi click vào nút volume
+                            volumeBtn.addEventListener('click', function () {
+                                const volumeContainer = this.nextElementSibling;
+                                volumeContainer.classList.toggle('active');
+                            });
+
+                            // Điều chỉnh âm lượng khi click vào thanh âm lượng
+                            volumeBar.addEventListener('click', function (e) {
+                                const width = this.clientWidth;
+                                const clickX = e.offsetX;
+                                const volumePercent = clickX / width;
+
+                                // Cập nhật thanh âm lượng
+                                volumeLevel.style.width = (volumePercent * 100) + '%';
+
+                                // Cập nhật tooltip
+                                volumeTooltip.textContent = Math.round(volumePercent * 100) + '%';
+
+                                // Cập nhật âm lượng audio
+                                audioPlayer.volume = volumePercent;
+
+                                // Cập nhật biểu tượng âm lượng
+                                updateVolumeIcon(volumePercent);
+                            });
+                        }
+
+                        // Xử lý điều chỉnh âm lượng trong expanded player
+                        const expandedVolumeBtn = document.getElementById('expandedVolumeBtn');
+                        const expandedVolumeBar = document.getElementById('expandedVolumeBar');
+                        const expandedVolumeLevel = document.getElementById('expandedVolumeLevel');
+                        const expandedVolumeTooltip = document.getElementById('expandedVolumeTooltip');
+
+                        if (expandedVolumeBtn && expandedVolumeBar && expandedVolumeLevel && expandedVolumeTooltip) {
+                            // Hiển thị/ẩn thanh âm lượng khi click vào nút volume
+                            expandedVolumeBtn.addEventListener('click', function () {
+                                const volumeContainer = this.nextElementSibling;
+                                volumeContainer.classList.toggle('active');
+                            });
+
+                            // Điều chỉnh âm lượng khi click vào thanh âm lượng
+                            expandedVolumeBar.addEventListener('click', function (e) {
+                                const width = this.clientWidth;
+                                const clickX = e.offsetX;
+                                const volumePercent = clickX / width;
+
+                                // Cập nhật thanh âm lượng
+                                expandedVolumeLevel.style.width = (volumePercent * 100) + '%';
+                                volumeLevel.style.width = (volumePercent * 100) + '%';
+
+                                // Cập nhật tooltip
+                                expandedVolumeTooltip.textContent = Math.round(volumePercent * 100) + '%';
+                                volumeTooltip.textContent = Math.round(volumePercent * 100) + '%';
+
+                                // Cập nhật âm lượng audio
+                                audioPlayer.volume = volumePercent;
+
+                                // Cập nhật biểu tượng âm lượng
+                                updateVolumeIcon(volumePercent);
+                            });
+                        }
+
+                        // Hàm cập nhật biểu tượng âm lượng
+                        function updateVolumeIcon(volumePercent) {
+                            const volumeIcon = document.querySelector('#volumeBtn i');
+                            const expandedVolumeIcon = document.querySelector('#expandedVolumeBtn i');
+
+                            if (volumePercent === 0) {
+                                volumeIcon.className = 'fas fa-volume-mute';
+                                expandedVolumeIcon.className = 'fas fa-volume-mute';
+                            } else if (volumePercent < 0.5) {
+                                volumeIcon.className = 'fas fa-volume-down';
+                                expandedVolumeIcon.className = 'fas fa-volume-down';
+                            } else {
+                                volumeIcon.className = 'fas fa-volume-up';
+                                expandedVolumeIcon.className = 'fas fa-volume-up';
+                            }
+                        }
+
+                        // Xử lý nút queue
+                        const queueBtn = document.getElementById('queueBtn');
+                        const queuePanel = document.getElementById('queuePanel');
+                        const queueCloseBtn = document.getElementById('queueCloseBtn');
+
+                        if (queueBtn && queuePanel && queueCloseBtn) {
+                            queueBtn.addEventListener('click', function () {
+                                queuePanel.classList.add('active');
+                            });
+
+                            queueCloseBtn.addEventListener('click', function () {
+                                queuePanel.classList.remove('active');
+                            });
+                        }
+
+                        // Xử lý nút next và previous
+                        const nextBtn = document.getElementById('nextBtn');
+                        const prevBtn = document.getElementById('prevBtn');
+                        const expandedNextBtn = document.getElementById('expandedNextBtn');
+                        const expandedPrevBtn = document.getElementById('expandedPrevBtn');
+
+                        // Tạm thói chỉ log ra console vì chưa có danh sách phát
+                        if (nextBtn) {
+                            nextBtn.addEventListener('click', function () {
+                                console.log('Next button clicked');
+                            });
+                        }
+
+                        if (prevBtn) {
+                            prevBtn.addEventListener('click', function () {
+                                console.log('Previous button clicked');
+                            });
+                        }
+
+                        if (expandedNextBtn) {
+                            expandedNextBtn.addEventListener('click', function () {
+                                console.log('Expanded next button clicked');
+                            });
+                        }
+
+                        if (expandedPrevBtn) {
+                            expandedPrevBtn.addEventListener('click', function () {
+                                console.log('Expanded previous button clicked');
+                            });
+                        }
+
+                        // Xử lý nút shuffle và repeat
+                        const shuffleBtn = document.getElementById('shuffleBtn');
+                        const repeatBtn = document.getElementById('repeatBtn');
+                        const expandedShuffleBtn = document.getElementById('expandedShuffleBtn');
+                        const expandedRepeatBtn = document.getElementById('expandedRepeatBtn');
+
+                        if (shuffleBtn) {
+                            shuffleBtn.addEventListener('click', function () {
+                                this.classList.toggle('active');
+                                if (expandedShuffleBtn) {
+                                    expandedShuffleBtn.classList.toggle('active');
+                                }
+                                console.log('Shuffle:', this.classList.contains('active'));
+                            });
+                        }
+
+                        if (expandedShuffleBtn) {
+                            expandedShuffleBtn.addEventListener('click', function () {
+                                this.classList.toggle('active');
+                                if (shuffleBtn) {
+                                    shuffleBtn.classList.toggle('active');
+                                }
+                                console.log('Shuffle:', this.classList.contains('active'));
+                            });
+                        }
+
+                        if (repeatBtn) {
+                            repeatBtn.addEventListener('click', function () {
+                                this.classList.toggle('active');
+                                if (expandedRepeatBtn) {
+                                    expandedRepeatBtn.classList.toggle('active');
+                                }
+                                console.log('Repeat:', this.classList.contains('active'));
+                            });
+                        }
+
+                        if (expandedRepeatBtn) {
+                            expandedRepeatBtn.addEventListener('click', function () {
+                                this.classList.toggle('active');
+                                if (repeatBtn) {
+                                    repeatBtn.classList.toggle('active');
+                                }
+                                console.log('Repeat:', this.classList.contains('active'));
+                            });
+                        }
+
+                        // Xử lý khi bài hát kết thúc
+                        audioPlayer.addEventListener('ended', function () {
+                            // Reset UI
+                            document.querySelector('#playPauseBtn i').className = 'fas fa-play';
+                            document.querySelector('#expandedPlayBtn i').className = 'fas fa-play';
+
+                            // Nếu có chế độ repeat, phát lại bài hát
+                            if (repeatBtn && repeatBtn.classList.contains('active')) {
+                                audioPlayer.currentTime = 0;
+                                audioPlayer.play();
+                            } else {
+                                // Nếu không, có thể chuyển sang bài tiếp theo (khi có danh sách phát)
+                                console.log('Song ended');
+                            }
+                        });
+
+                        // Add event listener to track play count
+                        let trackPlayedFlag = false;
+
+                        audioPlayer.addEventListener('playing', function () {
+                            // Get the current track ID
+                            const trackId = document.getElementById('playCurrentTrack').getAttribute('data-track-id');
+
+                            // Only send track ID once per track play session
+                            if (!trackPlayedFlag && trackId) {
+                                trackPlayedFlag = true;
+
+                                // Make AJAX call to set session attribute only
+                                fetch('${pageContext.request.contextPath}/home/track', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/x-www-form-urlencoded',
+                                    },
+                                    body: 'action=setPlayingTrack&trackId=' + trackId
+                                })
+                                .then(response => {
+                                    console.log('Play event sent for track ID:', trackId);
+                                })
+                                .catch(error => {
+                                    console.error('Error sending play event:', error);
+                                });
+                            }
+                        });
+
+                        // Reset the flag when a new track is loaded
+                        audioPlayer.addEventListener('loadstart', function () {
+                            trackPlayedFlag = false;
+                        });
+                    });
+                </script>
+
+                <style>
+                    /* Ad banner styles */
+                    .ad-banner {
+                        background: linear-gradient(135deg, #3a1c71, #d76d77, #ffaf7b);
+                        padding: 6px 10px;
+                        margin: 5px 0;
+                        border-radius: 6px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        color: white;
+                        font-size: 13px;
+                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+                        width: calc(100% - 20px);
+                        max-width: 100%;
+                        margin-left: auto;
+                        margin-right: auto;
+                    }
+                </style>
+
             </body>
 
             </html>

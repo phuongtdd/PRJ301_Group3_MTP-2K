@@ -1,0 +1,196 @@
+/* Chat Box Styles */
+.chat-container {
+    position: fixed;
+    bottom: 100px;
+    right: 10px;
+    z-index: 1000;
+}
+
+.chat-icon {
+    width: 50px;
+    height: 50px;
+    background-color: #1DB954;
+    border-radius: 50%;
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.chat-icon i {
+    color: white;
+    font-size: 20px;
+}
+
+.chat-box {
+    position: fixed;
+    bottom: 155px;
+    right: 20px;
+    width: 350px;
+    height: 450px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.chat-box.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+}
+
+.chat-header {
+    background-color: #1DB954;
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-header h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.message {
+    max-width: 80%;
+    padding: 10px 15px;
+    border-radius: 18px;
+    margin-bottom: 5px;
+}
+
+.user-message {
+    align-self: flex-end;
+    background-color: #1DB954;
+    color: white;
+}
+
+.ai-message {
+    align-self: flex-start;
+    background-color: #f1f1f1;
+    color: #333;
+}
+
+.chat-input-container {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #eee;
+}
+
+.chat-input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    outline: none;
+}
+
+.send-button {
+    background-color: #1DB954;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin-left: 10px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.typing-indicator span {
+    width: 8px;
+    height: 8px;
+    background-color: #999;
+    border-radius: 50%;
+    display: inline-block;
+    animation: typing 1s infinite ease-in-out;
+}
+
+.typing-indicator span:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+/* Voice Controls Styles */
+.voice-controls {
+    display: flex;
+    gap: 8px;
+    margin-right: 10px;
+}
+
+#voice-toggle,
+#stop-speech {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.2s ease;
+}
+
+#voice-toggle:hover,
+#stop-speech:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+#voice-toggle:active,
+#stop-speech:active {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+#voice-toggle.active {
+    color: #ffeb3b;
+}

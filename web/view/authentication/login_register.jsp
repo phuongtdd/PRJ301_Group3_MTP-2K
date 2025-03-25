@@ -87,8 +87,8 @@
                                 <input type="checkbox" name="remember" class="form-checkbox h-4 w-4 text-indigo-600 rounded focus:ring-indigo-500 mr-2">
                                 <span>Remember me</span>
                             </label>
-                            <a href="#" class="text-sm text-purple-500 hover:text-purple-600">Forgot password?</a>
-                        </div>
+                            <!-- Change this line in login_register.jsp -->
+                            <a href="${pageContext.request.contextPath}/login?action=forgotPassword" class="text-sm text-purple-500 hover:text-purple-600">Forgot password?</a>                        </div>
 
                         <%-- Thêm div cho thông báo lỗi đăng nhập --%>
                         <c:if test="${param.action eq 'login' && not empty requestScope.error}">

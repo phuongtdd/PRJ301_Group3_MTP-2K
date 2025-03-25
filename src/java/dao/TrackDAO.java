@@ -426,12 +426,54 @@ public class TrackDAO {
         return tracks;
     }
 
+    // Lấy tất cả tracks của một album theo albumID
+    public List<Track> getTracksByAlbumId(int albumId) {
+        List<Track> tracks = new ArrayList<>();
+
+        String query = "SELECT t.* FROM Tracks t " +
+                "JOIN Album_Track at ON t.trackID = at.trackID " +
+                "WHERE at.albumID = ? " +
+                "ORDER BY t.trackID ASC";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, albumId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Track track = new Track();
+                    track.setTrackID(rs.getInt("trackID"));
+                    track.setTitle(rs.getString("title"));
+                    track.setReleaseDate(rs.getDate("releaseDate"));
+                    track.setImageUrl(rs.getString("image_url"));
+                    track.setFileUrl(rs.getString("file_url"));
+                    track.setDescription(rs.getString("description"));
+                    track.setRecord(rs.getInt("record"));
+
+                    // Get genres for this track
+                    track.setGenres(getGenresForTrack(track.getTrackID()));
+
+                    // Get artists for this track
+                    track.setArtists(getArtistsForTrack(track.getTrackID()));
+
+                    tracks.add(track);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TrackDAO.class.getName()).log(Level.SEVERE, "Error getting tracks for album: " + albumId,
+                    ex);
+        }
+
+        return tracks;
+    }
+
     // Lấy tất cả tracks của một artist theo artistID
     public List<Track> getTracksByArtistId(int artistId) {
         List<Track> tracks = new ArrayList<>();
 
-        // Sử dụng VIEW để lấy track theo artistID
-        String query = "SELECT * FROM View_Tracks_By_Artist WHERE artistID = ? ORDER BY releaseDate DESC";
+        String query = "SELECT t.* FROM Tracks t "
+                + "JOIN Track_Artists ta ON t.trackID = ta.trackID "
+                + "WHERE ta.artistID = ? "
+                + "ORDER BY t.releaseDate DESC";
 
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             // Gán tham số artistId vào câu truy vấn
@@ -445,26 +487,32 @@ public class TrackDAO {
                     track.setReleaseDate(rs.getDate("releaseDate"));
                     track.setImageUrl(rs.getString("image_url"));
                     track.setFileUrl(rs.getString("file_url"));
-//                    track.setDescription(rs.getString("description"));
+                    track.setDescription(rs.getString("description"));
                     track.setRecord(rs.getInt("record"));
+
+                    // Get genres for this track
+                    track.setGenres(getGenresForTrack(track.getTrackID()));
+
+                    // Get artists for this track
+                    track.setArtists(getArtistsForTrack(track.getTrackID()));
 
                     tracks.add(track);
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(TrackDAO.class.getName()).log(Level.SEVERE, "Error getting tracks for artist: " + artistId,
-                    ex);
+            Logger.getLogger(TrackDAO.class.getName()).log(Level.SEVERE,
+                    "Error getting top tracks for artist: " + artistId, ex);
         }
 
         return tracks;
     }
-    
+
     // Đếm số bài hát theo thể loại
     public int countTracksByGenre(int genreId) {
         String query = "SELECT COUNT(DISTINCT t.trackID) FROM Tracks t " +
-                      "JOIN Track_Genre tg ON t.trackID = tg.trackID " +
-                      "WHERE tg.genreID = ?";
-        
+                "JOIN Track_Genre tg ON t.trackID = tg.trackID " +
+                "WHERE tg.genreID = ?";
+
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, genreId);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -477,11 +525,11 @@ public class TrackDAO {
         }
         return 0;
     }
-    
+
     // Lấy thông tin thể loại theo ID
     public Genre getGenreById(int genreId) {
         String query = "SELECT * FROM Genres WHERE genreID = ?";
-        
+
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, genreId);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -496,5 +544,105 @@ public class TrackDAO {
             Logger.getLogger(TrackDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
+    }
+
+    // Lấy top 5 tracks của một artist theo record (lượt nghe)
+    public List<Track> getTopTracksByArtistId(int artistId, int limit) {
+        List<Track> tracks = new ArrayList<>();
+
+        String query = "SELECT TOP(?) t.* FROM Tracks t "
+                + "JOIN Track_Artists ta ON t.trackID = ta.trackID "
+                + "WHERE ta.artistID = ? "
+                + "ORDER BY t.record DESC";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, limit);
+            stmt.setInt(2, artistId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Track track = new Track();
+                    track.setTrackID(rs.getInt("trackID"));
+                    track.setTitle(rs.getString("title"));
+                    track.setReleaseDate(rs.getDate("releaseDate"));
+                    track.setImageUrl(rs.getString("image_url"));
+                    track.setFileUrl(rs.getString("file_url"));
+                    track.setDescription(rs.getString("description"));
+                    track.setRecord(rs.getInt("record"));
+                    // Get genres for this track
+                    track.setGenres(getGenresForTrack(track.getTrackID()));
+
+                    // Get artists for this track
+                    track.setArtists(getArtistsForTrack(track.getTrackID()));
+
+                    tracks.add(track);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TrackDAO.class.getName()).log(Level.SEVERE,
+                    "Error getting top tracks for artist: " + artistId, ex);
+        }
+
+        return tracks;
+    }
+
+    public List<Track> getTopTracksByPlayCount(int limit) {
+        List<Track> tracks = new ArrayList<>();
+
+        String query = "SELECT TOP(?) t.*, a.name AS artistName FROM Tracks t "
+                + "JOIN Track_Artists ta ON t.trackID = ta.trackID "
+                + "JOIN Artists a ON ta.artistID = a.artistID "
+                + "ORDER BY t.record DESC";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, limit);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Track track = new Track();
+                    track.setTrackID(rs.getInt("trackID"));
+                    track.setTitle(rs.getString("title"));
+                    track.setReleaseDate(rs.getDate("releaseDate"));
+                    track.setImageUrl(rs.getString("image_url"));
+                    track.setFileUrl(rs.getString("file_url"));
+                    track.setDescription(rs.getString("description"));
+                    track.setRecord(rs.getInt("record"));
+                    // Get genres for this track
+                    track.setGenres(getGenresForTrack(track.getTrackID()));
+
+                    // Get artists for this track
+                    track.setArtists(getArtistsForTrack(track.getTrackID()));
+
+                    tracks.add(track);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TrackDAO.class.getName()).log(Level.SEVERE, "Error getting top tracks by play count", ex);
+        }
+
+        return tracks;
+    }
+
+    // Increment the play count (record) for a track
+    public boolean incrementPlayCount(int trackId) {
+        String query = "UPDATE Tracks SET record = record + 1 WHERE trackID = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, trackId);
+
+            int affectedRows = stmt.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(TrackDAO.class.getName()).log(Level.SEVERE,
+                    "Error incrementing play count for track: " + trackId, ex);
+        }
+        return false;
+    }
+
+    public static void main(String[] args) {
+        TrackDAO dao = new TrackDAO();
+        for (Track t : dao.getTopTracksByPlayCount(10)) {
+            System.out.println(t.getTitle());
+        }
     }
 }

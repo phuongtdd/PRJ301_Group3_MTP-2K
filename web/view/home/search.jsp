@@ -104,6 +104,10 @@
                                                onclick="showModal('phoneModal'); return false;">
                                                 <i class="fas fa-phone"></i> Change Phone Number
                                             </a>
+                                            <a href="${pageContext.request.contextPath}/premium"
+                                                            class="dropdown-item">
+                                                            <i class="fas fa-crown"></i> Premium
+                                            </a>
                                             <div class="divider"></div>
                                             <a href="#" class="dropdown-item"
                                                onclick="showModal('deleteAccountModal'); return false;"

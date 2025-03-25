@@ -1,4 +1,3 @@
-
 // Global variables
 let selectedSongs = []
 let searchResults = []
@@ -9,7 +8,7 @@ let currentTrackIndex = 0
 let currentTrackTime = 0
 let isShuffled = false
 let repeatMode = 0 // 0: no repeat, 1: repeat one, 2: repeat all
-let playlist = [...sampleQueueSongs]
+let playlist = []
 let queue = []
 let isDraggingProgress = false
 let isDraggingVolume = false
@@ -99,12 +98,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Functions
   function init() {
-    // Set up initial playlist with sample queue data ONLY
-    playlist = [...sampleQueueSongs]
-    
-    // Initialize song durations
-    initializeSongDurations()
-
     // Set up event listeners
     searchInput.addEventListener("input", handleSearch)
 
@@ -146,14 +139,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Keyboard shortcuts
     document.addEventListener("keydown", handleKeyboardShortcuts)
-
-    // Populate initial search results
-    populateSearchResults(sampleSearchSongs)
-
-    // Set initial track from queue if available
-    if (playlist.length > 0) {
-      updateCurrentTrackInfo(playlist[currentTrackIndex])
-    }
 
     // Set initial volume
     updateVolumeUI(previousVolume)
@@ -362,9 +347,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     actionBtn.addEventListener("click", () => {
       if (isSelected) {
-        removeSongFromSelection(song)
+        removeSongFromSelection(song.id)
       } else {
-        addSongToSelection(song)
+        addSongToSelection(song.id, song.title, song.artist, song.img, song.audioSrc)
       }
     })
 
@@ -397,35 +382,57 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function addSongToSelection(song) {
+  function addSongToSelection(trackId, title, artist, img, audioSrc) {
+    const song = {
+        id: trackId,
+        title: title,
+        artist: artist,
+        img: img,
+        audioSrc: audioSrc
+    };
+    
+    if (!selectedSongs.some(s => s.id === trackId)) {
+        selectedSongs.push(song);
+        updateSelectedSongsList();
+        updateSearchResultsButtons();
+    }
+  }  function addSongToSelection(song) {
     if (!selectedSongs.some((s) => s.id === song.id)) {
       selectedSongs.push(song)
-      updateSelectedSongsList()
-      populateSearchResults(searchResults) // Refresh search results to update buttons
-    }
-  }
-
-  function removeSongFromSelection(song) {
-    selectedSongs = selectedSongs.filter((s) => s.id !== song.id)
-    updateSelectedSongsList()
-    populateSearchResults(searchResults) // Refresh search results to update buttons
-  }
-
-  async function updateSelectedSongsList() {
-    if (selectedSongs.length === 0) {
       emptyState.style.display = "flex"
       selectedSongsList.style.display = "none"
       return
-    }
-
-    emptyState.style.display = "none"
-    selectedSongsList.style.display = "table"
-    selectedSongsBody.innerHTML = ""
+    }lay = "none";
+    selectedSongsList.style.display = "table";
+    selectedSongsBody.innerHTML = "";
 
     for (let i = 0; i < selectedSongs.length; i++) {
-      const song = selectedSongs[i]
-      const row = await createSongRow(song, i + 1, true)
-      selectedSongsBody.appendChild(row)
+        const song = selectedSongs[i];
+        const row = document.createElement("tr");
+        row.className = "song-row";
+        
+        row.innerHTML = `
+            <td class="song-number">${i + 1}</td>
+            <td>
+                <div class="song-info">
+                    <div class="song-img">
+                        <img src="${window.contextPath}${song.img}" alt="${song.title}">
+                    </div>
+                    <div class="song-details">
+                        <div class="song-title">${song.title}</div>
+                        <div class="song-artist">${song.artist}</div>
+                    </div>
+                </div>
+            </td>
+            <td class="song-duration">${song.duration || '0:00'}</td>
+            <td class="song-actions">
+                <button class="song-action-btn active" onclick="removeSongFromSelection(${song.id})">
+                    <i class="fas fa-check"></i>
+                </button>
+            </td>
+        `;
+        
+        selectedSongsBody.appendChild(row);
     }
   }
 

@@ -400,7 +400,7 @@
                             </div>
                             <div class="card-actions">
                                 <div class="action-icons">
-                                    <i class="fas fa-edit edit-album-btn" data-id="${album.albumID}"></i>
+                                    <%-- <i class="fas fa-edit edit-album-btn" data-id="${album.albumID}"></i> --%>
                                     <i class="fas fa-trash delete-album-btn" data-id="${album.albumID}"></i>
                                 </div>
                             </div>
@@ -461,7 +461,7 @@
             </div>
             
             <!-- Edit Album Modal -->
-            <div id="editAlbumModal" class="modal">
+            <%-- <div id="editAlbumModal" class="modal">
                 <div class="modal-content">
                     <h2>Edit Album</h2>
                     <form action="${pageContext.request.contextPath}/admin?action=update-album" method="POST" enctype="multipart/form-data">
@@ -520,7 +520,7 @@
                         </div>
                     </form>
                 </div>
-            </div>
+            </div> --%>
         </div>
 
         <script>

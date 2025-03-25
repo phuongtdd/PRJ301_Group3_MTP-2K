@@ -12,88 +12,32 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/create-playlist.css">
+        <!-- Add SweetAlert2 -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <!-- Add base URL for JavaScript -->
         <script>
             window.contextPath = '${pageContext.request.contextPath}';
-            // Sample data for SEARCH - Dữ liệu mẫu cho tìm kiếm
-            const sampleSearchSongs = [
-                {
-                    id: 1,
-                    title: "Đánh Đổi",
-                    artist: "OBITO",
-                    album: "Đánh Đổi",
-                    duration: "0:00",
-                    img: "/image/danhdoi.jpg",
-                    audioSrc: "/music/danhdoi.mp3",
-                },
-                {
-                    id: 2,
-                    title: "Thiên Lý Ơi",
-                    artist: "Jack",
-                    album: "Jack5M",
-                    duration: "0:00",
-                    img: "/image/thienlyoi.jpg",
-                    audioSrc: "/music/thienlyoi.mp3",
-                },
-                {
-                    id: 3,
-                    title: "Drunk",
-                    artist: "Keshi",
-                    album: "Keshi",
-                    duration: "0:00",
-                    img: "/image/drunk.jpg",
-                    audioSrc: "/music/drunk.mp3",
-                },
-                {
-                    id: 4,
-                    title: "Making My Way",
-                    artist: "Sơn Tùng",
-                    album: "Sky",
-                    duration: "0:00",
-                    img: "/image/makingmyway.jpg",
-                    audioSrc: "/makingmyway.mp3",
+            
+            // Function to fetch tracks from API
+            async function fetchTracks() {
+                try {
+                    const response = await fetch(window.contextPath + '/get-tracks');
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    const tracks = await response.json();
+                    return tracks;
+                } catch (error) {
+                    console.error('Error fetching tracks:', error);
+                    return [];
                 }
-            ];
+            }
 
-// Sample data for QUEUE - Dữ liệu mẫu cho danh sách phát
-            const sampleQueueSongs = [
-                {
-                    id: 101, // ID khác với search songs để tránh trùng lặp
-                    title: "Muộn rồi mà sao còn",
-                    artist: "Sơn Tùng",
-                    album: "Sky Tour",
-                    duration: "0:00",
-                    img: "/image/muonroimasaocon.jpg",
-                    audioSrc: "/music/MuonRoiMaSaoCon.mp3",
-                },
-                {
-                    id: 102,
-                    title: "Đánh Đổi",
-                    artist: "Obito",
-                    album: "Đánh Đổi",
-                    duration: "0:00",
-                    img: "/image/danhdoi.jpg",
-                    audioSrc: "/music/danhdoi.mp3",
-                },
-                {
-                    id: 103,
-                    title: "drunk",
-                    artist: "Keshi",
-                    album: "Keshi",
-                    duration: "0:00",
-                    img: "/image/drunk.jpg",
-                    audioSrc: "/music/drunk.mp3",
-                },
-                {
-                    id: 104,
-                    title: "Thiên Lý Ơi",
-                    artist: "Jack",
-                    album: "Jack5M",
-                    duration: "0:00",
-                    img: "/image/thienlyoi.jpg",
-                    audioSrc: "/music/thienlyoi.mp3",
-                }
-            ];
+            // Initialize tracks when page loads
+            document.addEventListener('DOMContentLoaded', async function() {
+                const tracks = await fetchTracks();
+                populateSearchResults(tracks);
+            });
         </script>
     </head>
 
@@ -180,7 +124,7 @@
                 <li><a href="${pageContext.request.contextPath}/home/library"><i class="fas fa-book"></i> Your
                         Library</a></li>
                 <li style="margin-top: 24px"><a
-                        href="${pageContext.request.contextPath}/home/create-playlist    "><i
+                        href="${pageContext.request.contextPath}/home/create-playlist"><i
                             class="fas fa-plus-square"></i> Create Playlist</a></li>
                 <li><a href="${pageContext.request.contextPath}/home/topsong"><i class="fas fa-heart"></i>
                         Top Songs</a></li>
@@ -202,21 +146,17 @@
             <div class="create-playlist-container">
                 <div class="playlist-form">
                     <div class="playlist-details">
-                        <div class="form-group">
-                            <label for="playlistName" class="form-label">Name</label>
-                            <input type="text" id="playlistName" class="form-input" placeholder="My Playlist">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="playlistDescription" class="form-label">Description</label>
-                            <textarea id="playlistDescription" class="form-textarea" placeholder="Give your playlist a catchy description"></textarea>
-                            <p class="form-hint">Add an optional description to let people know more about this playlist.</p>
-                        </div>
-
-                        <div class="form-actions">
-                            <button class="btn btn-secondary" id="cancelBtn">Cancel</button>
-                            <button class="btn btn-primary" id="saveBtn">Create</button>
-                        </div>
+                        <form action="${pageContext.request.contextPath}/home/create-playlist" method="POST" class="playlist-form">
+                            <div class="form-group">
+                                <label for="playlistName" class="form-label">Name</label>
+                                <input type="text" id="playlistName" name="playlistName" class="form-input" placeholder="My Playlist">
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                                <button type="submit" class="btn btn-primary" id="saveBtn" >Create</button>
+                            </div>
+                            <input type="hidden" id="trackIds" name="trackIds">
+                        </form>
                     </div>
                 </div>
             </div>
@@ -235,14 +175,42 @@
                     <table class="song-list">
                         <thead>
                             <tr>
-                                <th>#</th>
+                                <th>ID</th>
                                 <th>Title</th>
-                                <th>Album</th>
                                 <th>Duration</th>
                                 <th></th>
                             </tr>
                         </thead>
-                        <tbody id="searchResults"></tbody>
+                        <tbody id="searchResults">
+                            <c:forEach items="${tracks}" var="track" varStatus="status">
+                                <tr class="song-row">
+                                    <td>${track.trackID}</td>
+                                    <td>
+                                        <div class="song-info">
+                                            <div class="song-img">
+                                                <img src="${pageContext.request.contextPath}/${track.imageUrl}" alt="${track.title}">
+                                            </div>
+                                            <div class="song-details">
+                                                <div class="song-title">${track.title}</div>
+                                                <div class="song-artist">
+                                                    <c:forEach items="${track.artists}" var="artist" varStatus="artistStatus">
+                                                        ${artist.name}<c:if test="${!artistStatus.last}">, </c:if>
+                                                    </c:forEach>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="song-duration">
+                                        <fmt:formatDate value="${track.releaseDate}" pattern="dd/MM/yyyy"/>
+                                    </td>
+                                    <td class="song-actions">
+                                        <button class="song-action-btn" onclick="addSongToSelection(${track.trackID}, '${track.title}', '${track.artists[0].name}', '${track.imageUrl}', '${track.fileUrl}')">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -266,7 +234,6 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Title</th>
-                                    <th>Album</th>
                                     <th>Duration</th>
                                     <th></th>
                                 </tr>
@@ -650,6 +617,158 @@
             function confirmDelete() {
                 return confirm('Are you absolutely sure you want to delete your account? This action cannot be undone.');
             }
+
+            // Store selected track IDs and details
+            let selectedTracks = new Map();
+
+            function addSongToSelection(trackId, title, artist, imageUrl, fileUrl) {
+                const button = event.currentTarget;
+                
+                if (!selectedTracks.has(trackId)) {
+                    // Add track
+                    selectedTracks.set(trackId, {
+                        title: title,
+                        artist: artist,
+                        imageUrl: imageUrl,
+                        fileUrl: fileUrl
+                    });
+                    
+                    // Update button state
+                    button.innerHTML = '<i class="fas fa-check"></i>';
+                    button.classList.add('active');
+                    
+                    // Show success message
+                    showToast('Song added to selection', 'success');
+                } else {
+                    // Remove track
+                    selectedTracks.delete(trackId);
+                    
+                    // Update button state
+                    button.innerHTML = '<i class="fas fa-plus"></i>';
+                    button.classList.remove('active');
+                    
+                    // Show remove message
+                    showToast('Song removed from selection', 'success');
+                }
+
+                // Update selected songs list
+                updateSelectedSongsList();
+                
+                // Update hidden input with track IDs
+                document.getElementById('trackIds').value = JSON.stringify(Array.from(selectedTracks.keys()));
+            }
+
+            function updateSelectedSongsList() {
+                const selectedSongsBody = document.getElementById('selectedSongs');
+                const emptyState = document.getElementById('emptyState');
+                const selectedSongsList = document.getElementById('selectedSongsList');
+                
+                // Clear current list
+                selectedSongsBody.innerHTML = '';
+                
+                if (selectedTracks.size === 0) {
+                    emptyState.style.display = 'flex';
+                    selectedSongsList.style.display = 'none';
+                    return;
+                }
+
+                emptyState.style.display = 'none';
+                selectedSongsList.style.display = 'block';
+
+                // Add each selected track to the list
+                let index = 1;
+                selectedTracks.forEach((track, trackId) => {
+                    const row = document.createElement('tr');
+                    row.className = 'song-row';
+                    row.innerHTML = `
+                        <td class="song-number">${index}</td>
+                        <td>
+                            <div class="song-info">
+                                <div class="song-img">
+                                    <img src="${window.contextPath}${track.imageUrl}" alt="${track.title}">
+                                </div>
+                                <div class="song-details">
+                                    <div class="song-title">${track.title}</div>
+                                    <div class="song-artist">${track.artist}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="song-actions">
+                            <button class="song-action-btn remove" onclick="addSongToSelection(${trackId}, '${track.title}', '${track.artist}', '${track.imageUrl}', '${track.fileUrl}')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </td>
+                    `;
+                    selectedSongsBody.appendChild(row);
+                    index++;
+                });
+            }
+
+            // Show toast message function
+            function showToast(message, type) {
+                const toast = document.getElementById('toast');
+                toast.textContent = message;
+                toast.className = `toast ${type}`;
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+
+            // Clear all selected songs
+            document.getElementById('clearAllBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Clear selected tracks
+                selectedTracks.clear();
+                
+                // Reset all add buttons
+                const buttons = document.querySelectorAll('.song-action-btn:not(.remove)');
+                buttons.forEach(button => {
+                    button.innerHTML = '<i class="fas fa-plus"></i>';
+                    button.classList.remove('active');
+                });
+                
+                // Update selected songs list
+                updateSelectedSongsList();
+                
+                // Clear hidden input
+                document.getElementById('trackIds').value = '[]';
+                
+                // Show clear message
+                showToast('All songs cleared from selection', 'success');
+            });
+
+            // Handle form submission
+            document.querySelector('.playlist-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const playlistName = document.getElementById('playlistName').value.trim();
+                
+                if (!playlistName) {
+                    showToast('Please enter a playlist name', 'error');
+                    return;
+                }
+
+                if (selectedTracks.size === 0) {
+                    showToast('Please add at least one song to your playlist', 'error');
+                    return;
+                }
+
+                // Show confirmation
+                Swal.fire({
+                    title: 'Create Playlist',
+                    text: 'Are you sure you want to create this playlist?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Create',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.submit();
+                    }
+                });
+            });
         </script>
     </body>
 

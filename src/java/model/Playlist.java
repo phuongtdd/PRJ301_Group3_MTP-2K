@@ -5,37 +5,33 @@
 package model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.sql.Timestamp;
+import java.util.List;
 
 /**
  *
  * @author HP
  */
-class Playlist implements Serializable {
+public class Playlist implements Serializable {
 
     private int playlistID;
     private int userID;
     private String title;
-    private int quantity;
-    private Date createdAt;
-    private String imageUrl;
-    private String description;
+    private Timestamp createdAt;
+    private int trackCount;
+    private List<Track> tracks;
 
     public Playlist() {
     }
 
-    public Playlist(int playlistID, int userID, String title, int quantity, Date createdAt, String imageUrl, String description) {
+    public Playlist(int playlistID, int userID, String title, Timestamp createdAt, int trackCount) {
         this.playlistID = playlistID;
         this.userID = userID;
         this.title = title;
-        this.quantity = quantity;
         this.createdAt = createdAt;
-        this.imageUrl = imageUrl;
-        this.description = description;
+        this.trackCount = trackCount;
     }
-    
-    
-    
+
     public int getPlaylistID() {
         return playlistID;
     }
@@ -60,42 +56,34 @@ class Playlist implements Serializable {
         this.title = title;
     }
 
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public Date getCreatedAt() {
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public int getTrackCount() {
+        return trackCount;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setTrackCount(int trackCount) {
+        this.trackCount = trackCount;
     }
 
-    public String getDescription() {
-        return description;
+    public List<Track> getTracks() {
+        return tracks;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setTracks(List<Track> tracks) {
+        this.tracks = tracks;
     }
 
     @Override
     public String toString() {
-        return "Playlist{" + "playlistID=" + playlistID + ", userID=" + userID + ", title=" + title + ", quantity=" + quantity + ", createdAt=" + createdAt + ", imageUrl=" + imageUrl + ", description=" + description + '}';
+        return "Playlist{" + "playlistID=" + playlistID + ", userID=" + userID + ", title=" + title + ", createdAt="
+                + createdAt + ", trackCount=" + trackCount + ", tracks=" + tracks + '}';
     }
-    
-    
+
 }

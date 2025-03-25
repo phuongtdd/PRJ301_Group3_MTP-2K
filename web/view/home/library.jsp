@@ -15,117 +15,6 @@
         <!-- Additional library-specific styles -->
 
         <!-- Add base URL for JavaScript -->
-        <script>
-            window.contextPath = '${pageContext.request.contextPath}';
-            // samleSongs là tất cả các nhạc có sẵn
-            const sampleSongs = [
-                {
-                    id: 1,
-                    title: "Đánh Đổi",
-                    artist: "OBITO",
-                    album: "Đánh Đổi",
-                    duration: "0:00",
-                    img: "/image/danhdoi.jpg",
-                    audioSrc: "/music/danhdoi.mp3",
-                },
-                {
-                    id: 2,
-                    title: "Thiên Lý Ơi",
-                    artist: "Jack",
-                    album: "Jack5M",
-                    duration: "0:00",
-                    img: "/image/thienlyoi.jpg",
-                    audioSrc: "/music/thienlyoi.mp3",
-                },
-                {
-                    id: 3,
-                    title: "Drunk",
-                    artist: "Keshi",
-                    album: "Keshi",
-                    duration: "0:00",
-                    img: "/image/drunk.jpg",
-                    audioSrc: "/music/drunk.mp3",
-                },
-                {
-                    id: 4,
-                    title: "Making My Way",
-                    artist: "Sơn Tùng",
-                    album: "Sky",
-                    duration: "0:00",
-                    img: "/image/makingmyway.jpg",
-                    audioSrc: "/music/makingmyway.mp3",
-                },
-                {
-                    id: 5,
-                    title: "Muộn rồi mà sao còn",
-                    artist: "Sơn Tùng",
-                    album: "Sky Tour",
-                    duration: "0:00",
-                    img: "/image/muonroimasaocon.jpg",
-                    audioSrc: "/music/MuonRoiMaSaoCon.mp3",
-                }
-            ];
-
-            // Dữ liệu mẫu cho thư viện
-            // nó sẽ lấy từ sameSongs cho playlist, ví dụ songs: [sampleSongs[0], sampleSongs[1]]
-            const samplePlaylists = [
-                {
-                    id: 1,
-                    title: "My Favorites",
-                    type: "Playlist",
-                    img: "/image/playlist-image.jpg",
-                    description: "A personal collection of all-time favorites. These songs have been with me through thick and thin, each one holding special memories and emotions.",
-                    songs: [sampleSongs[0], sampleSongs[1], sampleSongs[2], sampleSongs[3], sampleSongs[4]]
-                },
-                {
-                    id: 2,
-                    title: "Chill Vibes",
-                    type: "Playlist",
-                    img: "/image/playlist-image.jpg",
-                    isNew: true,
-                    description: "Perfect for relaxation and unwinding. Smooth melodies and gentle rhythms create a peaceful atmosphere for your quiet moments.",
-                    songs: [sampleSongs[1], sampleSongs[2], sampleSongs[4]]
-                },
-                {
-                    id: 3,
-                    title: "Late Night Drive",
-                    type: "Playlist",
-                    img: "/image/playlist-image.jpg",
-                    description: "Your companion for those midnight drives. A mix of atmospheric tracks that perfectly complement the quiet of the night and the open road.",
-                    songs: [sampleSongs[2], sampleSongs[0], sampleSongs[3]]
-                },
-                {
-                    id: 4,
-                    title: "Workout Mix",
-                    type: "Playlist",
-                    img: "/image/playlist-image.jpg",
-                    description: "High-energy tracks to fuel your workout. Keep your motivation high and your energy higher with this powerful collection of songs.",
-                    songs: [sampleSongs[3], sampleSongs[4], sampleSongs[1]]
-                }
-            ];
-
-            // tương tự playlist
-            const sampleAlbums = [
-                {
-                    id: 5,
-                    title: "Sky Tour",
-                    type: "Album",
-                    artist: "Sơn Tùng",
-                    img: "/image/muonroimasaocon.jpg",
-                    description: "A groundbreaking album that showcases Sơn Tùng's unique artistry and vision. Each track tells a story of ambition, love, and personal growth.",
-                    songs: [sampleSongs[4]]
-                },
-                {
-                    id: 6,
-                    title: "Đánh Đổi",
-                    type: "Album",
-                    artist: "OBITO",
-                    img: "/image/danhdoi.jpg",
-                    description: "OBITO's masterful blend of modern sounds and emotional depth. An album that explores the complexities of life's choices and their consequences.",
-                    songs: [sampleSongs[0]]
-                }
-            ];
-        </script>
     </head>
 
     <body>
@@ -236,67 +125,29 @@
             </div>
 
             <div class="library-grid">
+                <c:if test="${empty playlists}">
+                    <div style="color: white; padding: 20px;">
+                        Không có playlist nào được tìm thấy.
+                    </div>
+                </c:if>
+                
                 <!-- Playlists -->
-                <div class="library-item">
-                    <div class="library-item-img">
-                        <img src="${pageContext.request.contextPath}/image/playlist-image.jpg" alt="Playlist">
-                        <div class="library-item-overlay">
-                            <button class="play-btn">
-                                <i class="fas fa-play"></i>
-                            </button>
+                <c:forEach items="${playlists}" var="playlist">
+                    <div class="library-item">
+                        <div class="library-item-img">
+                            <img src="${pageContext.request.contextPath}/image/playlist-image.jpg" alt="${playlist.title}">
+                            <div class="library-item-overlay">
+                                <button class="play-btn" onclick="window.location.href='${pageContext.request.contextPath}/home/playlist?id=${playlist.playlistID}'">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="library-item-info">
+                            <div class="library-item-title">${playlist.title}</div>
+                            <div class="library-item-subtitle">${playlist.trackCount} songs</div>
                         </div>
                     </div>
-                    <div class="library-item-info">
-                        <div class="library-item-title">My Favorites</div>
-                        <div class="library-item-subtitle">Playlist • 24 songs</div>
-                    </div>
-                </div>
-
-                <div class="library-item">
-                    <div class="library-item-img">
-                        <img src="${pageContext.request.contextPath}/image/playlist-image.jpg" alt="Playlist">
-                        <div class="library-item-badge">New</div>
-                        <div class="library-item-overlay">
-                            <button class="play-btn">
-                                <i class="fas fa-play"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="library-item-info">
-                        <div class="library-item-title">Chill Vibes</div>
-                        <div class="library-item-subtitle">Playlist • 18 songs</div>
-                    </div>
-                </div>
-
-                <div class="library-item">
-                    <div class="library-item-img">
-                        <img src="${pageContext.request.contextPath}/image/playlist-image.jpg" alt="Playlist">
-                        <div class="library-item-overlay">
-                            <button class="play-btn">
-                                <i class="fas fa-play"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="library-item-info">
-                        <div class="library-item-title">Late Night Drive</div>
-                        <div class="library-item-subtitle">Playlist • 32 songs</div>
-                    </div>
-                </div>
-
-                <div class="library-item">
-                    <div class="library-item-img">
-                        <img src="${pageContext.request.contextPath}/image/playlist-image.jpg" alt="Playlist">
-                        <div class="library-item-overlay">
-                            <button class="play-btn">
-                                <i class="fas fa-play"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="library-item-info">
-                        <div class="library-item-title">Workout Mix</div>
-                        <div class="library-item-subtitle">Playlist • 15 songs</div>
-                    </div>
-                </div>
+                </c:forEach>
 
                 <!-- Albums -->
                 <div class="library-item">
@@ -332,14 +183,14 @@
 
             <div class="section-divider"></div>
 
-            <div class="recent-activity">
+            <%-- <%-- <div class="recent-activity">
                 <div class="section-header">
                     <h2 class="section-title">Recently Played</h2>
                     <a href="#" class="section-action">See All</a>
                 </div>
 
                 <div class="activity-list">
-                    <div class="activity-item">
+               <div class="activity-item">tem">
                         <div class="activity-img">
                             <img src="${pageContext.request.contextPath}/image/danhdoi.jpg" alt="Đánh Đổi">
                         </div>
@@ -369,14 +220,14 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --%>
         </div>
         <!--------------------------------------------------- SIGNUPBANNER ----------------------------------------------------->
         <c:if test="${empty sessionScope.user}">
             <div class="signup-banner">
                 <div class="preview-text">
                     <h3>Preview of MTP-2K</h3>
-                    <p>Sign up to get unlimited songs and podcasts with occasional ads. No credit card needed.
+               <p>Sign up to get unlimited songs and podcasts with occasional ads. No credit card needed.eded.
                     </p>
                 </div>
                 <a href="${pageContext.request.contextPath}/login" class="signup-button">Sign up free</a>
@@ -567,7 +418,6 @@
                 <div class="playlist-songs-header">
                     <div class="song-number">#</div>
                     <div class="song-info-header">Title</div>
-                    <div class="song-album-header">Album</div>
                     <div class="song-duration-header">Duration</div>
                 </div>
                 <div class="playlist-songs-list" id="expandedPlaylistSongs">

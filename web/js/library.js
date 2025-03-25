@@ -341,89 +341,89 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     // Khởi tạo trình phát nhạc
-    function initMusicPlayer() {
-        // Các phần tử DOM
-        const playPauseBtn = document.getElementById("playPauseBtn");
-        const playPauseIcon = playPauseBtn.querySelector("i");
-        const prevBtn = document.getElementById("prevBtn");
-        const nextBtn = document.getElementById("nextBtn");
-        const shuffleBtn = document.getElementById("shuffleBtn");
-        const repeatBtn = document.getElementById("repeatBtn");
-        const progressBar = document.getElementById("progressBar");
-        const progress = document.getElementById("progress");
-        const currentTimeEl = document.getElementById("currentTime");
-        const totalTimeEl = document.getElementById("totalTime");
-        const volumeBtn = document.getElementById("volumeBtn");
-        const volumeIcon = volumeBtn.querySelector("i");
-        const volumeBar = document.getElementById("volumeBar");
-        const volumeLevel = document.getElementById("volumeLevel");
-        const queueBtn = document.getElementById("queueBtn");
-        const queuePanel = document.getElementById("queuePanel");
-        const queueCloseBtn = document.getElementById("queueCloseBtn");
-        const expandBtn = document.getElementById("expandBtn");
-        const expandedPlayer = document.getElementById("expandedPlayer");
-        const expandedCloseBtn = document.getElementById("expandedCloseBtn");
-        const expandedPlayBtn = document.getElementById("expandedPlayBtn");
-        const expandedPlayIcon = expandedPlayBtn.querySelector("i");
-        const expandedProgressBar = document.getElementById("expandedProgressBar");
-        const expandedVolumeBar = document.getElementById("expandedVolumeBar");
+    // function initMusicPlayer() {
+    //     // Các phần tử DOM
+    //     const playPauseBtn = document.getElementById("playPauseBtn");
+    //     const playPauseIcon = playPauseBtn.querySelector("i");
+    //     const prevBtn = document.getElementById("prevBtn");
+    //     const nextBtn = document.getElementById("nextBtn");
+    //     const shuffleBtn = document.getElementById("shuffleBtn");
+    //     const repeatBtn = document.getElementById("repeatBtn");
+    //     const progressBar = document.getElementById("progressBar");
+    //     const progress = document.getElementById("progress");
+    //     const currentTimeEl = document.getElementById("currentTime");
+    //     const totalTimeEl = document.getElementById("totalTime");
+    //     const volumeBtn = document.getElementById("volumeBtn");
+    //     const volumeIcon = volumeBtn.querySelector("i");
+    //     const volumeBar = document.getElementById("volumeBar");
+    //     const volumeLevel = document.getElementById("volumeLevel");
+    //     const queueBtn = document.getElementById("queueBtn");
+    //     const queuePanel = document.getElementById("queuePanel");
+    //     const queueCloseBtn = document.getElementById("queueCloseBtn");
+    //     const expandBtn = document.getElementById("expandBtn");
+    //     const expandedPlayer = document.getElementById("expandedPlayer");
+    //     const expandedCloseBtn = document.getElementById("expandedCloseBtn");
+    //     const expandedPlayBtn = document.getElementById("expandedPlayBtn");
+    //     const expandedPlayIcon = expandedPlayBtn.querySelector("i");
+    //     const expandedProgressBar = document.getElementById("expandedProgressBar");
+    //     const expandedVolumeBar = document.getElementById("expandedVolumeBar");
         
-        // Sự kiện cho nút phát/tạm dừng
-        playPauseBtn.addEventListener("click", togglePlayPause);
-        expandedPlayBtn.addEventListener("click", togglePlayPause);
+    //     // Sự kiện cho nút phát/tạm dừng
+    //     playPauseBtn.addEventListener("click", togglePlayPause);
+    //     expandedPlayBtn.addEventListener("click", togglePlayPause);
         
-        // Sự kiện cho nút trước/sau
-        prevBtn.addEventListener("click", playPreviousTrack);
-        nextBtn.addEventListener("click", playNextTrack);
-        document.getElementById("expandedPrevBtn").addEventListener("click", playPreviousTrack);
-        document.getElementById("expandedNextBtn").addEventListener("click", playNextTrack);
+    //     // Sự kiện cho nút trước/sau
+    //     prevBtn.addEventListener("click", playPreviousTrack);
+    //     nextBtn.addEventListener("click", playNextTrack);
+    //     document.getElementById("expandedPrevBtn").addEventListener("click", playPreviousTrack);
+    //     document.getElementById("expandedNextBtn").addEventListener("click", playNextTrack);
         
-        // Sự kiện cho nút xáo trộn/lặp lại
-        shuffleBtn.addEventListener("click", toggleShuffle);
-        repeatBtn.addEventListener("click", toggleRepeat);
-        document.getElementById("expandedShuffleBtn").addEventListener("click", toggleShuffle);
-        document.getElementById("expandedRepeatBtn").addEventListener("click", toggleRepeat);
+    //     // Sự kiện cho nút xáo trộn/lặp lại
+    //     shuffleBtn.addEventListener("click", toggleShuffle);
+    //     repeatBtn.addEventListener("click", toggleRepeat);
+    //     document.getElementById("expandedShuffleBtn").addEventListener("click", toggleShuffle);
+    //     document.getElementById("expandedRepeatBtn").addEventListener("click", toggleRepeat);
         
-        // Sự kiện cho thanh tiến trình
-        progressBar.addEventListener("mousedown", startDragging);
-        expandedProgressBar.addEventListener("mousedown", startDragging);
+    //     // Sự kiện cho thanh tiến trình
+    //     progressBar.addEventListener("mousedown", startDragging);
+    //     expandedProgressBar.addEventListener("mousedown", startDragging);
         
-        // Thêm sự kiện click cho thanh tiến trình
-        progressBar.addEventListener("click", handleProgressBarClick);
-        expandedProgressBar.addEventListener("click", handleProgressBarClick);
+    //     // Thêm sự kiện click cho thanh tiến trình
+    //     progressBar.addEventListener("click", handleProgressBarClick);
+    //     expandedProgressBar.addEventListener("click", handleProgressBarClick);
         
-        // Sự kiện cho điều khiển âm lượng
-        volumeBtn.addEventListener("click", toggleMute);
-        document.getElementById("expandedVolumeBtn").addEventListener("click", toggleMute);
-        volumeBar.addEventListener("mousedown", startVolumeDragging);
-        expandedVolumeBar.addEventListener("mousedown", startVolumeDragging);
+    //     // Sự kiện cho điều khiển âm lượng
+    //     volumeBtn.addEventListener("click", toggleMute);
+    //     document.getElementById("expandedVolumeBtn").addEventListener("click", toggleMute);
+    //     volumeBar.addEventListener("mousedown", startVolumeDragging);
+    //     expandedVolumeBar.addEventListener("mousedown", startVolumeDragging);
         
-        // Thêm sự kiện click cho thanh âm lượng
-        volumeBar.addEventListener("click", handleVolumeBarClick);
-        expandedVolumeBar.addEventListener("click", handleVolumeBarClick);
+    //     // Thêm sự kiện click cho thanh âm lượng
+    //     volumeBar.addEventListener("click", handleVolumeBarClick);
+    //     expandedVolumeBar.addEventListener("click", handleVolumeBarClick);
         
-        // Sự kiện cho bảng điều khiển hàng đợi
-        queueBtn.addEventListener("click", toggleQueuePanel);
-        queueCloseBtn.addEventListener("click", closeQueuePanel);
+    //     // Sự kiện cho bảng điều khiển hàng đợi
+    //     queueBtn.addEventListener("click", toggleQueuePanel);
+    //     queueCloseBtn.addEventListener("click", closeQueuePanel);
         
-        // Sự kiện cho trình phát mở rộng
-        expandBtn.addEventListener("click", openExpandedPlayer);
-        expandedCloseBtn.addEventListener("click", closeExpandedPlayer);
+    //     // Sự kiện cho trình phát mở rộng
+    //     expandBtn.addEventListener("click", openExpandedPlayer);
+    //     expandedCloseBtn.addEventListener("click", closeExpandedPlayer);
         
-        // Sự kiện cho trình phát âm thanh
-        audioPlayer.addEventListener("timeupdate", updateProgress);
-        audioPlayer.addEventListener("ended", handleTrackEnd);
-        audioPlayer.addEventListener("loadedmetadata", updateDuration);
+    //     // Sự kiện cho trình phát âm thanh
+    //     audioPlayer.addEventListener("timeupdate", updateProgress);
+    //     audioPlayer.addEventListener("ended", handleTrackEnd);
+    //     audioPlayer.addEventListener("loadedmetadata", updateDuration);
         
-        // Thêm sự kiện mousemove và mouseup cho toàn bộ document
-        document.addEventListener("mousemove", handleDragging);
-        document.addEventListener("mousemove", handleVolumeDragging);
-        document.addEventListener("mouseup", stopDragging);
-        document.addEventListener("mouseup", stopVolumeDragging);
+    //     // Thêm sự kiện mousemove và mouseup cho toàn bộ document
+    //     document.addEventListener("mousemove", handleDragging);
+    //     document.addEventListener("mousemove", handleVolumeDragging);
+    //     document.addEventListener("mouseup", stopDragging);
+    //     document.addEventListener("mouseup", stopVolumeDragging);
         
-        // Đặt âm lượng ban đầu
-        audioPlayer.volume = 0.7;
-    }
+    //     // Đặt âm lượng ban đầu
+    //     audioPlayer.volume = 0.7;
+    // }
     
     // Phát một bài hát
     function playTrack(song) {

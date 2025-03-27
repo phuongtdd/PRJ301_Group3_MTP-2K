@@ -17,6 +17,7 @@ public class Track implements Serializable {
     private int record;
     private List<Genre> genres;
     private List<Artist> artists;
+    private String albumTitle;
 
     public Track() {
     }
@@ -29,6 +30,7 @@ public class Track implements Serializable {
         this.fileUrl = fileUrl;
         this.description = description;
         this.record = record;
+        this.albumTitle = "Unknown Album";
     }
 
     public int getTrackID() {
@@ -101,6 +103,14 @@ public class Track implements Serializable {
     
     public void setArtists(List<Artist> artists) {
         this.artists = artists;
+    }
+
+    public String getAlbumTitle() {
+        return albumTitle;
+    }
+    
+    public void setAlbumTitle(String albumTitle) {
+        this.albumTitle = albumTitle;
     }
 
     @Override

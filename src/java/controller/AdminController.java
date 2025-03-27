@@ -718,8 +718,8 @@ public class AdminController extends HttpServlet {
             // Handle file upload for image
             Part imagePart = request.getPart("image");
             String originalImageName = getSubmittedFileName(imagePart);
-            // Thêm timestamp cho ảnh để tránh trùng lặp
-            String imageFileName = System.currentTimeMillis() + "_" + originalImageName;
+            // Không thêm timestamp cho file hình ảnh
+            String imageFileName = originalImageName;
             String imageUploadPath = getServletContext().getRealPath("image/");
 
             // Handle file upload for audio file

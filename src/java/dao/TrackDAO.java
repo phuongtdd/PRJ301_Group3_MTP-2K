@@ -28,7 +28,10 @@ public class TrackDAO {
     // Lấy tất cả tracks từ database
     public List<Track> getAllTracks() {
         List<Track> tracks = new ArrayList<>();
-        String query = "SELECT * FROM Tracks";
+        String query = "SELECT t.*, a.title as album_title " +
+                      "FROM Tracks t " +
+                      "LEFT JOIN Album_Track at ON t.trackID = at.trackID " +
+                      "LEFT JOIN Albums a ON at.albumID = a.albumID";
         try (PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
@@ -39,6 +42,15 @@ public class TrackDAO {
                 track.setImageUrl(rs.getString("image_url"));
                 track.setFileUrl(rs.getString("file_url"));
                 track.setRecord(rs.getInt("record"));
+                track.setDescription(rs.getString("description"));
+                
+                // Set album title
+                String albumTitle = rs.getString("album_title");
+                if (albumTitle != null) {
+                    track.setAlbumTitle(albumTitle);
+                } else {
+                    track.setAlbumTitle("Unknown Album");
+                }
 
                 // Get genres for this track
                 track.setGenres(getGenresForTrack(track.getTrackID()));
@@ -109,7 +121,7 @@ public class TrackDAO {
     }
 
     // Lấy artists cho một track
-    private List<Artist> getArtistsForTrack(int trackId) {
+    public List<Artist> getArtistsForTrack(int trackId) {
         List<Artist> artists = new ArrayList<>();
         String query = "SELECT a.* FROM Artists a "
                 + "JOIN Track_Artists ta ON a.artistID = ta.artistID "
@@ -430,10 +442,10 @@ public class TrackDAO {
     public List<Track> getTracksByAlbumId(int albumId) {
         List<Track> tracks = new ArrayList<>();
 
-        String query = "SELECT t.* FROM Tracks t " +
-                "JOIN Album_Track at ON t.trackID = at.trackID " +
-                "WHERE at.albumID = ? " +
-                "ORDER BY t.trackID ASC";
+        String query = "SELECT t.* FROM Tracks t "
+                + "JOIN Album_Track at ON t.trackID = at.trackID "
+                + "WHERE at.albumID = ? "
+                + "ORDER BY t.trackID ASC";
 
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, albumId);
@@ -489,7 +501,6 @@ public class TrackDAO {
                     track.setFileUrl(rs.getString("file_url"));
                     track.setDescription(rs.getString("description"));
                     track.setRecord(rs.getInt("record"));
-
                     // Get genres for this track
                     track.setGenres(getGenresForTrack(track.getTrackID()));
 
@@ -509,9 +520,9 @@ public class TrackDAO {
 
     // Đếm số bài hát theo thể loại
     public int countTracksByGenre(int genreId) {
-        String query = "SELECT COUNT(DISTINCT t.trackID) FROM Tracks t " +
-                "JOIN Track_Genre tg ON t.trackID = tg.trackID " +
-                "WHERE tg.genreID = ?";
+        String query = "SELECT COUNT(DISTINCT t.trackID) FROM Tracks t "
+                + "JOIN Track_Genre tg ON t.trackID = tg.trackID "
+                + "WHERE tg.genreID = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, genreId);
@@ -641,7 +652,7 @@ public class TrackDAO {
 
     public static void main(String[] args) {
         TrackDAO dao = new TrackDAO();
-        for (Track t : dao.getTopTracksByPlayCount(10)) {
+        for (Track t : dao.getAllTracks()) {
             System.out.println(t.getTitle());
         }
     }

@@ -1,6 +1,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
     <%@ page contentType="text/html" pageEncoding="UTF-8" %>
         <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+        <%@ page import="dao.TrackDAO" %>
+        <%@ page import="model.Track" %>
+        <%@ page import="java.util.List" %>
 
             <!DOCTYPE html>
             <html lang="en">
@@ -17,85 +20,6 @@
                 <!-- Add base URL for JavaScript -->
                 <script>
                     window.contextPath = '${pageContext.request.contextPath}';
-                    // Sample data for SEARCH - Dữ liệu mẫu cho tìm kiếm
-                    const sampleSearchSongs = [
-                        {
-                            id: 1,
-                            title: "Đánh Đổi",
-                            artist: "OBITO",
-                            album: "Đánh Đổi",
-                            duration: "0:00",
-                            img: "/image/danhdoi.jpg",
-                            audioSrc: "/music/danhdoi.mp3",
-                        },
-                        {
-                            id: 2,
-                            title: "Thiên Lý Ơi",
-                            artist: "Jack",
-                            album: "Jack5M",
-                            duration: "0:00",
-                            img: "/image/thienlyoi.jpg",
-                            audioSrc: "/music/thienlyoi.mp3",
-                        },
-                        {
-                            id: 3,
-                            title: "Drunk",
-                            artist: "Keshi",
-                            album: "Keshi",
-                            duration: "0:00",
-                            img: "/image/drunk.jpg",
-                            audioSrc: "/music/drunk.mp3",
-                        },
-                        {
-                            id: 4,
-                            title: "Making My Way",
-                            artist: "Sơn Tùng",
-                            album: "Sky",
-                            duration: "0:00",
-                            img: "/image/makingmyway.jpg",
-                            audioSrc: "/makingmyway.mp3",
-                        }
-                    ];
-
-                    // Sample data for QUEUE - Dữ liệu mẫu cho danh sách phát
-                    const sampleQueueSongs = [
-                        {
-                            id: 101, // ID khác với search songs để tránh trùng lặp
-                            title: "Muộn rồi mà sao còn",
-                            artist: "Sơn Tùng",
-                            album: "Sky Tour",
-                            duration: "0:00",
-                            img: "/image/muonroimasaocon.jpg",
-                            audioSrc: "/music/MuonRoiMaSaoCon.mp3",
-                        },
-                        {
-                            id: 102,
-                            title: "Đánh Đổi",
-                            artist: "Obito",
-                            album: "Đánh Đổi",
-                            duration: "0:00",
-                            img: "/image/danhdoi.jpg",
-                            audioSrc: "/music/danhdoi.mp3",
-                        },
-                        {
-                            id: 103,
-                            title: "drunk",
-                            artist: "Keshi",
-                            album: "Keshi",
-                            duration: "0:00",
-                            img: "/image/drunk.jpg",
-                            audioSrc: "/music/drunk.mp3",
-                        },
-                        {
-                            id: 104,
-                            title: "Thiên Lý Ơi",
-                            artist: "Jack",
-                            album: "Jack5M",
-                            duration: "0:00",
-                            img: "/image/thienlyoi.jpg",
-                            audioSrc: "/music/thienlyoi.mp3",
-                        }
-                    ];
                 </script>
             </head>
 
@@ -208,23 +132,18 @@
                     <div class="create-playlist-container">
                         <div class="playlist-form">
                             <div class="playlist-details">
-                                <div class="form-group">
-                                    <label for="playlistName" class="form-label">Name</label>
-                                    <input type="text" id="playlistName" class="form-input" placeholder="My Playlist">
-                                </div>
+                                <form id="playlistSubmitForm" method="POST" action="${pageContext.request.contextPath}/home/create-playlist">
+                                    <div class="form-group">
+                                        <label for="playlistName" class="form-label">Name</label>
+                                        <input type="text" id="playlistName" name="playlistName" class="form-input" placeholder="My Playlist">
+                                    </div>
 
-                                <div class="form-group">
-                                    <label for="playlistDescription" class="form-label">Description</label>
-                                    <textarea id="playlistDescription" class="form-textarea"
-                                        placeholder="Give your playlist a catchy description"></textarea>
-                                    <p class="form-hint">Add an optional description to let people know more about this
-                                        playlist.</p>
-                                </div>
-
-                                <div class="form-actions">
-                                    <button class="btn btn-secondary" id="cancelBtn">Cancel</button>
-                                    <button class="btn btn-primary" id="saveBtn">Create</button>
-                                </div>
+                                    <div class="form-actions">
+                                        <a href="${pageContext.request.contextPath}/home" class="btn btn-secondary">Cancel</a>
+                                        <button type="submit" class="btn btn-primary">Create</button>
+                                    </div>
+                                    <!-- Track IDs will be added dynamically by JavaScript -->
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -251,7 +170,52 @@
                                         <th></th>
                                     </tr>
                                 </thead>
-                                <tbody id="searchResults"></tbody>
+                                <tbody id="searchResults">
+                                    <% 
+                                    // Check if tracks are in the session
+                                    List<Track> tracks = (List<Track>) session.getAttribute("tracks");
+                                    // If not, load them directly
+                                    if (tracks == null) {
+                                        TrackDAO trackDAO = new TrackDAO();
+                                        tracks = trackDAO.getAllTracks();
+                                        session.setAttribute("tracks", tracks);
+                                    }
+                                    // Continue with JSTL to display tracks
+                                    request.setAttribute("tracksToDisplay", tracks);
+                                    %>
+                                    <c:forEach items="${tracks}" var="track" varStatus="loop">
+                                        <tr class="song-row">
+                                            <td class="song-number">
+                                                ${loop.index + 1}
+                                                <input type="checkbox" name="trackIDs" value="${track.trackID}" id="track${track.trackID}" form="playlistSubmitForm" style="display: none;">
+                                            </td>
+                                            <td>
+                                                <div class="song-info">
+                                                    <div class="song-img">
+                                                        <img src="${pageContext.request.contextPath}/${track.imageUrl}"
+                                                            alt="${track.title}">
+                                                    </div>
+                                                    <div class="song-details">
+                                                        <div class="song-title">${track.title}</div>
+                                                        <div class="song-artist">
+                                                            <c:forEach items="${track.artists}" var="artist"
+                                                                varStatus="artistLoop">
+                                                                ${artist.name}<c:if test="${!artistLoop.last}">, </c:if>
+                                                            </c:forEach>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="song-album">${track.albumTitle}</td>
+                                            <td class="song-duration" data-song-id="${track.trackID}">0:00</td>
+                                            <td class="song-actions">
+                                                <label for="track${track.trackID}" class="song-action-btn">
+                                                    <i class="fas fa-plus"></i>
+                                                </label>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -276,7 +240,6 @@
                                             <th>#</th>
                                             <th>Title</th>
                                             <th>Album</th>
-                                            <th>Duration</th>
                                             <th></th>
                                         </tr>
                                     </thead>
@@ -302,13 +265,13 @@
                 </c:if>
 
                 <!-------------------------------------------------------- Music Player ----------------------------------------------------->
-                <c:if test="${not empty sessionScope.user}">
+                <!-- <c:if test="${not empty sessionScope.user}">
 
                     <div class="music-player">
                         <div class="now-playing">
-                            <div class="now-playing-img" id="nowPlayingImg">
+                            <div class="now-playing-img" id="nowPlayingImg"> -->
                                 <!-- COMMENT: Default album art image path in the image folder -->
-                                <img id="currentSongImg" src="${pageContext.request.contextPath}/image/m-tp.jpg"
+                                <!-- <img id="currentSongImg" src="${pageContext.request.contextPath}/image/m-tp.jpg"
                                     alt="Now Playing">
                             </div>
                             <div class="now-playing-info">
@@ -372,11 +335,11 @@
                             </div>
                         </div>
                     </div>
-                </c:if>
+                </c:if> -->
                 <!-------------------------------------------------------- Music Player ----------------------------------------------------->
 
                 <!-- Queue Panel -->
-                <div class="queue-panel" id="queuePanel">
+                <!-- <div class="queue-panel" id="queuePanel">
                     <div class="queue-header">
                         <div class="queue-title">Queue</div>
                         <button class="queue-close" id="queueCloseBtn">
@@ -393,17 +356,17 @@
                             <div id="queueContent"></div>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- Expanded Player -->
-                <div class="expanded-player" id="expandedPlayer">
+                <!-- <div class="expanded-player" id="expandedPlayer">
                     <button class="expanded-close" id="expandedCloseBtn">
                         <i class="fas fa-times"></i>
                     </button>
                     <div class="expanded-content">
-                        <div class="expanded-img">
+                        <div class="expanded-img"> -->
                             <!-- COMMENT: Default expanded player album art image path in the image folder -->
-                            <img id="expandedImg" src="${pageContext.request.contextPath}/image/m-tp.jpg"
+                            <!-- <img id="expandedImg" src="${pageContext.request.contextPath}/image/m-tp.jpg"
                                 alt="Now Playing">
                         </div>
                         <div class="expanded-info">
@@ -437,10 +400,10 @@
                                 <button class="expanded-btn" id="expandedRepeatBtn" title="Repeat">
                                     <i class="fas fa-redo"></i>
                                 </button>
-                            </div>
+                            </div> -->
 
                             <!-- Added volume control to expanded player -->
-                            <div class="expanded-volume-control">
+                            <!-- <div class="expanded-volume-control">
                                 <button class="expanded-btn" id="expandedVolumeBtn" title="Volume">
                                     <i class="fas fa-volume-up"></i>
                                 </button>
@@ -455,11 +418,28 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- Audio Element for Music Playback -->
                 <!-- COMMENT: This is the audio element that will play the music files -->
                 <audio id="audioPlayer"></audio>
+
+                <!-- Add script to initialize track data for JavaScript -->
+                <script>
+                    // Initialize searchResults with track data from the server
+                    window.searchResults = [
+                        <c:forEach items="${tracks}" var="track" varStatus="loop">
+                            {
+                                id: ${track.trackID},
+                                title: "${track.title}",
+                                artist: "<c:forEach items="${track.artists}" var="artist" varStatus="artistLoop">${artist.name}<c:if test="${!artistLoop.last}">, </c:if></c:forEach>",
+                                image: "${pageContext.request.contextPath}/${track.imageUrl}",
+                                file: "${pageContext.request.contextPath}/${track.fileUrl}",
+                                duration: 0
+                            }<c:if test="${!loop.last}">,</c:if>
+                        </c:forEach>
+                    ];
+                </script>
 
                 <script src="${pageContext.request.contextPath}/js/create-playlist.js">
                 </script>

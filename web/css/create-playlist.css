@@ -515,7 +515,8 @@ body {
 .song-details {
     display: flex;
     flex-direction: column;
-    min-width: 0; /* Ensures text truncation works */
+    min-width: 0;
+    /* Ensures text truncation works */
 }
 
 .song-title {
@@ -833,7 +834,8 @@ body {
 }
 
 .progress-bar:hover .progress {
-    background-color: #1ed760; /* Spotify green */
+    background-color: #1ed760;
+    /* Spotify green */
 }
 
 .player-options {
@@ -920,7 +922,8 @@ body {
 }
 
 .volume-bar:hover .volume-level {
-    background-color: #1ed760; /* Spotify green */
+    background-color: #1ed760;
+    /* Spotify green */
 }
 
 /* Volume tooltip */
@@ -1056,7 +1059,8 @@ body {
 
 .queue-item-info {
     flex: 1;
-    min-width: 0; /* Ensures text truncation works */
+    min-width: 0;
+    /* Ensures text truncation works */
 }
 
 .queue-item-title {
@@ -1235,7 +1239,8 @@ body {
 }
 
 .expanded-progress-bar:hover .expanded-progress-level {
-    background-color: #1ed760; /* Spotify green */
+    background-color: #1ed760;
+    /* Spotify green */
 }
 
 .expanded-buttons {
@@ -1295,7 +1300,8 @@ body {
 .expanded-play-btn:hover {
     transform: scale(1.1);
     box-shadow: 0 0 20px rgba(100, 255, 218, 0.5);
-    background-color: #1ed760; /* Spotify green */
+    background-color: #1ed760;
+    /* Spotify green */
 }
 
 /* Add these styles for the expanded volume control */
@@ -1352,7 +1358,8 @@ body {
 }
 
 .expanded-volume-bar:hover .expanded-volume-level {
-    background-color: #1ed760; /* Spotify green */
+    background-color: #1ed760;
+    /* Spotify green */
 }
 
 .expanded-volume-tooltip {
@@ -1433,9 +1440,11 @@ body {
     0% {
         transform: scale(1);
     }
+
     50% {
         transform: scale(1.2);
     }
+
     100% {
         transform: scale(1);
     }
@@ -2101,6 +2110,7 @@ body {
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }
@@ -2110,7 +2120,37 @@ body {
     from {
         opacity: 1;
     }
+
     to {
         opacity: 0;
     }
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #4ad3b3;
+}
+
+
+/* Styles for song rows in playlist */
+.song-row {
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+}
+
+.song-row:hover {
+    background-color: rgba(30, 215, 96, 0.1);
+}
+
+.selected-row {
+    background-color: rgba(30, 215, 96, 0.2) !important;
+}
+
+.selected-row:hover {
+    background-color: rgba(30, 215, 96, 0.3) !important;
+}
+
+/* Change icon for selected rows */
+.selected-row .fa-plus:before {
+    content: "\f00c";
+    /* Font Awesome check icon */
 }

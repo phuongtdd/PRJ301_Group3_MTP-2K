@@ -89,6 +89,7 @@ public class LoginServlet extends HttpServlet {
                 if (user != null) {
                     HttpSession session = request.getSession();
                     session.setAttribute("user", user);
+                    session.setAttribute("userID", user.getUserID()); // Add this line to set userID in session
 
                     if (user.getRoles().get(0).equals("Admin")) {
                         response.sendRedirect(request.getContextPath() + "/admin");
@@ -179,6 +180,7 @@ public class LoginServlet extends HttpServlet {
         if (user != null) {
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
+            session.setAttribute("userID", user.getUserID()); // Add this line to set userID in session
 
             // If "Remember Me" is checked, create cookies
             if (remember != null && remember.equals("on")) {

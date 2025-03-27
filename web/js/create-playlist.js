@@ -1,4 +1,3 @@
-
 // Global variables
 let selectedSongs = []
 let searchResults = []
@@ -9,7 +8,7 @@ let currentTrackIndex = 0
 let currentTrackTime = 0
 let isShuffled = false
 let repeatMode = 0 // 0: no repeat, 1: repeat one, 2: repeat all
-let playlist = [...sampleQueueSongs]
+let playlist = []
 let queue = []
 let isDraggingProgress = false
 let isDraggingVolume = false
@@ -35,6 +34,132 @@ document.addEventListener("DOMContentLoaded", () => {
   const selectedSongsList = document.getElementById("selectedSongsList")
   const selectedSongsBody = document.getElementById("selectedSongs")
   const clearAllBtn = document.getElementById("clearAllBtn")
+
+  // Track checkboxes
+  const trackCheckboxes = document.querySelectorAll('input[name="trackIDs"]');
+  
+  // Make entire row clickable to select/deselect tracks
+  const songRows = document.querySelectorAll('.song-row');
+  songRows.forEach(row => {
+    row.style.cursor = 'pointer'; // Add pointer cursor to indicate clickable
+    row.addEventListener('click', function(e) {
+      // Don't trigger if clicking on action buttons
+      if (e.target.closest('.song-actions') || e.target.closest('.remove-track')) {
+        return;
+      }
+      
+      // Find the checkbox in this row and toggle it
+      const checkbox = this.querySelector('input[name="trackIDs"]');
+      if (checkbox) {
+        checkbox.checked = !checkbox.checked;
+        
+        // Visual feedback for selection
+        if (checkbox.checked) {
+          this.classList.add('selected-row');
+        } else {
+          this.classList.remove('selected-row');
+        }
+        
+        // Update the selected songs display
+        updateSelectedSongs();
+      }
+    });
+  });
+  
+  // Add event listeners to checkboxes (for programmatic changes)
+  trackCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+      // Visual feedback for the row
+      const row = this.closest('.song-row');
+      if (row) {
+        if (this.checked) {
+          row.classList.add('selected-row');
+        } else {
+          row.classList.remove('selected-row');
+        }
+      }
+      updateSelectedSongs();
+    });
+  });
+  
+  // Clear all button
+  if (clearAllBtn) {
+    clearAllBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      // Uncheck all checkboxes
+      trackCheckboxes.forEach(checkbox => {
+        checkbox.checked = false;
+      });
+      updateSelectedSongs();
+    });
+  }
+  
+  // Function to update the selected songs display
+  function updateSelectedSongs() {
+    // Get all checked checkboxes
+    const checkedBoxes = document.querySelectorAll('input[name="trackIDs"]:checked');
+    
+    // Clear the selected songs container
+    if (selectedSongsBody) {
+      selectedSongsBody.innerHTML = '';
+    }
+    
+    // Show/hide empty state based on selection
+    if (checkedBoxes.length === 0) {
+      if (emptyState) emptyState.style.display = 'block';
+      if (selectedSongsList) selectedSongsList.style.display = 'none';
+    } else {
+      if (emptyState) emptyState.style.display = 'none';
+      if (selectedSongsList) selectedSongsList.style.display = 'block';
+      
+      // Add each selected song to the list
+      checkedBoxes.forEach((checkbox, index) => {
+        const trackId = checkbox.value;
+        const songRow = checkbox.closest('.song-row');
+        
+        if (songRow && selectedSongsBody) {
+          // Clone the song info
+          const songInfo = songRow.querySelector('.song-info').cloneNode(true);
+          const songTitle = songRow.querySelector('.song-title').textContent;
+          const songArtist = songRow.querySelector('.song-artist').textContent;
+          const songAlbum = songRow.querySelector('.song-album').textContent;
+          
+          // Create a new row for the selected songs table
+          const newRow = document.createElement('tr');
+          newRow.className = 'song-row';
+          newRow.innerHTML = `
+            <td class="song-number">${index + 1}</td>
+            <td>
+              <div class="song-info">
+                ${songInfo.innerHTML}
+              </div>
+            </td>
+            <td class="song-album">${songAlbum}</td>
+            <td class="song-actions">
+              <button class="song-action-btn remove-track" data-track-id="${trackId}">
+                <i class="fas fa-times"></i>
+              </button>
+            </td>
+          `;
+          
+          // Add remove button functionality
+          const removeBtn = newRow.querySelector('.remove-track');
+          if (removeBtn) {
+            removeBtn.addEventListener('click', function() {
+              // Uncheck the corresponding checkbox
+              checkbox.checked = false;
+              updateSelectedSongs();
+            });
+          }
+          
+          selectedSongsBody.appendChild(newRow);
+        }
+      });
+    }
+  }
+  
+  // Initialize the selected songs display
+  updateSelectedSongs();
 
   // Player Controls
   const playPauseBtn = document.getElementById("playPauseBtn")
@@ -99,8 +224,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Functions
   function init() {
-    // Set up initial playlist with sample queue data ONLY
-    playlist = [...sampleQueueSongs]
+    // Sử dụng dữ liệu tracks đã được định nghĩa trong JSP
+    searchResults = window.searchResults || [];
+    playlist = window.queue || [];
     
     // Initialize song durations
     initializeSongDurations()
@@ -110,7 +236,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     clearAllBtn.addEventListener("click", clearAllSelectedSongs)
 
-    saveBtn.addEventListener("click", savePlaylist)
+    if (saveBtn) {
+      saveBtn.addEventListener("click", submitPlaylistForm)
+    } else {
+      console.error("Save button not found in the DOM")
+    }
+    
     cancelBtn.addEventListener("click", () => (window.location.href = "home"))
 
     // Player controls
@@ -148,7 +279,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("keydown", handleKeyboardShortcuts)
 
     // Populate initial search results
-    populateSearchResults(sampleSearchSongs)
+    populateSearchResults(searchResults)
 
     // Set initial track from queue if available
     if (playlist.length > 0) {
@@ -160,6 +291,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Audio player event listeners
     setupAudioEventListeners()
+
+    // Hàm thiết lập sự kiện cho các nút "Add" đã được hiển thị bởi JSP
+    function setupAddTrackButtons() {
+      const addButtons = document.querySelectorAll('.add-track');
+      addButtons.forEach(button => {
+        // Chỉ thêm sự kiện nếu chưa có
+        if (!button.hasAttribute('data-event-added')) {
+          button.setAttribute('data-event-added', 'true');
+          button.addEventListener('click', function() {
+            const trackId = parseInt(this.dataset.trackId);
+            const trackTitle = this.dataset.trackTitle;
+            const trackImage = this.dataset.trackImage;
+            const trackFile = this.dataset.trackFile;
+            const trackArtists = this.dataset.trackArtists;
+            
+            const song = {
+              id: trackId,
+              title: trackTitle,
+              artist: trackArtists,
+              image: trackImage,
+              file: trackFile,
+              duration: "0:00"
+            };
+            
+            // Thêm bài hát vào danh sách đã chọn và hiển thị
+            addSongToSelection(song);
+            
+            // Hiển thị thông báo
+            showToast(`Added "${trackTitle}" to your playlist`);
+          });
+        }
+      });
+    }
+    
+    setupAddTrackButtons();
   }
 
   function setupAudioEventListeners() {
@@ -237,11 +403,13 @@ document.addEventListener("DOMContentLoaded", () => {
   function handleSearch(event) {
     const searchTerm = event.target.value.toLowerCase()
     if (searchTerm.length === 0) {
-      populateSearchResults(sampleSearchSongs)
+      // Hiển thị tất cả bài hát khi không có từ khóa tìm kiếm
+      populateSearchResults(searchResults)
       return
     }
 
-    const filteredSongs = sampleSearchSongs.filter(
+    // Lọc bài hát dựa trên từ khóa tìm kiếm
+    const filteredSongs = searchResults.filter(
       (song) =>
         song.title.toLowerCase().includes(searchTerm) ||
         song.artist.toLowerCase().includes(searchTerm) ||
@@ -255,7 +423,7 @@ document.addEventListener("DOMContentLoaded", () => {
   async function getAudioDuration(audioSrc) {
     return new Promise((resolve) => {
         try {
-            const audio = new Audio(window.contextPath + audioSrc)
+            const audio = new Audio(audioSrc)
             
             const errorHandler = () => {
                 console.error('Error loading audio:', audioSrc)
@@ -289,21 +457,31 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   }
 
-  // Initialize function to update all sample songs with actual durations
+  // Initialize function to update all songs with actual durations
   async function initializeSongDurations() {
-    // Update search songs
-    for (const song of sampleSearchSongs) {
-      song.duration = await getAudioDuration(song.audioSrc)
+    // Update search results if available
+    if (searchResults && searchResults.length > 0) {
+      for (const song of searchResults) {
+        if (song.audioSrc) {
+          song.duration = await getAudioDuration(song.audioSrc)
+        }
+      }
     }
     
-    // Update queue songs
-    for (const song of sampleQueueSongs) {
-      song.duration = await getAudioDuration(song.audioSrc)
+    // Update queue if available
+    if (playlist && playlist.length > 0) {
+      for (const song of playlist) {
+        if (song.audioSrc) {
+          song.duration = await getAudioDuration(song.audioSrc)
+        }
+      }
     }
     
     // Update initial display
     updateQueue()
-    populateSearchResults(sampleSearchSongs)
+    if (searchResults.length > 0) {
+      populateSearchResults(searchResults)
+    }
   }
 
   async function createSongRow(song, index, isSelected) {
@@ -349,10 +527,8 @@ document.addEventListener("DOMContentLoaded", () => {
     durationCell.className = "song-duration"
     durationCell.dataset.songId = song.id
     
-    // Get and set the actual duration
-    const duration = await getAudioDuration(song.audioSrc)
-    durationCell.textContent = duration
-    song.duration = duration // Update the song object
+    // Sử dụng thời lượng mặc định thay vì cố gắng tải file âm thanh
+    durationCell.textContent = song.duration || "0:00"
 
     const actionsCell = document.createElement("td")
     actionsCell.className = "song-actions"
@@ -386,6 +562,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function populateSearchResults(songs) {
     searchResults = songs
+    
+    // Kiểm tra xem tracks đã được hiển thị bởi JSP chưa
+    // Nếu container đã có nội dung, không thêm lại
+    if (searchResultsContainer && searchResultsContainer.children.length > 0) {
+      // Tracks đã được hiển thị, chỉ cần thiết lập sự kiện cho các nút
+      setupAddTrackButtons();
+      return;
+    }
+    
     searchResultsContainer.innerHTML = ""
 
     // Use for...of instead of forEach for async operations
@@ -435,30 +620,41 @@ document.addEventListener("DOMContentLoaded", () => {
     populateSearchResults(searchResults)
   }
 
-  function savePlaylist() {
-    const playlistName = playlistNameInput.value.trim()
-    if (!playlistName) {
-        alert("Please enter a playlist name")
-        return
-    }
-
+  // Simplified function to submit the playlist form
+  function submitPlaylistForm() {
+    // Basic validation
     if (selectedSongs.length === 0) {
-        alert("Please add at least one song to your playlist")
-        return
+      showToast("Please add at least one song to your playlist");
+      return;
     }
-
-    const playlistData = {
-        name: playlistName,
-        description: playlistDescriptionInput.value.trim(),
-        songs: selectedSongs,
+    
+    const playlistName = document.getElementById("playlistName").value.trim();
+    
+    if (!playlistName) {
+      showToast("Please enter a playlist name");
+      return;
     }
-
-    // In a real application, you would send this data to the server
-    console.log("Playlist data:", playlistData)
-    alert("Playlist created successfully!")
-
-    // Redirect to the library page
-    window.location.href = "library"
+    
+    // Show toast
+    showToast("Creating playlist...");
+    
+    // Get the form
+    const form = document.getElementById("playlistSubmitForm");
+    
+    // Clear any existing track inputs
+    form.querySelectorAll('input[name="trackIDs"]').forEach(input => input.remove());
+    
+    // Add track IDs to the form
+    selectedSongs.forEach(song => {
+      const trackInput = document.createElement("input");
+      trackInput.type = "hidden";
+      trackInput.name = "trackIDs";
+      trackInput.value = song.id;
+      form.appendChild(trackInput);
+    });
+    
+    // Submit the form
+    form.submit();
   }
 
   // Player functionality
@@ -1126,3 +1322,22 @@ document.addEventListener("DOMContentLoaded", () => {
     playTrack(song)
   }
 })
+
+// Đổi tên nút Save Playlist thành Create
+document.getElementById("savePlaylistBtn").textContent = "Create";
+
+// Add direct event listener to the save button
+document.addEventListener("DOMContentLoaded", function() {
+  console.log("DOM fully loaded - adding direct event listener to save button");
+  const saveBtn = document.getElementById("saveBtn");
+  if (saveBtn) {
+    console.log("Save button found:", saveBtn);
+    saveBtn.addEventListener("click", function(e) {
+      console.log("Save button clicked directly");
+      e.preventDefault();
+      submitPlaylistForm();
+    });
+  } else {
+    console.error("Save button not found by direct query");
+  }
+});

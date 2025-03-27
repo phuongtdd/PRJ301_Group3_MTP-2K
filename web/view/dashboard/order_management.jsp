@@ -165,7 +165,7 @@
                         <th>Expiry Date</th>
                         <th>Amount</th>
                         <th>Status</th>
-                        <th>Actions</th>
+                        <!-- <th>Actions</th> -->
                     </tr>
                 </thead>
                 <tbody>
@@ -183,13 +183,13 @@
                                     ${order.status}
                                 </span>
                             </td>
-                            <td>
+                            <!-- <td>
                                 <div class="action-icons">
                                     <i class="fas fa-eye" onclick="viewOrder(${order.orderID})" title="View Order"></i>
                                     <i class="fas fa-edit" onclick="editOrder(${order.orderID})" title="Edit Order"></i>
                                     <i class="fas fa-trash" onclick="deleteOrder(${order.orderID})" title="Delete Order"></i>
                                 </div>
-                            </td>
+                            </td> -->
                         </tr>
                     </c:forEach>
                 </tbody>

@@ -11,7 +11,7 @@ import java.util.Date;
  *
  * @author HP
  */
-class Playlist implements Serializable {
+public class Playlist implements Serializable {
 
     private int playlistID;
     private int userID;

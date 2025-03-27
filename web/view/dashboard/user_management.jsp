@@ -585,7 +585,7 @@ body {
 
             function deleteUser(userId) {
                 if (confirm('Are you sure you want to delete this user?')) {
-                    window.location.href = 'admin?action=delete-user&id=' + userId;
+                    window.location.href = '?action=delete-user&id=' + userId;
                 }
             }
 

@@ -8,22 +8,18 @@
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>MTP-2K</title>
+                <title>MTP-2K - Playlist</title>
                 <link rel="stylesheet"
                     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
                 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
                     rel="stylesheet">
                 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/library.css">
+                <link rel="stylesheet" href="${pageContext.request.contextPath}/css/track.css">
                 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css">
-                <!-- Additional library-specific styles -->
-
-
+                <link rel="stylesheet" href="${pageContext.request.contextPath}/css/playlist.css">
             </head>
 
             <body>
-
-
-
                 <div id="toast" class="toast"></div>
                 <script>
                     window.onload = function () {
@@ -37,11 +33,11 @@
                             setTimeout(() => {
                                 toast.classList.remove('show');
                             }, 3000);
-            <%
+                <%
                                 session.removeAttribute("message");
                             session.removeAttribute("messageType");
-            %>
-                }
+                %>
+            }
                     }
                 </script>
 
@@ -77,7 +73,7 @@
                                             </a>
                                             <div class="divider"></div>
                                             <a href="#" class="dropdown-item" onclick="showModal('deleteAccountModal');
-                                        return false;" style="color: #ff4d4d;">
+                            return false;" style="color: #ff4d4d;">
                                                 <i class="fas fa-trash-alt"></i> Delete Account
                                             </a>
                                             <div class="divider"></div>
@@ -120,309 +116,262 @@
                         <a href="#">About Ads</a>
                     </div>
                 </div>
-                <div class="main-content">
-                    <div class="library-header">
-                        <h2 class="section-title">Your Library</h2>
-                    </div>
 
-                    <div class="library-grid">
-                        <!-- Playlists -->
-                        <c:if test="${not empty sessionScope.playlists}">
-                            <c:forEach var="playlist" items="${sessionScope.playlists}">
-                                <div class="library-item" data-type="playlist">
-                                    <div class="library-item-img"
-                                        onclick="document.getElementById('playlistForm${playlist.playlistID}').submit();"
-                                        style="cursor: pointer;">
+                <div class="main-content">
+                    <!-- Playlist Header -->
+                    <c:if test="${not empty sessionScope.playlistTracks}">
+                        <c:set var="playlist" value="${sessionScope.currentPlaylist}" />
+
+                        <div class="album-header">
+                            <div class="album-header-bg" style="background-image: url('${playlist.imageUrl != null ? playlist.imageUrl : pageContext.request.contextPath.concat("/image/playlist-image.jpg")}');"></div>
+                            <div class="album-info">
+                                <div class="album-cover">
+                                    <img src="${playlist.imageUrl != null ? playlist.imageUrl : pageContext.request.contextPath.concat("/image/playlist-image.jpg")}"
+                                        alt="${playlist.title}">
+                                </div>
+                                <div class="album-details">
+                                    <div class="album-type">PLAYLIST</div>
+                                    <h1 class="album-title">${playlist.title}</h1>
+                                    <div class="album-meta">
                                         <c:choose>
-                                            <c:when test="${not empty playlist.imageUrl}">
-                                                <img src="${pageContext.request.contextPath}/${playlist.imageUrl}"
-                                                    alt="${playlist.title}">
+                                            <c:when test="${not empty sessionScope.user}">
+                                                <span class="album-artist">Created by
+                                                    ${sessionScope.user.userName}</span>
                                             </c:when>
                                             <c:otherwise>
-                                                <img src="${pageContext.request.contextPath}/image/playlist-image.jpg"
-                                                    alt="${playlist.title}">
+                                                <span class="album-artist">Created by User</span>
                                             </c:otherwise>
                                         </c:choose>
-                                        <div class="library-item-overlay">
-                                            <button class="play-btn">
-                                                <i class="fas fa-play"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="library-item-info"
-                                        onclick="document.getElementById('playlistForm${playlist.playlistID}').submit();"
-                                        style="cursor: pointer;">
-                                        <h3>${playlist.title}</h3>
-                                        <p>Playlist • ${playlist.quantity} songs</p>
-                                    </div>
-                                    <!-- Hidden form for playlist details -->
-                                    <form id="playlistForm${playlist.playlistID}"
-                                        action="${pageContext.request.contextPath}/home" method="post"
-                                        style="display: none; width: auto;">
-                                        <input type="hidden" name="action" value="viewPlaylist">
-                                        <input type="hidden" name="playlistId" value="${playlist.playlistID}">
-                                    </form>
-                                    <!-- Delete button -->
-                                    <div class="library-item-actions">
-                                        <form action="${pageContext.request.contextPath}/home" method="post"
-                                            style="display: inline;">
-                                            <input type="hidden" name="action" value="deletePlaylist">
-                                            <input type="hidden" name="playlistId" value="${playlist.playlistID}">
-                                            <button type="submit" class="delete-btn"
-                                                onclick="return confirm('Are you sure you want to delete this playlist?');">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
+                                        <span class="album-year">${sessionScope.playlistTracks.size()} songs</span>
                                     </div>
                                 </div>
-                            </c:forEach>
-                        </c:if>
-
-                        <!-- If no playlists available -->
-                        <c:if test="${empty sessionScope.playlists}">
-                            <div class="empty-library">
-                                <i class="fas fa-music"></i>
-                                <h3>Your library is empty</h3>
-                                <p>Create playlists to see them here</p>
-                                <a href="${pageContext.request.contextPath}/home/create-playlist"
-                                    class="create-playlist-btn">
-                                    <i class="fas fa-plus"></i> Create Playlist
-                                </a>
                             </div>
-                        </c:if>
-                    </div>
-
-                    <div class="section-divider"></div>
-
-                    <div class="recent-activity">
-                        <h2 class="section-title">Recent Activity</h2>
-                        <div class="activity-container">
-                            <c:if test="${not empty sessionScope.user}">
-                                <p>Your recent activity will appear here.</p>
-                            </c:if>
-                            <c:if test="${empty sessionScope.user}">
-                                <p>Sign in to see your recent activity.</p>
-                            </c:if>
                         </div>
-                    </div>
+
+                        <!-- Playlist Actions -->
+                        <div class="album-actions">
+                            <button class="play-button" id="playPlaylist">
+                                <i class="fas fa-play"></i>
+                                Play
+                            </button>
+                            <a href="${pageContext.request.contextPath}/home/library" class="back-button">
+                                <i class="fas fa-arrow-left"></i>
+                                Back to Library
+                            </a>
+                        </div>
+
+                        <!-- Playlist Tracks -->
+                        <div class="track-list">
+                            <div class="track-list-header">
+                                <div class="track-number">#</div>
+                                <div class="track-info">TITLE</div>
+                                <div class="track-album">ALBUM</div>
+                                <div class="track-duration">DURATION</div>
+                            </div>
+
+                            <c:forEach var="track" items="${sessionScope.playlistTracks}" varStatus="status">
+                                <div class="track-item" onclick="document.getElementById('trackForm${track.trackID}').submit();" style="cursor: pointer;">
+                                    <div class="track-number">${status.index + 1}</div>
+                                    <div class="track-info">
+                                        <div class="track-image">
+                                            <img src="${track.imageUrl}" alt="${track.title}">
+                                            <div class="play-hover">
+                                                <i class="fas fa-play"></i>
+                                            </div>
+                                        </div>
+                                        <div class="track-name-artist">
+                                            <div class="track-name">${track.title}</div>
+                                            <div class="track-artist">
+                                                <c:forEach var="artist" items="${track.artists}"
+                                                    varStatus="artistStatus">
+                                                    ${artist.name}<c:if test="${!artistStatus.last}">, </c:if>
+                                                </c:forEach>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="track-album">Album Name</div>
+                                    <div class="track-duration">3:45</div>
+
+                                    <!-- Hidden form for track navigation -->
+                                    <form id="trackForm${track.trackID}"
+                                        action="${pageContext.request.contextPath}/home/track" method="post"
+                                        style="display: none;">
+                                        <input type="hidden" name="id" value="${track.trackID}">
+                                    </form>
+                                </div>
+                            </c:forEach>
+                        </div>
+                    </c:if>
+
+                    <c:if test="${empty sessionScope.playlistTracks}">
+                        <div class="empty-playlist">
+                            <i class="fas fa-music"></i>
+                            <h3>This playlist is empty</h3>
+                            <p>Add some songs to get started</p>
+                            <a href="${pageContext.request.contextPath}/home/create-playlist"
+                                class="create-playlist-btn">
+                                <i class="fas fa-plus"></i> Add Songs
+                            </a>
+                        </div>
+                    </c:if>
                 </div>
+
                 <!--------------------------------------------------- SIGNUPBANNER ----------------------------------------------------->
-                <c:if test="${empty sessionScope.user}">
+                <c:if test="${empty sessionScope.userID}">
                     <div class="signup-banner">
                         <div class="preview-text">
-                            <h3>Preview of MTP-2K</h3>
+                            <h2>Preview of MTP-2K</h2>
                             <p>Sign up to get unlimited songs and podcasts with occasional ads. No credit card needed.
                             </p>
                         </div>
-                        <a href="${pageContext.request.contextPath}/login" class="signup-button">Sign up free</a>
+                        <a href="${pageContext.request.contextPath}/register" class="signup-btn">Sign up free</a>
                     </div>
                 </c:if>
 
-                <!-------------------------------------------------------- Music Player ----------------------------------------------------->
-                <!-- <c:if test="${ not empty sessionScope.user}">
-
+                <!-- Music Player -->
+                <!-- <c:if test="${not empty sessionScope.userID}">
                     <div class="music-player">
                         <div class="now-playing">
-                            <div class="now-playing-img" id="nowPlayingImg"> -->
-                <!-- COMMENT: Default album art image path in the image folder -->
-                <!-- <img id="currentSongImg" src="${pageContext.request.contextPath}/image/m-tp.jpg"
-                                    alt="Now Playing">
+                            <div class="now-playing-img" id="nowPlayingImg">
+                                <img src="${pageContext.request.contextPath}/image/default-album.jpg" alt="Album Cover">
                             </div>
                             <div class="now-playing-info">
-                                <div class="now-playing-title" id="currentSongTitle">Not Playing</div>
-                                <div class="now-playing-artist" id="currentSongArtist"></div>
+                                <div class="track-name" id="nowPlayingTitle">Select a track</div>
+                                <div class="artist-name" id="nowPlayingArtist">Artist</div>
                             </div>
-                            <div class="now-playing-actions">
-                                <button class="option-btn" id="expandBtn" title="Expand">
-                                    <i class="fas fa-expand-alt"></i>
-                                </button>
+                            <div class="now-playing-like">
+                                <i class="far fa-heart"></i>
                             </div>
                         </div>
 
                         <div class="player-controls">
                             <div class="control-buttons">
-                                <button class="control-btn" id="shuffleBtn" title="Shuffle">
+                                <button class="control-btn" id="shuffleBtn">
                                     <i class="fas fa-random"></i>
                                 </button>
-                                <button class="control-btn" id="prevBtn" title="Previous">
+                                <button class="control-btn" id="prevBtn">
                                     <i class="fas fa-step-backward"></i>
                                 </button>
-                                <button class="play-pause-btn" id="playPauseBtn" title="Play/Pause">
+                                <button class="control-btn play-btn" id="playBtn">
                                     <i class="fas fa-play"></i>
                                 </button>
-                                <button class="control-btn" id="nextBtn" title="Next">
+                                <button class="control-btn" id="nextBtn">
                                     <i class="fas fa-step-forward"></i>
                                 </button>
-                                <button class="control-btn" id="repeatBtn" title="Repeat">
+                                <button class="control-btn" id="repeatBtn">
                                     <i class="fas fa-redo"></i>
                                 </button>
                             </div>
 
                             <div class="progress-container">
-                                <span class="progress-time" id="currentTime">0:00</span>
-                                <div class="progress-bar" id="progressBar">
-                                    <div class="progress" id="progress">
-                                        <div class="progress-handle"></div>
-                                    </div>
-                                    <div class="progress-tooltip" id="progressTooltip">0:00</div>
+                                <span id="currentTime">0:00</span>
+                                <div class="progress-bar">
+                                    <div class="progress" id="progress"></div>
+                                    <div class="progress-handle" id="progressHandle"></div>
                                 </div>
-                                <span class="progress-time" id="totalTime">0:00</span>
+                                <span id="totalTime">0:00</span>
                             </div>
                         </div>
 
                         <div class="player-options">
-                            <button class="option-btn" id="queueBtn" title="Queue">
+                            <button class="option-btn" id="queueBtn">
                                 <i class="fas fa-list"></i>
                             </button>
-                            <div class="volume-control">
-                                <button class="option-btn" id="volumeBtn" title="Volume">
+                            <div class="volume-container">
+                                <button class="option-btn" id="volumeBtn">
                                     <i class="fas fa-volume-up"></i>
                                 </button>
-                                <div class="volume-slider-container">
-                                    <div class="volume-bar" id="volumeBar">
-                                        <div class="volume-level" id="volumeLevel">
-                                            <div class="volume-handle"></div>
-                                        </div>
-                                        <div class="volume-tooltip" id="volumeTooltip">70%</div>
+                                <div class="volume-slider">
+                                    <div class="volume-bar">
+                                        <div class="volume-level" id="volumeLevel"></div>
+                                        <div class="volume-handle" id="volumeHandle"></div>
                                     </div>
                                 </div>
                             </div>
+                            <button class="option-btn" id="expandBtn">
+                                <i class="fas fa-expand-alt"></i>
+                            </button>
                         </div>
                     </div>
-                </c:if> -->
-                <!-------------------------------------------------------- Music Player ----------------------------------------------------->
+                </c:if>
 
+                 Audio Player -->
+                <!-- <audio id="audioPlayer"></audio>  -->
 
-                <!-- Queue Panel -->
-                <!-- <div class="queue-panel" id="queuePanel">
-                    <div class="queue-header">
-                        <div class="queue-title">Queue</div>
-                        <button class="queue-close" id="queueCloseBtn">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div class="queue-content">
-                        <div class="queue-section">
-                            <div class="queue-section-title">Now Playing</div>
-                            <div id="nowPlayingQueue"></div>
-                        </div>
-                        <div class="queue-section">
-                            <div class="queue-section-title">Next Up</div>
-                            <div id="queueContent"></div>
-                        </div>
-                    </div>
-                </div> -->
+                <!-- JavaScript for player functionality -->
+                <script>
+                    // Toggle user dropdown
+                    function toggleUserDropdown() {
+                        const dropdown = document.getElementById('userDropdown');
+                        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+                    }
 
-                <!-- Expanded Player -->
-                <!-- <div class="expanded-player" id="expandedPlayer">
-                    <button class="expanded-close" id="expandedCloseBtn">
-                        <i class="fas fa-times"></i>
-                    </button>
-                    <div class="expanded-content">
-                        <div class="expanded-img"> -->
-                <!-- COMMENT: Default expanded player album art image path in the image folder -->
-                <!-- <img id="expandedImg" src="${pageContext.request.contextPath}/image/m-tp.jpg"
-                                alt="Now Playing">
-                        </div>
-                        <div class="expanded-info">
-                            <div class="expanded-title" id="expandedTitle">Not Playing</div>
-                            <div class="expanded-artist" id="expandedArtist"></div>
-                        </div>
-                        <div class="expanded-controls">
-                            <div class="expanded-progress">
-                                <span class="progress-time" id="expandedCurrentTime">0:00</span>
-                                <div class="expanded-progress-bar" id="expandedProgressBar">
-                                    <div class="expanded-progress-level" id="expandedProgress">
-                                        <div class="expanded-progress-handle"></div>
-                                    </div>
-                                    <div class="progress-tooltip" id="expandedProgressTooltip">0:00</div>
-                                </div>
-                                <span class="progress-time" id="expandedTotalTime">0:00</span>
-                            </div>
-                            <div class="expanded-buttons">
-                                <button class="expanded-btn" id="expandedShuffleBtn" title="Shuffle">
-                                    <i class="fas fa-random"></i>
-                                </button>
-                                <button class="expanded-btn" id="expandedPrevBtn" title="Previous">
-                                    <i class="fas fa-step-backward"></i>
-                                </button>
-                                <button class="expanded-play-btn" id="expandedPlayBtn" title="Play/Pause">
-                                    <i class="fas fa-play"></i>
-                                </button>
-                                <button class="expanded-btn" id="expandedNextBtn" title="Next">
-                                    <i class="fas fa-step-forward"></i>
-                                </button>
-                                <button class="expanded-btn" id="expandedRepeatBtn" title="Repeat">
-                                    <i class="fas fa-redo"></i>
-                                </button>
-                            </div> -->
+                    // Close dropdown when clicking outside
+                    window.addEventListener('click', function (event) {
+                        if (!event.target.matches('.user-icon') && !event.target.matches('.user-icon *')) {
+                            const dropdown = document.getElementById('userDropdown');
+                            if (dropdown.style.display === 'block') {
+                                dropdown.style.display = 'none';
+                            }
+                        }
+                    });
 
-                <!-- Added volume control to expanded player -->
-                <!-- <div class="expanded-volume-control">
-                                <button class="expanded-btn" id="expandedVolumeBtn" title="Volume">
-                                    <i class="fas fa-volume-up"></i>
-                                </button>
-                                <div class="expanded-volume-slider-container">
-                                    <div class="expanded-volume-bar" id="expandedVolumeBar">
-                                        <div class="expanded-volume-level" id="expandedVolumeLevel">
-                                            <div class="expanded-volume-handle"></div>
-                                        </div>
-                                        <div class="expanded-volume-tooltip" id="expandedVolumeTooltip">70%</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
+                    // Modal functions
+                    function openModal(modalId) {
+                        document.getElementById(modalId).style.display = 'block';
+                    }
 
-                <!-- Expanded Playlist/Album View -->
-                <!-- <div class="expanded-playlist" id="expandedPlaylist">
-                    <div class="expanded-playlist-header">
-                        <div class="playlist-cover-large">
-                            <img id="expandedPlaylistImg"
-                                src="${pageContext.request.contextPath}/image/playlist-image.jpg" alt="Playlist">
-                        </div>
-                        <div class="playlist-info-large">
-                            <div class="playlist-type" id="expandedPlaylistType">Playlist</div>
-                            <h1 class="playlist-title-large" id="expandedPlaylistTitle">My Playlist</h1>
-                            <div class="playlist-description" id="expandedPlaylistDescription">
-                                Discover your perfect soundtrack with this carefully curated collection of songs. From
-                                energetic beats to soulful melodies, each track has been selected to create the perfect
-                                atmosphere for any moment.
-                            </div>
-                            <div class="playlist-details-large">
-                                <span class="playlist-owner" id="expandedPlaylistOwner">Your Library</span>
-                                <span class="playlist-stats" id="expandedPlaylistStats">• 24 songs</span>
-                            </div>
-                        </div>
-                    </div>
+                    function closeModal(modalId) {
+                        document.getElementById(modalId).style.display = 'none';
+                    }
 
-                    <div class="expanded-playlist-controls">
-                        <button class="playlist-play-btn">
-                            <i class="fas fa-play"></i>
-                        </button>
-                    </div>
+                    // Play track functionality
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const trackItems = document.querySelectorAll('.track-item');
+                        const audioPlayer = document.getElementById('audioPlayer');
+                        const playBtn = document.getElementById('playBtn');
+                        const playIcon = playBtn.querySelector('i');
 
-                    <div class="expanded-playlist-content">
-                        <div class="playlist-songs-header">
-                            <div class="song-number">#</div>
-                            <div class="song-info-header">Title</div>
-                            <div class="song-album-header">Album</div>
-                            <div class="song-duration-header">Duration</div>
-                        </div>
-                        <div class="playlist-songs-list" id="expandedPlaylistSongs"> -->
-                <!-- Songs will be added here dynamically -->
-                <!-- </div>
-                    </div>
+                        trackItems.forEach(item => {
+                            item.addEventListener('click', function () {
+                                const trackId = this.querySelector('form input[name="id"]').value;
+                                // Here you would fetch the track URL and play it
+                                // For now, we'll just update the UI
 
-                    <button class="expanded-playlist-close" id="expandedPlaylistClose">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div> -->
+                                // Update now playing info
+                                const trackName = this.querySelector('.track-name').textContent;
+                                const artistName = this.querySelector('.track-artist').textContent;
+                                const imgSrc = this.querySelector('.track-image img').src;
 
-                <!-- Audio Element for Music Playback -->
-                <!-- COMMENT: This is the audio element that will play the music files -->
-                <!-- <audio id="audioPlayer"></audio> -->
+                                document.getElementById('nowPlayingTitle').textContent = trackName;
+                                document.getElementById('nowPlayingArtist').textContent = artistName;
+                                document.getElementById('nowPlayingImg').querySelector('img').src = imgSrc;
+
+                                // Update play button
+                                playIcon.classList.remove('fa-play');
+                                playIcon.classList.add('fa-pause');
+
+                                // Send request to server to update play count
+                                fetch(`${pageContext.request.contextPath}/home/track?action=setPlayingTrack&id=${trackId}`, {
+                                    method: 'POST'
+                                });
+                            });
+                        });
+
+                        // Play/pause button functionality
+                        playBtn.addEventListener('click', function () {
+                            if (audioPlayer.paused) {
+                                audioPlayer.play();
+                                playIcon.classList.remove('fa-play');
+                                playIcon.classList.add('fa-pause');
+                            } else {
+                                audioPlayer.pause();
+                                playIcon.classList.remove('fa-pause');
+                                playIcon.classList.add('fa-play');
+                            }
+                        });
+                    });
+                </script>
 
                 <!-- Add these modal forms before closing body tag -->
                 <!-- Password Change Modal -->
@@ -629,8 +578,6 @@
                     }
                 </script>
 
-                <script src="${pageContext.request.contextPath}/js/library.js">
+            </body>
 
-            </body >
-
-            </html >
+            </html>
